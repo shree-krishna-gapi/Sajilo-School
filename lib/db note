@@ -1,0 +1,29 @@
+login status bool -> userStatus
+schoolid -> schoolId
+gradeid -> gradeId
+studentid / profileid -> studentId
+
+login //
+abc school , I , aarushi shrestha ,9841380887
+
+
+http://school.karmathalo.com/Student/StudentDetailIndex?studentId=31172&EducationalYear=30
+
+FutureBuilder<List<SubAcademicPeriod>>(
+                          future: FetchsubAcademicPeriod(http.Client()),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError);
+                            return snapshot.hasData ?
+                            ListView.builder(
+                                itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return DataField(
+                                      examName:snapshot.data[index].examName,
+                                      fromDate:snapshot.data[index].fromDate,
+                                      toDate:snapshot.data[index].toDate,
+                                      examId:snapshot.data[index].examId,
+                                      sn:index,
+                                  );
+                                }
+                            ) : Center(child: CircularProgressIndicator());
+                          }),
