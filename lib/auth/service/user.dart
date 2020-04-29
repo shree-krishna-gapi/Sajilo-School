@@ -15,16 +15,32 @@ class User {
   }
 }
 
-//class Student {
-//  int studentId;
-//  String studentName;
-//  int rollNo;
-//  Student({this.studentId,this.studentName,this.rollNo});
-//  factory Student.fromJson(Map<String, dynamic> parsedJson) {
-//    return Student(
-//      studentId: parsedJson["StudentId"],
-//      studentName: parsedJson["StudentName"] as String,
-//      rollNo: parsedJson["RollNo"] as int,
-//    );
-//  }
-//}
+class Test {
+  int studentId;
+  String studentName;
+  int rollNo;
+  Test({this.studentId,this.studentName,this.rollNo});
+  factory Test.fromJson(Map<String, dynamic> parsedJson) {
+    return Test(
+      studentId: parsedJson["StudentId"],
+      studentName: parsedJson["StudentName"] as String,
+      rollNo: parsedJson["RollNo"] as int,
+    );
+  }
+}
+
+
+class Std {
+  int studentId;
+  String studentName;
+  int rollNo;
+  Std({this.studentId,this.studentName,this.rollNo});
+
+  factory Std.fromJson(Map<String, dynamic> parsedJson) {
+    return Std(
+      studentId: parsedJson["StudentId"],
+      studentName: parsedJson["StudentName"] as String,
+      rollNo: parsedJson["RollNo"] as int,
+    );
+  }
+}

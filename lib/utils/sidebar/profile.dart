@@ -88,14 +88,14 @@ class _ProfileState extends State<Profile> {
                                 Divider(height: dividerHeight,),
                                 Row(
                                   children: <Widget>[
-                                    Expanded(child: InfoLeft(txt:'Phone No. :  '),flex: 1,),
+                                    Expanded(child: InfoLeft(txt:'Guardian No. :  '),flex: 1,),
                                     Expanded(child: InfoText(txt:snapshot.data.phoneNumber),flex: 1,),
                                   ],
                                 ),
                                 Divider(height: dividerHeight,),
                                 Row(
                                   children: <Widget>[
-                                    Expanded(child: InfoLeft(txt:'Mobile No. :  '),flex: 1,),
+                                    Expanded(child: InfoLeft(txt:'Student No. :  '),flex: 1,),
                                     Expanded(child: snapshot.data.mobileNumber != null ? InfoText(txt:snapshot.data.mobileNumber):
                                     InfoText(txt:'-'),flex: 1,),
                                   ],

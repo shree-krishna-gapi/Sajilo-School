@@ -14,8 +14,7 @@ import 'service/user.dart';
 import 'service/grade.dart';
 import 'service/student.dart';
 import 'package:sajiloschool/teacher/teacher.dart';
-import 'page/searchBody.dart';
-import 'grade/studentGrade.dart';
+
 class LoginBody extends StatefulWidget {
   final String title = "AutoComplete Demo";
   @override
@@ -23,24 +22,26 @@ class LoginBody extends StatefulWidget {
 }
 class _LoginBodyState extends State<LoginBody> {
   AutoCompleteTextField searchTextField;
+  AutoCompleteTextField searchTextFieldTest;
   GlobalKey<AutoCompleteTextFieldState<User>> key = new GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<Test>> testKey = new GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<Std>> studentKey = new GlobalKey();
   final _formKey = GlobalKey<FormState>();
   double paddingValue = 10.0;
+  int schoolId;
   @override
   void initState() {
-    getUsers();
+
+
     super.initState();
   }
   static List<User> users = new List<User>();
+  static List<Test> tests = new List<Test>();
+  static List<Std> students = new List<Std>();
   TextEditingController mobileNumber = TextEditingController();
   TextEditingController teacherNumber = TextEditingController();
   TextEditingController userName = TextEditingController();
-  TextEditingController studentNameController = TextEditingController();
-  // school
-  int selectedSchoolId;
-
 //  bool loader = true;
-  String tt;
   bool loading = true;
   // Grade
   int selectedGradeId = 0;
@@ -51,23 +52,34 @@ class _LoginBodyState extends State<LoginBody> {
   // Student
   int selectedStudentId = 0;
   String selectedStudentName = '';
-  String studentName = '';
+  String studentName;
   int studentId;
   // School
 
 
-
+  getStudent(gradeId) async {
+    final response =
+    await http.get('${Urls.BASE_API_URL}/login/getstudent?schoolid=$schoolId&gradeid=$gradeId');
+    if (response.body != null) {
+      setState(() {
+        tests = testUsers(response.body);
+      });
+      getUsers();
+    }
+  }
   getUsers() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('schoolId',0);
     prefs.setInt('gradeId',0);
     try {
+      String surl = 'http://192.168.1.89:88/api/login/getschools';
       final response =
-      await http.get('${Urls.BASE_API_URL}/login/getschools');
-      print('${Urls.BASE_API_URL}/login/getschools');
+      await http.get(surl);
+
       if (response.body != null) {
         setState(() {
           users = loadUsers(response.body);
+
           loading = false;
         });
       } else {
@@ -82,26 +94,16 @@ class _LoginBodyState extends State<LoginBody> {
     final parsed = json.decode(jsonString).cast<Map<String, dynamic>>();
     return parsed.map<User>((json) => User.fromJson(json)).toList();
   }
+  static List<Test> testUsers(String jsonString) {
+    final parsed = json.decode(jsonString).cast<Map<String, dynamic>>();
+    return parsed.map<Test>((json) => Test.fromJson(json)).toList();
+  }
+
   bool loginStatus = true;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            topLeft:  Radius.circular(30),
-            topRight: Radius.circular(30)
-        ),
-        gradient: purpleGradient,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            offset: Offset(1.0,-3.0),
-          )
-        ],
-      ),
       child: Form(
         key: _formKey,
         child: Container(
@@ -144,6 +146,9 @@ class _LoginBodyState extends State<LoginBody> {
                                 borderSide: BorderSide(color: Colors.white70,width: 1.5)
                             )
                             ),
+
+
+
                             itemFilter: (item, query) {
                               return item.name
                                   .toLowerCase()
@@ -160,17 +165,14 @@ class _LoginBodyState extends State<LoginBody> {
                               if(oldSchoolId != item.id) {
                                 prefs.setInt('gradeId',0);
                                 prefs.setInt('studentId',0);
-                                selectedStudentId = 0;
                                 setState(() {
                                   selectedGrade = '';
                                   selectedStudentName = '';
                                 });
-
                               }
-                              selectedSchoolId = item.id;
-                              prefs.setInt('schoolId',selectedSchoolId);
-                              print('${item.logoImage}');
-                              prefs.setString('logoImage',item.logoImage);
+                              schoolId = item.id;
+                              prefs.setInt('schoolId',item.id);
+
                               setState(() {
                                 searchTextField.textField.controller.text = item.name;
                               });
@@ -257,71 +259,20 @@ class _LoginBodyState extends State<LoginBody> {
                   ],
                 ),)
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextFormField(
-                    onTap: ()async {
-
-
-//                        String returnGrade = await Navigator.push(context, MaterialPageRoute(builder: (context) => StudentGrade(
-//                            schoolId: selectedSchoolId
-//                        )));
-//                        if(returnGrade != null){
-//                          print('returnGrade $returnGrade');
-//                          setState(() {
-//                            selectedGrade = returnGrade;
-//                          });
-//                        }
-
-
-                    },
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 4.0,
-                          color: Colors.black12,
-                          offset: Offset(2.0, 2.0),
-                        ),
-                      ],
-                    ),
-                    readOnly: true,
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(hintText: "Student Name",hintStyle: TextStyle(
-                        fontSize: 16, color: Colors.white60
-                    ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                      ),
-
-                    ),
-                  ),
-
-                ),
                 FadeAnimation(
                     0.7, Container(height: 65,child: Row(
                   children: <Widget>[
                     Expanded(child: Text(''),flex: 2,),
                     Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child:  studentName == '' || studentName == null ? TextFormField(
-                          onTap: ()async {
-                            if(selectedGradeId == 0) {
-                              showSnack('Please, Select The Grade.');
-                            }
-                            else {
-                              String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
-                                schoolId: selectedSchoolId, gradeId:selectedGradeId
-                              )));
-                              if(message != null){
-                                setState(() {
-                                  studentName = message;
-                                });
-                              }
-
-                            }
-                          },
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: loading
+                            ? Loader()
+                            : searchTextFieldTest = AutoCompleteTextField<Test>(
+                          key: testKey,
+                          clearOnSubmit: false,
+                          suggestions: tests,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -333,63 +284,38 @@ class _LoginBodyState extends State<LoginBody> {
                               ),
                             ],
                           ),
-                          readOnly: true,
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(hintText: "Student Name",hintStyle: TextStyle(
-                              fontSize: 16, color: Colors.white60
+                          decoration: InputDecoration(
+                              hintText: "Student",
+                              hintStyle: TextStyle(fontSize: 16, color: Colors.white60),focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white70,width: 1.5)
+                          )
                           ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                            ),
 
-                          ),
-                        ):TextFormField(
-                          onTap: ()async {
-                            if(selectedGradeId == 0) {
-                              showSnack('Please, Select The Grade.');
-                            }
-                            else {
-                              String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
-                                  schoolId: selectedSchoolId, gradeId:selectedGradeId
-                              )));
-                              if(message != null ){
-                                setState(() {
-                                  studentName = message;
-                                });
-                              }
-                            }
+                          itemFilter: (item, query) {
+                            return item.studentName
+                                .toLowerCase()
+                                .startsWith(query.toLowerCase());
                           },
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                          readOnly: true,
-                          decoration: InputDecoration(hintText: studentName,hintStyle: TextStyle(
-                              fontSize: 18, color: Colors.white
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white,width: 1.5),
-                            ),
-
-                          ),
+                          itemSorter: (a, b) {
+                            return a.studentName.compareTo(b.studentName);
+                          },
+                          itemSubmitted: (item){
+                            studentId = item.studentId;
+                            setState(() {
+                              searchTextFieldTest.textField.controller.text = item.studentName;
+                            });
+                          },
+                          itemBuilder: (context, item) {
+                            return row2(item);
+                          },
                         ),
-
+                      ),
                     ),flex: 6,),
                     Expanded(child: Container(
                     ),flex: 2,)
                   ],
                 ),)
                 ),
-
-
                 SizedBox(
                   height: 0,
                 ),
@@ -497,14 +423,11 @@ class _LoginBodyState extends State<LoginBody> {
                               ),
                               splashColor: Colors.orange,
                               onTap: (){
+                                if (_formKey.currentState.validate()) {
+//
 
-                                if (_formKey.currentState.validate() && studentId !=0) {
-                                  studentLoginProcess();
                                 }
-                                else {
-                                  showSnack('Please, Select The All Field.');
-                                }
-
+                                studentLoginProcess();
 
                               },
                             ),
@@ -528,7 +451,7 @@ class _LoginBodyState extends State<LoginBody> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Column(
+                           Column(
                             children: <Widget>[
                               Text('Teacher Login ?',style: TextStyle(color: Colors.white70,
                                   fontSize: 14),),
@@ -800,15 +723,9 @@ class _LoginBodyState extends State<LoginBody> {
                               ),
                               splashColor: Colors.orange,
                               onTap: (){
-                                print('studentId -> $studentId');
-                                if (_formKey.currentState.validate() && selectedSchoolId !=null) {
+                                if (_formKey.currentState.validate()) {
                                   teacherLoginProcess();
                                 }
-                                else {
-                                  showSnack('Please, Select The All Field.');
-                                }
-
-
                               },
                             ),
                           ),
@@ -869,6 +786,55 @@ class _LoginBodyState extends State<LoginBody> {
           ),
         ),
       ),
+      height: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+            topLeft:  Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
+        gradient: purpleGradient,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 5,
+            offset: Offset(1.0,-3.0),
+          )
+        ],
+      ),
+    );
+  }
+  Widget row2(Test user) {
+    return Container(
+      decoration: BoxDecoration(
+          gradient: purpleGradient,
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0.0, 1.0),
+                color: Colors.black12,blurRadius: 2
+            )
+          ]
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            user.studentName,
+            style: TextStyle(fontSize: 16.0,color: Colors.white),
+          ),
+          SizedBox(
+            width: 10.0,
+          ),
+          Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: user.rollNo == null ? Text('') :Text(
+                  '${user.rollNo}',style: TextStyle(color: Colors.white70,fontSize: 12),
+                ),
+              )
+          ),
+        ],
+      ),
     );
   }
   Widget row(User user) {
@@ -905,74 +871,151 @@ class _LoginBodyState extends State<LoginBody> {
       ),
     );
   }
-  String url;
+  Widget row1(Std studentData) {
+    return Container(
+      decoration: BoxDecoration(
+          gradient: purpleGradient,
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0.0, 1.0),
+                color: Colors.black12,blurRadius: 2
+            )
+          ]
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            studentData.studentName,
+            style: TextStyle(fontSize: 16.0,color: Colors.yellow),
+          ),
+          SizedBox(
+            width: 10.0,
+          ),
+          Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: studentData.rollNo == null ? Text('') :Text(
+                  '${studentData.rollNo}',style: TextStyle(color: Colors.white70,fontSize: 12),
+                ),
+              )
+          ),
+        ],
+      ),
+    );
+  }
+
   studentLoginProcess() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var  getStudentId = prefs.getInt('studentId');
+    var schoolId =  prefs.getInt('schoolId');
+    var gradeId =  prefs.getInt('gradeId');
+    var studentId =  prefs.getInt('studentId');
     var mobileNo = mobileNumber.text;
     showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
-          return Wait();});
-     url = '${Urls.BASE_API_URL}/login/checkcredential?schoolid=$selectedSchoolId&gradeid=$selectedGradeId&studentid=$getStudentId&mobileno=$mobileNo';
-    print(url);
-    if(getStudentId !=0) {
-      final response =
-      await http.get(url);
-      if (response.statusCode == 200) {
-        final isUser = json.decode(response.body)['Success'];
-        if(isUser == true) {
-          showDialog<void>(
-              context: context,
-              barrierDismissible: false, // user must tap button!
-              builder: (BuildContext context) {
-                return Success();
-              }
-          );
-          prefs.setBool('userStatus',true);
-          Navigator.of(context).pop();
-          Timer(Duration(milliseconds: 600), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-            );
-          });
-        }
-        else {
-          Navigator.of(context).pop();
-          showSnack('Login Failled! Please, Try Again');
-        }
+          return AlertDialog(
+            backgroundColor: Color(0xfffbfbef),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+//            backgroundColor: Color(0x00000000),
+            title: Container( height: 110,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(backgroundColor: Colors.yellow[700],
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                  ),
+                  SizedBox(height: 30,),
+                  Shimmer.fromColors(baseColor: Colors.black,highlightColor: Colors.black12,
+                      child: Text('Please Wait...', style: TextStyle(fontSize: 17,fontWeight: FontWeight.w500,
+                          letterSpacing: 0.6),))
+                ],
+              ),
+            ),
+          );});
 
-      } else {
+    final response =
+    await http.get("${Urls.BASE_API_URL}/login/checkcredential?schoolid=$schoolId&gradeid=$gradeId&studentid=$studentId&mobileno=$mobileNo");
+    if (response.statusCode == 200) {
+      final isUser = json.decode(response.body)['Success'];
+      if(isUser == true) {
+        showDialog<void>(
+            context: context,
+            barrierDismissible: false, // user must tap button!
+            builder: (BuildContext context) {
+              return Success();
+            }
+        );
+        prefs.setBool('userStatus',true);
         Navigator.of(context).pop();
-        showSnack('Login Failled! Please, Contact To The Developer');
+        Timer(Duration(milliseconds: 600), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+          );
+        });
       }
+      else {
+        Navigator.of(context).pop();
+        final scaff = Scaffold.of(context);
+        scaff.showSnackBar(SnackBar(
+          content: Text("Login Failled!."),
+          backgroundColor: Colors.black26,
+          duration: Duration(seconds: 2),
+        ));
+      }
+
     } else {
       Navigator.of(context).pop();
-      showSnack('Login Failled! Please, Try Again');
+      final scaff = Scaffold.of(context);
+      scaff.showSnackBar(SnackBar(
+        content: Text("Login Failled!. Urls not Exist."),
+        backgroundColor: Colors.black26,
+        duration: Duration(seconds: 2),
+      ));
     }
-
 
 
 
   }
   teacherLoginProcess() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    var schoolId =  prefs.getInt('schoolId');
     var username = userName.text;
     var mobileNo = teacherNumber.text;
     showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
-          return Wait();});
-     url = '${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$selectedSchoolId&username=$username&password=$mobileNo';
-    print(url);
-
-
+          return AlertDialog(
+            backgroundColor: Color(0xfffbfbef),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+//            backgroundColor: Color(0x00000000),
+            title: Container( height: 110,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(backgroundColor: Colors.yellow[700],
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                  ),
+                  SizedBox(height: 30,),
+                  Shimmer.fromColors(baseColor: Colors.black,highlightColor: Colors.black12,
+                      child: Text('Please Wait...', style: TextStyle(fontSize: 17,fontWeight: FontWeight.w500,
+                          letterSpacing: 0.6),))
+                ],
+              ),
+            ),
+          );});
+    if(schoolId != 0) {
+      print('${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$schoolId&username=$username&password=$mobileNo');
       final response =
-      await http.get(url);
+      await http.get("${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$schoolId&username=$username&password=$mobileNo");
       if (response.statusCode == 200) {
         final isUser = json.decode(response.body)['Success'];
         if(isUser == true) {
@@ -993,13 +1036,34 @@ class _LoginBodyState extends State<LoginBody> {
           });
         }
         else {
-          showSnack('Login Failled!. Please Try Again.');
+          Navigator.of(context).pop();
+          final scaff = Scaffold.of(context);
+          scaff.showSnackBar(SnackBar(
+            content: Text("Login Failled!."),
+            backgroundColor: Colors.black26,
+            duration: Duration(seconds: 2),
+          ));
         }
 
       } else {
-        showSnack('Login Failled!. Urls not Exist.');
-
+        Navigator.of(context).pop();
+        final scaff = Scaffold.of(context);
+        scaff.showSnackBar(SnackBar(
+          content: Text("Login Failled!. Urls not Exist."),
+          backgroundColor: Colors.black26,
+          duration: Duration(seconds: 2),
+        ));
       }
+    } else {
+      Navigator.of(context).pop();
+      final scaff = Scaffold.of(context);
+      scaff.showSnackBar(SnackBar(
+        content: Text("Please, Field First."),
+        backgroundColor: Colors.black26,
+        duration: Duration(seconds: 2),
+      ));
+    }
+
 
   }
   Future<void> _showDialog() async {
@@ -1008,7 +1072,12 @@ class _LoginBodyState extends State<LoginBody> {
     int schoolId =  prefs.getInt('schoolId');
 
     if(schoolId == 0) {
-      showSnack('Please, Select The School Name');
+      final scaff = Scaffold.of(context);
+      scaff.showSnackBar(SnackBar(
+        content: Text("Please, Select The School Name"),
+        backgroundColor: Colors.black26,
+        duration: Duration(milliseconds: 800),
+      ));
     }
     else {
       return showDialog<void>(
@@ -1059,20 +1128,20 @@ class _LoginBodyState extends State<LoginBody> {
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     int oldGradeId = prefs.getInt('gradeId');
 //                    prefs.setInt('gradeId',changedNowId);
+                    getStudent(changedNowId);
                     setState(() {
                       selectedGrade = changedNowGrade;
                       selectedGradeId = changedNowId;
                     });
+//                    getStudent(selectedGradeId);
                     if(oldGradeId == 0) {
 
                     }
                     else if(oldGradeId!=changedNowId) {
                       prefs.setInt('gradeId',0);
                       prefs.setInt('studentId',0);
-                      selectedStudentId = 0;
                       setState(() {
                         selectedStudentName = '';
-                        studentName = '';
                       });
                     }
 
@@ -1096,15 +1165,109 @@ class _LoginBodyState extends State<LoginBody> {
     prefs.setInt('gradeId',0);
   }
 
-  showSnack(message) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.black26,
-      duration: Duration(milliseconds: 800),
-    ));
+
+  // login body
+  _showDialogS() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int schoolId =  prefs.getInt('schoolId');
+    int gradeId = prefs.getInt('gradeId');
+    if(schoolId == 0 || gradeId == 0){
+      final scaff = Scaffold.of(context);
+      scaff.showSnackBar(SnackBar(
+        content: Text("Please, Select The Student Grade."),
+        backgroundColor: Colors.black26,
+        duration: Duration(milliseconds: 800),
+      ));
+    }
+    else {
+      return showDialog<void>(
+          context: context,
+          barrierDismissible: true, // user must tap button!
+          builder: (BuildContext context) {
+            return FadeAnimation(0.4,
+              AlertDialog(
+                backgroundColor: Color(0xfffbf9e7),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
+                contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                content: Container( height: 180,
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                      child: FutureBuilder<List<Student>>(
+                        future: FetchStudent(http.Client()),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) ;
+                          if(snapshot.hasData) {
+                            return snapshot.data.length > 0 ?
+                            CupertinoPicker(
+                              itemExtent: 60.0,
+                              backgroundColor: Color(0x00000000),
+                              onSelectedItemChanged: (index) {
+                                selectedStudentName = snapshot.data[index].studentName;
+                                selectedStudentId = snapshot.data[index].profileId;
+                              },
+                              children: new List<Widget>.generate(snapshot.data.length, (index) {
+                                selectedStudentName = snapshot.data[0].studentName;
+                                selectedStudentId = snapshot.data[0].profileId;
+                                return Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(height: 6,),
+                                      Text('${snapshot.data[index].studentName}',style: TextStyle(
+                                          fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.6
+                                      ),),
+                                      SizedBox(height: 3,),
+                                      Align(alignment: Alignment.bottomRight, child:
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          Text('Roll No.: ',style: TextStyle(
+                                              fontSize: 13.0,letterSpacing: 0.4
+                                          ),),
+                                          Text(' ${snapshot.data[index].rollNo}',style: TextStyle(
+                                              fontSize: 13.0, fontWeight: FontWeight.w600))
+                                        ],
+                                      ),)
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ) :
+                            Align(
+                                alignment: Alignment.center,
+                                child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                                  letterSpacing: 0.4,),)
+                            );
+                          } else {
+                            return Loader();
+                          }
+
+                        },
+                      )
+                  ),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: ()async {
+                      setState(() {
+                        studentName = selectedStudentName;
+                      });
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      prefs.setInt('studentId',selectedStudentId);
+                      prefs.setString('studentName',selectedStudentName);
+                      Duration(milliseconds: 500);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+                elevation: 4,
+              ),
+            );} );
+    }
   }
-
-
 
 
 }

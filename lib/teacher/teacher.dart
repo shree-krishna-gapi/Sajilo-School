@@ -104,7 +104,7 @@ class _TeacherState extends State<Teacher> {
         }
     );
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('userStatus',false);
+//    prefs.setBool('userStatus',false);
     prefs.setBool('teacherStatus',false);
     Timer(Duration(milliseconds: 200), () {
       Navigator.of(context).pop();
