@@ -24,7 +24,10 @@ class _EducationalYearState extends State<EducationalYear> {
 
   getCurrentYear() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    selectedYear = prefs.getString('educationalYearName');
+
+    setState(() {
+      selectedYear = prefs.getString('educationalYearName');
+    });
   }
 
   @override

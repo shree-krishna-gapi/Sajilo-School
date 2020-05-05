@@ -158,17 +158,20 @@ class SideBarBody extends StatefulWidget {
 }
 
 class _SideBarBodyState extends State<SideBarBody> {
-  String studentName='fd';
-  void initState() {
-    super.initState();
-    getUser();
-  }
+  String studentName = '';
   getUser() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
+//    setState(() {
       studentName = pref.getString('studentName');
-    });
+//    });
   }
+  @override
+  void initState() {
+    super.initState();
+    this.getUser();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -179,8 +182,7 @@ class _SideBarBodyState extends State<SideBarBody> {
             child: new UserAccountsDrawerHeader(otherAccountsPictures: <Widget>[
 //              Icon(Icons.apps,color: Colors.white,),
             ],
-              accountName: Text(studentName),
-              accountEmail: Text('$studentName@demo.com'),
+//2
               currentAccountPicture: GestureDetector(
                 child: new CircleAvatar(
                   backgroundColor: Colors.white,

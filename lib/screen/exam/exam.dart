@@ -133,8 +133,31 @@ class _BodySectionState extends State<BodySection> {
   String changedNowYear;
   // Year
   bool loading;
+
+  FixedExtentScrollController scrollController;
+  String _mySelection;
+
+  final String url = "http://webmyls.com/php/getdata.php";
+
+  List data = List(); //edited line
+
+  Future<String> getSWData() async {
+    var res = await http
+        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      data = resBody;
+    });
+
+    print(resBody);
+
+    return "Sucess";
+  }
+
   @override
   void initState(){
+//    this.getSWData();
     getCurrentYear();
     super.initState();
   }
@@ -157,8 +180,24 @@ class _BodySectionState extends State<BodySection> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
+
                   Text('Year:',style: TextStyle(fontStyle: FontStyle.italic,
                       fontSize: 15,fontWeight: FontWeight.w600),),
+//            DropdownButton(
+//              items: data.map((item) {
+//                return new DropdownMenuItem(
+//                  child: new Text(item['item_name']),
+//                  value: item['id'].toString(),
+//                );
+//              }).toList(),
+//              onChanged: (newVal) {
+//                setState(() {
+//                  _mySelection = newVal;
+//                });
+//              },
+//              value: _mySelection,
+//            ),
+
                   SizedBox(width: 15,),
                   InkWell(
                     onTap: (){_showDialog();},
@@ -168,7 +207,7 @@ class _BodySectionState extends State<BodySection> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                selectedYear == '' ?
+                                selectedYear == '' || selectedYear == null  ?
                                 Text('yyyy',style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 0.8,
@@ -264,6 +303,8 @@ class _BodySectionState extends State<BodySection> {
       ),
     );
   }
+
+
   Future<void> _showDialog() async {
 
     showDialog<void>(
@@ -276,8 +317,7 @@ class _BodySectionState extends State<BodySection> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-
-              child: Container( height: 180,
+              child: Container( height: 380,
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(20,20,20,10),
                     child: FutureBuilder<List<OfflineFeeYear>>(
@@ -289,13 +329,13 @@ class _BodySectionState extends State<BodySection> {
                           itemExtent: 60.0,
                           backgroundColor: Color(0x00000000),
                           onSelectedItemChanged: (index)async {
-
                             changedNowYear = snapshot.data[index].sYearName;
                             changedNowYearId = snapshot.data[index].educationalYearID;
                           },
+                          scrollController: scrollController,
                           children: new List<Widget>.generate(snapshot.data.length, (index) {
-                            changedNowYear = snapshot.data[0].sYearName;
-                            changedNowYearId = snapshot.data[0].educationalYearID;
+                            changedNowYear = snapshot.data[2].sYearName;
+                            changedNowYearId = snapshot.data[2].educationalYearID;
                             return Align(
                               alignment: Alignment.center,//
                               child: Text(snapshot.data[index].sYearName,

@@ -41,12 +41,14 @@ class Hw {
   final int homeworkId;
   final String subjectName;
   final String homeworkDetail;
-  Hw({this.homeworkId,this.subjectName,this.homeworkDetail
+  final bool isFileExist;
+  Hw({this.homeworkId,this.subjectName,this.homeworkDetail,this.isFileExist
   });
   factory Hw.fromJson(Map<String, dynamic> json) {
     return Hw(
       homeworkId: json['HomeworkId'] as int,
       subjectName: json['SubjectName'] as String,
       homeworkDetail: json['HomeworkDetail'] as String,
+      isFileExist: json['IsFileExist'] as bool
     );}
 }

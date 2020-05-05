@@ -70,7 +70,7 @@ class BodySection extends StatefulWidget {
 }
 
 class _BodySectionState extends State<BodySection> {
-  bool isMonthly = true;
+  bool isMonthly = false;
   bool isSearch = false;
 //  void initState(){
 //    setMonth();
@@ -79,6 +79,7 @@ class _BodySectionState extends State<BodySection> {
   void setMonth()async {
     SharedPreferences prefs= await SharedPreferences.getInstance();
     prefs.setBool('parentAttendanceIsMonthly', isMonthly);
+//    prefs.setInt('monthId', 0);
 
   }
   @override
@@ -115,7 +116,7 @@ class _BodySectionState extends State<BodySection> {
                     activeTrackColor: Colors.blue[700].withOpacity(0.5),
                     activeColor: Colors.blue[700].withOpacity(0.8),
                   ),
-                  SizedBox(width: 10,),
+                  SizedBox(width: 20,),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -140,12 +141,12 @@ class _BodySectionState extends State<BodySection> {
         )),
 
         Container(child:
-        FadeAnimation(0.6, MainRow()),
+        FadeAnimation(0.3, MainRow()),
           decoration: BoxDecoration(
               gradient: purpleGradient
           ),),
         isSearch ? Container(
-
+          height: 400,
           child:FutureBuilder<List<StudentAttendanceData>>(
               future: FetchParentAttendance(http.Client()),
               builder: (context, snapshot) {
@@ -157,31 +158,50 @@ class _BodySectionState extends State<BodySection> {
                       itemBuilder: (context, index) {
 //                              return Text('${snapshot.data[index].monthName}');
                         return FadeAnimation(
-                          0.5, Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(15,12,15,12),
+                          0.2, Column(
+                          children: <Widget>[
+                            snapshot.data[index].isWorkingDay ? Container(
+
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(15,8,15,8),
                                 child: Row(
                                   children: <Widget>[
-                                    Expanded(child: ChildTxt(title: '${index+1}'), flex: 1,),
-                                    Expanded(child: ChildTxt(title: '${snapshot.data[index].dateOfYearNepali}'), flex: 3,),
+                                    Container(child: ChildTxt(title: '${index+1}'), width: 28,),
+                                    Expanded(child: ChildTxt(title: '${snapshot.data[index].dateOfYearNepali}'), flex: 1,),
+                                    Expanded(child: ChildTxt(title: '${snapshot.data[index].dayName}'), flex: 1,),
                                     Expanded(child: snapshot.data[index].isPresent ? ChildTxt(title: 'Present'):
                                     ChildTxt1(title:'Absent'),
-                                       flex: 3,),
+                                      flex: 1,),
                                   ],
                                 ),
                               ),
-                              Divider(),
-                            ],
-                          ),
+                            ):
+                            Container(
+                              color: Colors.orange[400],
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(15,8,15,8),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(child: ChildTxtWhite(title: '${index+1}'), width: 28,),
+                                    Expanded(child: ChildTxtWhite(title: '${snapshot.data[index].dateOfYearNepali}'), flex: 1,),
+                                    Expanded(child: ChildTxtWhite(title: '${snapshot.data[index].dayName}'), flex: 1,),
+                                    Expanded(child: ChildTxtWhite(title: 'Holiday'),
+                                      flex: 1,),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(height: 1, color: Colors.black12,),
+                          ],
+                        ),
                         );
                       }
                   ) : FadeAnimation(
                     0.4, Align(
-                        alignment: Alignment.center,
-                        child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
-                          letterSpacing: 0.4,),)
-                    ),
+                      alignment: Alignment.center,
+                      child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                        letterSpacing: 0.4,),)
+                  ),
                   );
                 }
                 else {
@@ -189,11 +209,10 @@ class _BodySectionState extends State<BodySection> {
                 }
               }) , //ChildRow()
 
-          height: 400,
+
           decoration: BoxDecoration(
               color: Color(0xfffbf9e7).withOpacity(0.5)
           ),
-
         ):Container(
             height: 400,
             child:FutureBuilder<List<StudentAttendanceData>>(
@@ -207,21 +226,40 @@ class _BodySectionState extends State<BodySection> {
                         itemBuilder: (context, index) {
 //                              return Text('${snapshot.data[index].monthName}');
                           return FadeAnimation(
-                            0.5, Column(
+                            0.2, Column(
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(15,12,15,12),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(child: ChildTxt(title: '${index+1}'), flex: 1,),
-                                      Expanded(child: ChildTxt(title: '${snapshot.data[index].dateOfYearNepali}'), flex: 3,),
-                                      Expanded(child: snapshot.data[index].isPresent ? ChildTxt(title: 'Present'):
-                                      ChildTxt(title:'Absent'),
-                                        flex: 3,),
-                                    ],
+                                snapshot.data[index].isWorkingDay ? Container(
+
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(15,8,15,8),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(child: ChildTxt(title: '${index+1}'), width: 28,),
+                                        Expanded(child: ChildTxt(title: '${snapshot.data[index].dateOfYearNepali}'), flex: 1,),
+                                        Expanded(child: ChildTxt(title: '${snapshot.data[index].dayName}'), flex: 1,),
+                                        Expanded(child: snapshot.data[index].isPresent ? ChildTxt(title: 'Present'):
+                                        ChildTxt1(title:'Absent'),
+                                          flex: 1,),
+                                      ],
+                                    ),
+                                  ),
+                                ):
+                                Container(
+                                  color: Colors.orange[400],
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(15,8,15,8),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(child: ChildTxtWhite(title: '${index+1}'), width: 28,),
+                                        Expanded(child: ChildTxtWhite(title: '${snapshot.data[index].dateOfYearNepali}'), flex: 1,),
+                                        Expanded(child: ChildTxtWhite(title: '${snapshot.data[index].dayName}'), flex: 1,),
+                                        Expanded(child: ChildTxtWhite(title: 'Holiday'),
+                                          flex: 1,),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Divider(),
+                                Container(height: 1, color: Colors.black12,),
                               ],
                             ),
                           );
@@ -258,43 +296,11 @@ class MainRow extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(15,12,15,12),
       child: Row(
         children: <Widget>[
-          Expanded(child: Txt(title:'Sn'),flex: 1,),
-          Expanded(child: Txt(title:'Date'),flex: 3,),
-          Expanded(child: Txt(title:'Status'),flex: 3,),
-        ],
-      ),
-    );
-  }
-}
-class ChildRow extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(15,12,15,12),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              children: <Widget>[
-                Expanded(child: ChildTxt(title:'03/01/2076'),flex: 1,),
-                Expanded(child: ChildTxt(title:'Absent'),flex: 3,),
-                Expanded(child: ChildTxt(title:'Absent'),flex: 3,),
-              ],
-            ),
-          ),
-          SizedBox(height: 10,),
-          Container(height: 1,color: Colors.black12,),
-          SizedBox(height: 10,),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              children: <Widget>[
-                Expanded(child: ChildTxt(title:'06/05/2076'),flex: 2,),
-                Expanded(child: ChildTxt(title:'Sick Leave'),flex: 2,),
-              ],
-            ),
-          ),
+          Container(child: Txt(title:'Sn'),width: 28,),
+          Expanded(child: Txt(title:'Date'),flex: 1,),
+          Expanded(child: Txt(title:'Day'),flex: 1,),
+          Expanded(child: Txt(title:'Status'),flex: 1,),
+
         ],
       ),
     );
@@ -308,6 +314,15 @@ class ChildTxt extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(title,style: TextStyle(
       letterSpacing: 0.4,));
+  }
+}
+class ChildTxtWhite extends StatelessWidget {
+  ChildTxtWhite({this.title});
+  final String title;
+  @override
+  Widget build(BuildContext context) {
+    return Text(title,style: TextStyle(
+      letterSpacing: 0.4,color: Colors.white));
   }
 }
 class ChildTxt1 extends StatelessWidget {

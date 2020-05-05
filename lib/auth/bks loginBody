@@ -16,7 +16,6 @@ import 'service/student.dart';
 import 'package:sajiloschool/teacher/teacher.dart';
 import 'page/searchBody.dart';
 import 'grade/studentGrade.dart';
-import 'pages/getGrade.dart';
 class LoginBody extends StatefulWidget {
   final String title = "AutoComplete Demo";
   @override
@@ -31,8 +30,8 @@ class _LoginBodyState extends State<LoginBody> {
 
   @override
   void initState() {
-    getSchool();
-//    getGrades();
+//    getSchool();
+    getGrades();
     super.initState();
   }
   static List<School> schoolData = new List<School>();
@@ -58,8 +57,7 @@ class _LoginBodyState extends State<LoginBody> {
   String studentName = '';
   int studentId;
   // School
-  // Grade
-  bool loadGrade = false;
+
 
   getSchool() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -87,6 +85,38 @@ class _LoginBodyState extends State<LoginBody> {
   }
   int schoolId = 0;
   bool loginStatus = true;
+  String _valProvince;
+  List<dynamic> _dataProvince = List();
+  getGrade(l) {
+
+  }
+  getGrades() async {
+
+
+    String _baseUrl = "${Urls.BASE_API_URL}/login/getgrades?schoolid=1";
+
+
+    final response = await http.get(_baseUrl);
+
+   if(response.statusCode == 200){
+     var listData = jsonDecode(response.body);
+     if(listData.length > 0){
+       print('ok $listData');
+       setState(() {
+         _dataProvince = listData; // dan kita set kedalam variable _dataProvince
+       });
+     }else{
+       showDialog<void>(
+           context: context,
+           barrierDismissible: true, // user must tap button!
+           builder: (BuildContext context) {
+             return Empty();
+           });
+     }
+   }else{
+     showSnack("Server Error");
+   }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -113,10 +143,42 @@ class _LoginBodyState extends State<LoginBody> {
             padding: const EdgeInsets.only(top: 20),
             child: loginStatus?
             FadeAnimation(
-              0.2, ListView(
+              0.6, ListView(
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Align( alignment: Alignment.center,
+                    child: DropdownButton(
+                      hint: Align(alignment: Alignment.center,child: Text("Grade",style: TextStyle(color: Colors.white70,),)),
+                      value: _valProvince,style: TextStyle(color: Colors.red),
+
+                      items: _dataProvince.map((item) {
+                        return DropdownMenuItem(
+                          child: Text(item['GradeNameEng'],textAlign: TextAlign.center),
+                          value: item['GradeNameEng'],
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                       // print(mList.singleWhere((i) => i == 3))
+
+//                          setState(() {
+//                            _valProvince = value;
+//                          });
+
+                          print(_dataProvince.runtimeType);
+                          print(_dataProvince.length);
+                          var a= _dataProvince.where((i) => i.contains(value)).toList();
+                          print('a $a');
+//                          List list= _dataProvince.map((array)=>array[value]).toList();
+//                          print('List: $list');
+
+                      },
+
+                    ),
+                  ),
+                ),
                 FadeAnimation(
-                  0.0, Container(
+                  0.5, Container(
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text(''),flex: 2,),
@@ -160,6 +222,11 @@ class _LoginBodyState extends State<LoginBody> {
                               SharedPreferences prefs = await SharedPreferences.getInstance();
                               int oldSchoolId = prefs.getInt('schoolId');
 
+
+                              getGrade(item.id);
+
+
+
                               if(oldSchoolId != item.id) {
                                 prefs.setInt('gradeId',0);
                                 prefs.setInt('studentId',0);
@@ -168,7 +235,7 @@ class _LoginBodyState extends State<LoginBody> {
                                   selectedGrade = '';
                                   selectedStudentName = '';
                                 });
-                                loadGrade = false;
+
                               }
                               selectedSchoolId = item.id;
                               schoolId=item.id;                          prefs.setInt('schoolId',selectedSchoolId);
@@ -192,113 +259,30 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 ),
                 SizedBox(
-                    height: 10
+                    height: 0
                 ),
                 FadeAnimation(
-                    0.0, Container(height: 65,child: Row(
+                    0.6, Container(height: 65,child: Row(
                   children: <Widget>[
-                    Expanded(child: Text(''),flex: 2,),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child:  selectedGrade == '' || selectedGrade == null ? TextFormField(
-                        onTap: ()async {
+                    Expanded(child:
+                    Text(''),flex: 2,),
 
-                          print('selectedSchoolId $selectedSchoolId');
-                          if(selectedSchoolId == 0 || selectedSchoolId == null) {
-                            showSnack('Please, Select The School Name.');
-                          }
-                          else {
-                            List message = await Navigator.push(context, MaterialPageRoute(builder: (context) => GetGrade(
-                                schoolId:selectedSchoolId
-                            )));
-                            selectedGradeId = message[0];
-                            if(message != null){
-                              setState(() {
-                                selectedGrade = message[1];
-                              });
-                            }
-                          }
-                        },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black12,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        readOnly: true,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(hintText: "Select Grade",hintStyle: TextStyle(
-                            fontSize: 16, color: Colors.white60
-                        ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                          ),
-
-                        ),
-                      ):TextFormField(
-                        onTap: ()async {
-
-                          print('selectedSchoolId $selectedSchoolId');
-                          if(selectedSchoolId == 0 || selectedSchoolId == null) {
-                            showSnack('Please, Select The SchoolName.');
-                          }
-                          else {
-                            List message = await Navigator.push(context, MaterialPageRoute(builder: (context) => GetGrade(
-                                schoolId:selectedSchoolId
-                            )));
-                            selectedGradeId = message[0];
-                            if(message != null){
-                              setState(() {
-                                selectedGrade = message[1];
-                              });
-                            }
-                          }
-                        },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black12,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        readOnly: true,
-                        decoration: InputDecoration(hintText: selectedGrade,hintStyle: TextStyle(
-                            fontSize: 18, color: Colors.white
-                        ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,width: 1.5),
-                          ),
-
-                        ),
-                      ),
-
-                    ),flex: 6,),
                     Expanded(child: Container(
                     ),flex: 2,)
                   ],
                 ),)
                 ),
-                // todo Student Name Field
+
                 FadeAnimation(
-                    0.0, Container(height: 65,child: Row(
+                    0.7, Container(height: 65,child: Row(
                   children: <Widget>[
                     Expanded(child: Text(''),flex: 2,),
                     Expanded(child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child:  studentName == '' || studentName == null ? TextFormField(
                         onTap: ()async {
-                          if(selectedGradeId == 0 || selectedGradeId == null) {
-                            showSnack('Please, Select The Student Grade.');
+                          if(selectedGradeId == 0) {
+                            showSnack('Please, Select The Grade.');
                           }
                           else {
                             String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
@@ -335,8 +319,8 @@ class _LoginBodyState extends State<LoginBody> {
                         ),
                       ):TextFormField(
                         onTap: ()async {
-                          if(selectedGradeId == 0 || selectedGradeId == null) {
-                            showSnack('Please, Select The Student Grade.');
+                          if(selectedGradeId == 0) {
+                            showSnack('Please, Select The Grade.');
                           }
                           else {
                             String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
@@ -922,7 +906,7 @@ class _LoginBodyState extends State<LoginBody> {
           );
           prefs.setBool('userStatus',true);
           Navigator.of(context).pop();
-          Timer(Duration(milliseconds: 400), () {
+          Timer(Duration(milliseconds: 600), () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Home()),
@@ -1011,3 +995,5 @@ class _LoginBodyState extends State<LoginBody> {
 
 
 }
+
+// https://gist.github.com/HansMuller/a46c847cd38c9394405975a2b95ace81

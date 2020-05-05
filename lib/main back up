@@ -7,11 +7,7 @@ import 'screen/home.dart';
 import 'utils/fadeAnimation.dart';
 import 'teacher/teacher.dart';
 import 'auth/Test.dart';
-import 'dart:io';
-import 'package:flutter_downloader/flutter_downloader.dart';
-void main()async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(debug: false);
+void main(){
   runApp(
     MyApp(),
   );
@@ -21,16 +17,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Sajilo School',
+      debugShowCheckedModeBanner: false,
+      title: 'Sajilo School',
 //        com.mininginfosys.sajiloschool
-        theme: ThemeData(
-          primarySwatch: Colors.blueGrey,
-          accentColor: Color(0xFF35739f),
-          bottomSheetTheme: BottomSheetThemeData(
-              backgroundColor: Colors.black.withOpacity(0)),
-        ),
-        home:LoginStatus()
+      theme: ThemeData(
+        primarySwatch: Colors.blueGrey,
+        accentColor: Color(0xFF35739f),
+        bottomSheetTheme: BottomSheetThemeData(
+            backgroundColor: Colors.black.withOpacity(0)),
+      ),
+    home:LoginStatus()
     );
   }
 }

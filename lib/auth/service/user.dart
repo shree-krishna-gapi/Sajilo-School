@@ -1,12 +1,12 @@
-class User {
+class School {
   int id;
   String name;
   String address;
   String logoImage;
-  User({this.id, this.name, this.address,this.logoImage});
+  School({this.id, this.name, this.address,this.logoImage});
 
-  factory User.fromJson(Map<String, dynamic> parsedJson) {
-    return User(
+  factory School.fromJson(Map<String, dynamic> parsedJson) {
+    return School(
       id: parsedJson["Id"],
       name: parsedJson["SchoolName"] as String,
       address: parsedJson["Address"] as String,

@@ -28,6 +28,7 @@ class _NotificationDownloadState extends State<NotificationDownload> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int schoolId = prefs.getInt('schoolId');
     String url = '${Urls.BASE_API_URL}/login/getfile?schoolid=$schoolId&filepath=$urlPath';
+
     var dio = new Dio();
     dir = await getExternalStorageDirectory();
     print('this is $dir');

@@ -34,6 +34,31 @@ class Empty extends StatelessWidget {
     );
   }
 }
+class WaitLoader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          CircularProgressIndicator(
+            backgroundColor: Colors.yellow[700],
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          ),
+          SizedBox(height: 30,),
+          Shimmer.fromColors(
+              baseColor: Colors.white, highlightColor: Colors.white54,
+              child: Text('Please Wait...', style: TextStyle(
+                  fontSize: 17, fontWeight: FontWeight.w500, color: Colors.white,
+                  letterSpacing: 0.6),)),
+          SizedBox(height: 30,),
+        ],
+      )
+    );
+  }
+}
+
 class Wait extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

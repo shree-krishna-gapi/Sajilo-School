@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:sajiloschool/utils/api.dart';
 import 'package:sajiloschool/utils/fadeAnimation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'user.dart';
-import 'services.dart';
+
+import 'package:sajiloschool/auth/page/services.dart';
 import 'dart:async';
 import 'package:sajiloschool/utils/pallate.dart';
-class UserFilterDemo extends StatefulWidget {
+class GetGrade extends StatefulWidget {
   final int schoolId;
-  final int gradeId;
-  UserFilterDemo({this.schoolId,this.gradeId}) : super();
+  GetGrade({this.schoolId}) : super();
 
   @override
-  UserFilterDemoState createState() => UserFilterDemoState();
+  GetGradeState createState() => GetGradeState();
 }
 
 class Debouncer {
@@ -30,20 +29,19 @@ class Debouncer {
   }
 }
 
-class UserFilterDemoState extends State<UserFilterDemo> {
-
+class GetGradeState extends State<GetGrade> {
   final _debouncer = Debouncer(milliseconds: 100);
-  List<User> users = List();
-  List<User> filteredUsers = List();
+  List<Grade1> grades = List();
+  List<Grade1> filteredUsers = List();
   bool loader=true;
   @override
   void initState() {
     super.initState();
-    Services.getUsers(widget.schoolId,widget.gradeId).then((usersFromServer) {
+    Services.getGrades(widget.schoolId).then((gradesFromServer) {
       loader = false;
       setState(() {
-        users = usersFromServer;
-        filteredUsers = users;
+        grades = gradesFromServer;
+        filteredUsers = grades;
       });
     });
   }
@@ -54,7 +52,7 @@ class UserFilterDemoState extends State<UserFilterDemo> {
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
-            gradient: purpleGradient
+              gradient: purpleGradient
           ),
           child: Column(
             children: <Widget>[
@@ -66,7 +64,6 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                       Navigator.of(context).pop();
                     },),flex: 1,),
                     Expanded(child: TextField(
-//                      autofocus: true,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(15.0),
                         hintText: 'Student Name Search By Letter',
@@ -74,7 +71,7 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                       onChanged: (string) {
                         _debouncer.run(() {
                           setState(() {
-                            filteredUsers = users
+                            filteredUsers = grades
                                 .where((u) => (u.name
                                 .toLowerCase()
                                 .contains(string.toLowerCase()) ||
@@ -87,7 +84,6 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                   ],
                 ),
               ),
-              
               Expanded(child: loader ? WaitLoader() : ListView.builder(
                 padding: EdgeInsets.all(10.0),
                 itemCount: filteredUsers.length,
@@ -99,8 +95,8 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                     child: InkWell(
                       onTap: () async{
                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                        prefs.setInt('studentId', filteredUsers[index].id);
-                        Navigator.pop(context,filteredUsers[index].name);
+                        prefs.setInt('gradeId',filteredUsers[index].id);
+                        Navigator.pop(context,[filteredUsers[index].id,filteredUsers[index].name]);
                       },
                       child: Padding(
                         padding: EdgeInsets.all(10.0),
@@ -118,15 +114,6 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                             SizedBox(
                               height: 5.0,
                             ),
-                            Align(alignment: Alignment.centerRight,
-                              child: Text(
-                                'Roll No. ${filteredUsers[index].email}',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            )
                           ],
                         ),
                       ),
@@ -142,3 +129,4 @@ class UserFilterDemoState extends State<UserFilterDemo> {
     );
   }
 }
+

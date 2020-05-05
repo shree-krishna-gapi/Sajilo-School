@@ -23,131 +23,133 @@ class _SubResultState extends State<SubResult> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0x000000),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.all(20),
-
+      body: InkWell( onTap: (){Navigator.of(context).pop();},
+        child: Center(
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              color: Color(0xfffbf9e7),
-            ),
-            height: 450,
-            width: double.infinity,
-            child: ListView(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15)
-                      ),
-                      gradient: purpleGradient
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10,11,10,4),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(child: RoutinHead(head:'SN'),flex: 2,),
-                            Expanded(child: RoutinHead(head:'  Subject'),flex: 6),
-                            Expanded(child: RoutinHead(head:'F. M.'),flex: 3,),
-                            Expanded(child: RoutinHead(head:'P. M.'),flex: 3,),
-                            Expanded(child: RoutinHead(head:'O. M.'),flex: 3,),
+            padding: EdgeInsets.all(20),
 
-                          ],
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                color: Color(0xfffbf9e7),
+              ),
+              height: 450,
+              width: double.infinity,
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15)
                         ),
-                        SizedBox(height: 10,),
-                      ],
+                        gradient: purpleGradient
                     ),
-                  ),
-                ),
-                Container( height: 300,
-                  child: FutureBuilder<List<AcademicMarksheetData>>(
-                      future: FetchGetPeriodExamMarks(http.Client()),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError);
-
-                        return snapshot.hasData ?
-                        ListView.builder(
-                            itemCount: snapshot.data == null ? 0 : snapshot.data.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 6),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(child: Text('   ${index+1}'),flex: 2,),
-                                    Expanded(child: Text('  ${snapshot.data[index].subjectName}'),flex: 6,),
-                                    Expanded(child: Text('${snapshot.data[index].fullMarks}'),flex: 3,),
-                                    Expanded(child: Text('${snapshot.data[index].passMarks}'),flex: 3,),
-                                    Expanded(child: Text('${snapshot.data[index].obtainedMarks}'),flex: 3,),
-
-                                  ],
-                                ),
-                              );
-                            }):Loader(); }),
-                ),
-                FutureBuilder<Album>(
-                  future: futureAlbum,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FadeAnimation(
-                        1, Column(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10,11,10,4),
+                      child: Column(
                         children: <Widget>[
                           Row(
                             children: <Widget>[
-                              Expanded(child: Text(''),flex: 2,),
-                              Expanded(child: Text('Total',style: TextStyle(fontWeight: FontWeight.w600),),flex: 6,),
-                              Expanded(child: Text('-'),flex: 3,),
-                              Expanded(child: Text('-'),flex: 3,),
-                              Expanded(child: Text('${snapshot.data.obtainedMarks}',
-                                  style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
-                            ],
-                          ),
-                          SizedBox(height: 8,),
-                          Row(
-                            children: <Widget>[
-                              Expanded(child: Text(''),flex: 2,),
-                              Expanded(child: Text('Percentage',style: TextStyle(fontWeight: FontWeight.w600),),flex: 6,),
+                              Expanded(child: RoutinHead(head:'SN'),flex: 2,),
+                              Expanded(child: RoutinHead(head:'  Subject'),flex: 6),
+                              Expanded(child: RoutinHead(head:'F. M.'),flex: 3,),
+                              Expanded(child: RoutinHead(head:'P. M.'),flex: 3,),
+                              Expanded(child: RoutinHead(head:'O. M.'),flex: 3,),
 
-                              Expanded(child: Text(''),flex: 3,),
-                              Expanded(child: Text('-'),flex: 3,),
-                              Expanded(child: Text('${snapshot.data.percentage}%',
-                                  style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
                             ],
                           ),
-                          SizedBox(height: 8,),
-                          Row(
-                            children: <Widget>[
-                              Expanded(child: Text(''),flex: 2,),
-                              Expanded(child: Text('GPA ',style: TextStyle(fontWeight: FontWeight.w600),),flex: 6,),
-                              Expanded(child: Text('${snapshot.data.gpa}',style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
-                              Expanded(child: Text('Grade',style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
-                              Expanded(child: Text('${snapshot.data.grades}',style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
-                            ],
-                          ),
+                          SizedBox(height: 10,),
                         ],
                       ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
+                    ),
+                  ),
+                  Container( height: 300,
+                    child: FutureBuilder<List<AcademicMarksheetData>>(
+                        future: FetchGetPeriodExamMarks(http.Client()),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError);
 
-                    // By default, show a loading spinner.
-                    return Text('');
-                  },
+                          return snapshot.hasData ?
+                          ListView.builder(
+                              itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(child: Text('   ${index+1}'),flex: 2,),
+                                      Expanded(child: Text('  ${snapshot.data[index].subjectName}'),flex: 6,),
+                                      Expanded(child: Text('${snapshot.data[index].fullMarks}'),flex: 3,),
+                                      Expanded(child: Text('${snapshot.data[index].passMarks}'),flex: 3,),
+                                      Expanded(child: Text('${snapshot.data[index].obtainedMarks}'),flex: 3,),
 
-                )
+                                    ],
+                                  ),
+                                );
+                              }):Loader(); }),
+                  ),
+                  FutureBuilder<Album>(
+                    future: futureAlbum,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return FadeAnimation(
+                          1, Column(
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Expanded(child: Text(''),flex: 2,),
+                                Expanded(child: Text('Total',style: TextStyle(fontWeight: FontWeight.w600),),flex: 6,),
+                                Expanded(child: Text('-'),flex: 3,),
+                                Expanded(child: Text('-'),flex: 3,),
+                                Expanded(child: Text('${snapshot.data.obtainedMarks}',
+                                    style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
+                              ],
+                            ),
+                            SizedBox(height: 8,),
+                            Row(
+                              children: <Widget>[
+                                Expanded(child: Text(''),flex: 2,),
+                                Expanded(child: Text('Percentage',style: TextStyle(fontWeight: FontWeight.w600),),flex: 6,),
+
+                                Expanded(child: Text(''),flex: 3,),
+                                Expanded(child: Text('-'),flex: 3,),
+                                Expanded(child: Text('${snapshot.data.percentage}%',
+                                    style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
+                              ],
+                            ),
+                            SizedBox(height: 8,),
+                            Row(
+                              children: <Widget>[
+                                Expanded(child: Text(''),flex: 2,),
+                                Expanded(child: Text('GPA ',style: TextStyle(fontWeight: FontWeight.w600),),flex: 6,),
+                                Expanded(child: Text('${snapshot.data.gpa}',style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
+                                Expanded(child: Text('Grade',style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
+                                Expanded(child: Text('${snapshot.data.grades}',style: TextStyle(fontWeight: FontWeight.w600)),flex: 3,),
+                              ],
+                            ),
+                          ],
+                        ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+
+                      // By default, show a loading spinner.
+                      return Text('');
+                    },
+
+                  )
 
 
 
-              ],
+                ],
+              ),
+
             ),
 
+
           ),
-
-
         ),
       ),
     );

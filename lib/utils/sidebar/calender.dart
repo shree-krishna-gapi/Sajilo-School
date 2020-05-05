@@ -39,7 +39,10 @@ class _CalenderState extends State<Calender> {
                                 Expanded(child: _title(context,'  SN'),flex: 1,),
                                 Expanded(child: _title(context,'Date'),flex: 2,),
                                 Expanded(child: _title(context,'  Day'),flex: 2,),
-                                Expanded(child: _title(context,'    Remark'),flex: 3,),
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(left:4.0),
+                                  child: _title(context,'Remark'),
+                                ),flex: 3,),
 
                               ],
                             ),
@@ -58,23 +61,31 @@ class _CalenderState extends State<Calender> {
          snapshot.data[index].isHoliday ? Container(
               color: Colors.orange[400],
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                padding: const EdgeInsets.symmetric(vertical: 4.5),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(child: Text('   ${index+1}',style: TextStyle(color: Colors.white),),flex: 1,),
                     Expanded(child: Text('${snapshot.data[index].dayOfYearNepali}',style: TextStyle(color: Colors.white)),flex: 2,),
                     Expanded(child: Text('  ${snapshot.data[index].dayName}',style: TextStyle(color: Colors.white)),flex: 2,),
-                    Expanded(child: Text('     -',style: TextStyle(color: Colors.white)),flex: 3,)
+                    Expanded(child: Padding(
+                      padding: const EdgeInsets.only(left:4.0,right: 10),
+                      child: snapshot.data[index].remark == null ? Text('-',style: TextStyle(color: Colors.white)) :
+                      Text('${snapshot.data[index].remark}',style: TextStyle(color: Colors.white)),
+                    ),flex: 3,)
                   ],
       ),
               ),
-            ): Padding(padding: const EdgeInsets.symmetric(vertical: 4.0),
+            ): Padding(padding: const EdgeInsets.symmetric(vertical: 4.5),
               child: Row(
                 children: <Widget>[
                   Expanded(child: Text('   ${index+1}'),flex: 1,),
                   Expanded(child: Text('${snapshot.data[index].dayOfYearNepali}'),flex: 2,),
                   Expanded(child: Text('  ${snapshot.data[index].dayName}'),flex: 2,),
-                  Expanded(child: Text('     -'),flex: 3,)
+                  Expanded(child: Padding(
+                    padding: const EdgeInsets.only(left:4.0,right: 10),
+                    child: snapshot.data[index].remark == null ?Text('-') : Text('${snapshot.data[index].remark}'),
+                  ),flex: 3,)
                 ],
 
           ),

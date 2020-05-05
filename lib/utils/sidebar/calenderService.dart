@@ -34,7 +34,7 @@ class CalenderData {
   factory CalenderData.fromJson(Map<String, dynamic> json) {
     return CalenderData(
       dayOfYearNepali: json['DayOfYearNepali'] as String,
-      remark: json['Remark'] as String,
+      remark: json['Remarks'] as String,
         dayName: json['DayName'] as String,
 isHoliday: json['IsHoliday'] as bool
 

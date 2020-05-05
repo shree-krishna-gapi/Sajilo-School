@@ -15,6 +15,7 @@ Future<List<StudentAttendanceData>> FetchParentAttendance(http.Client client) as
   String toDate = prefs.getString('AttendanceSelectToDate');
   bool isMonthly = prefs.getBool('parentAttendanceIsMonthly');
   String url;
+//  String urll = "http://192.168.1.89:88/api/Login/GetAttendanceOfStudent?schoolId=1&yearId=30&monthId=0&studentId=319&fromDate=2076-12-09&toDate=2076-12-23";
   if(isMonthly) {
     url = "${Urls.BASE_API_URL}/Login/GetAttendanceOfStudent?schoolId=$schoolId&yearId=$yearId&monthId=$monthId&studentId=$studentId&fromDate=%02%03&toDate=%02%03";
   }
@@ -48,13 +49,17 @@ List<StudentAttendanceData> parseData(String responseBody) {
 class StudentAttendanceData {
   final String dateOfYearNepali;
   final bool isPresent;
+  final bool isWorkingDay;
+  final String dayName;
 //  final List studentAttenances;
-  StudentAttendanceData({this.dateOfYearNepali,this.isPresent
+  StudentAttendanceData({this.dateOfYearNepali,this.isPresent,this.isWorkingDay,this.dayName
   });
   factory StudentAttendanceData.fromJson(Map<String, dynamic> json) {
     return StudentAttendanceData(
         dateOfYearNepali: json['DateOfYearNepali'] as String,
-      isPresent:json['IsPresent'] as bool
+      isPresent:json['IsPresent'] as bool,
+        isWorkingDay:json['IsWorkingDay'] as bool,
+    dayName:json['DayName'] as String
 //      studentAttenances: json['StudentAttenances'] as List,
     );}
 }
