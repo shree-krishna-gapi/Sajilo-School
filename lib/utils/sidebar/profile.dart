@@ -41,7 +41,7 @@ class _ProfileState extends State<Profile> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return FadeAnimation(
-                              0.6, Column(
+                              0.2, Column(
                               children: <Widget>[
                                 CircleAvatar(
                                   minRadius: 35,
@@ -51,7 +51,7 @@ class _ProfileState extends State<Profile> {
                                       color: Colors.amber
                                   ),
                                 ),
-                                SizedBox(height: 20,),
+                                SizedBox(height: 30,),
                                 Align(
                                   alignment: Alignment.center,
                                   child: Text(snapshot.data.accountHeadName,style: TextStyle(fontSize: 15),),

@@ -135,26 +135,12 @@ class _BodySectionState extends State<BodySection> {
   bool loading;
 
   FixedExtentScrollController scrollController;
-  String _mySelection;
 
-  final String url = "http://webmyls.com/php/getdata.php";
 
-  List data = List(); //edited line
 
-  Future<String> getSWData() async {
-    var res = await http
-        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
-    var resBody = json.decode(res.body);
 
-    setState(() {
-      data = resBody;
-    });
 
-    print(resBody);
-
-    return "Sucess";
-  }
-
+  int indexYear;
   @override
   void initState(){
 //    this.getSWData();
@@ -164,9 +150,12 @@ class _BodySectionState extends State<BodySection> {
 
   getCurrentYear() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentYear =  prefs.getString('educationalYearNameExam');
+    indexYear = prefs.getInt('indexYearExam');
     setState(() {
-      selectedYear = prefs.getString('educationalYearName');
+      selectedYear = currentYear;
     });
+
   }
 
   @override
@@ -183,21 +172,6 @@ class _BodySectionState extends State<BodySection> {
 
                   Text('Year:',style: TextStyle(fontStyle: FontStyle.italic,
                       fontSize: 15,fontWeight: FontWeight.w600),),
-//            DropdownButton(
-//              items: data.map((item) {
-//                return new DropdownMenuItem(
-//                  child: new Text(item['item_name']),
-//                  value: item['id'].toString(),
-//                );
-//              }).toList(),
-//              onChanged: (newVal) {
-//                setState(() {
-//                  _mySelection = newVal;
-//                });
-//              },
-//              value: _mySelection,
-//            ),
-
                   SizedBox(width: 15,),
                   InkWell(
                     onTap: (){_showDialog();},
@@ -207,15 +181,7 @@ class _BodySectionState extends State<BodySection> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                selectedYear == '' || selectedYear == null  ?
-                                Text('yyyy',style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.8,
-                                    fontSize: 14.5,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.black26
-                                ),):
-                                Text('$selectedYear',style: TextStyle(
+                                Text(selectedYear,style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.8,
                                     fontSize: 15,
@@ -244,7 +210,7 @@ class _BodySectionState extends State<BodySection> {
           ),),
           SizedBox(height: 15,),
           loadAgain ? FadeAnimation(
-            0.4, Container(height: 500,
+            0.1, Container(height: 500,
             child: FutureBuilder<List<AcademicPeriodId>>(
                 future: FetchAcademicPeriodId(http.Client()),
                 builder: (context, snapshot) {
@@ -272,8 +238,8 @@ class _BodySectionState extends State<BodySection> {
           ),
           ): FadeAnimation(
             0.1, Container(height: 500,
-            child: FutureBuilder<List<AcademicPeriodId>>(
-                future: FetchAcademicPeriodId(http.Client()),
+            child: FutureBuilder<List<AcademicPeriodId1>>(
+                future: FetchAcademicPeriodId1(http.Client()),
                 builder: (context, snapshot) {
                   if (snapshot.hasError);
                   if (snapshot.hasData) {
@@ -305,6 +271,7 @@ class _BodySectionState extends State<BodySection> {
   }
 
 
+
   Future<void> _showDialog() async {
 
     showDialog<void>(
@@ -317,59 +284,139 @@ class _BodySectionState extends State<BodySection> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              child: Container( height: 380,
+              child: Container(
+//                height: 380,
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                    padding: const EdgeInsets.fromLTRB(20,15,20,10),
                     child: FutureBuilder<List<OfflineFeeYear>>(
                       future: FetchOffline(http.Client()),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) ;
                         return snapshot.hasData ?
-                        CupertinoPicker(
-                          itemExtent: 60.0,
-                          backgroundColor: Color(0x00000000),
-                          onSelectedItemChanged: (index)async {
-                            changedNowYear = snapshot.data[index].sYearName;
-                            changedNowYearId = snapshot.data[index].educationalYearID;
-                          },
-                          scrollController: scrollController,
-                          children: new List<Widget>.generate(snapshot.data.length, (index) {
-                            changedNowYear = snapshot.data[2].sYearName;
-                            changedNowYearId = snapshot.data[2].educationalYearID;
-                            return Align(
-                              alignment: Alignment.center,//
-                              child: Text(snapshot.data[index].sYearName,
-                                style: TextStyle(
-                                    fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8,color: Colors.black
-                                ),),
-                            );
-                          }),
-                        ):Loader();
+                            ListView.builder(
+                              itemCount: snapshot.data.length,
+                                itemBuilder: (BuildContext context,int index) {
+                                  return
+                                    index == indexYear ? Container(
+                                      color: Colors.orange[400],
+                                      child: InkWell(
+                                        onTap: ()async {
+                                          indexYear = index;
+                                          setState(() {
+                                            selectedYear = snapshot.data[index].sYearName;
+                                          });
+                                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                                          int old = prefs.getInt('educationalYearIdExam');
+                                          prefs.setInt('indexYearExam',index);
+                                          prefs.setString('educationalYearNameExam',snapshot.data[index].sYearName);
+
+                                          if(old != snapshot.data[index].educationalYearID) {
+                                            loadAgain = true;
+                                          }
+                                          prefs.setInt('educationalYearIdExam',snapshot.data[index].educationalYearID);
+                                          Timer(Duration(milliseconds: 100), () {
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(vertical: 8.5),
+                                              child: Center(child: Text(snapshot.data[index].sYearName,style: TextStyle(
+                                                color: Colors.white
+                                              ),)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1, color: Colors.black.withOpacity(0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ):
+                                    Container(
+                                      child: InkWell(
+                                        onTap: ()async {
+                                          indexYear = index;
+                                          setState(() {
+                                            selectedYear = snapshot.data[index].sYearName;
+                                          });
+                                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                                          int old = prefs.getInt('educationalYearIdExam');
+                                          prefs.setInt('indexYearExam',index);
+                                          prefs.setString('educationalYearNameExam',snapshot.data[index].sYearName);
+
+                                          if(old != snapshot.data[index].educationalYearID) {
+                                            loadAgain = true;
+                                          }
+                                          prefs.setInt('educationalYearIdExam',snapshot.data[index].educationalYearID);
+                                          Timer(Duration(milliseconds: 100), () {
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(vertical: 8.5),
+                                              child: Center(child: Text(snapshot.data[index].sYearName)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1, color: Colors.black.withOpacity(0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                }
+                            )
+//                        CupertinoPicker(
+//                          itemExtent: 60.0,
+//                          backgroundColor: Color(0x00000000),
+//                          onSelectedItemChanged: (index)async {
+//                            changedNowYear = snapshot.data[index].sYearName;
+//                            changedNowYearId = snapshot.data[index].educationalYearID;
+//                          },
+//                          scrollController: scrollController,
+//                          children: new List<Widget>.generate(snapshot.data.length, (index) {
+//                            changedNowYear = snapshot.data[2].sYearName;
+//                            changedNowYearId = snapshot.data[2].educationalYearID;
+//                            return Align(
+//                              alignment: Alignment.center,//
+//                              child: Text(snapshot.data[index].sYearName,
+//                                style: TextStyle(
+//                                    fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8,color: Colors.black
+//                                ),),
+//                            );
+//                          }),
+//                        )
+                            
+                            :Loader();
                       },
                     )
                 ),
               ),
             ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: ()async {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  int old = prefs.getInt('educationalYearId');
-                  if(old != changedNowYearId) {
-                    loadAgain = true;
-                  }
-                  setState(() {
-                    selectedYear = changedNowYear;
-                    selectedYearId = changedNowYearId;
-                  });
-                  prefs.setInt('educationalYearId',changedNowYearId);
-                  Duration(milliseconds: 500);
-                  Navigator.of(context).pop();
-
-                },
-              ),
-            ],
+//            actions: <Widget>[
+//              FlatButton(
+//                child: Text('Ok'),
+//                onPressed: ()async {
+//                  SharedPreferences prefs = await SharedPreferences.getInstance();
+//                  int old = prefs.getInt('educationalYearId');
+//                  if(old != changedNowYearId) {
+//                    loadAgain = true;
+//                  }
+//                  setState(() {
+//                    selectedYear = changedNowYear;
+//                    selectedYearId = changedNowYearId;
+//                  });
+//                  prefs.setInt('educationalYearId',changedNowYearId);
+//                  Duration(milliseconds: 500);
+//                  Navigator.of(context).pop();
+//
+//                },
+//              ),
+//            ],
             elevation: 4,
           );}
     );
@@ -468,7 +515,7 @@ class _ColumnListState extends State<ColumnList> {
                                     child: InkWell(
                                       onTap: ()async{
                                         final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        prefs.setInt('academicPeriodId',widget.academicPeriodId);
+                                        prefs.setInt('educationalYearIdExam',widget.academicPeriodId);
                                         modal.mainBottomSheet(context,widget.title,widget.academicPeriodId,widget.exams);
                                       },
                                       child: Padding(
@@ -501,7 +548,7 @@ class _ColumnListState extends State<ColumnList> {
                                   child: InkWell(
                                     onTap: ()async{
                                       final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                      prefs.setInt('academicPeriodId',widget.academicPeriodId);
+                                      prefs.setInt('educationalYearIdExam',widget.academicPeriodId);
                                       _showDialog();
                                     },
                                     child: Padding(

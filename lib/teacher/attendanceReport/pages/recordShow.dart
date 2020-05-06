@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:sajiloschool/utils/api.dart';
+import 'package:sajiloschool/utils/pallate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'service/record.dart';
 import 'package:http/http.dart' as http;
 import 'package:sajiloschool/utils/fadeAnimation.dart';
 import 'modal.dart';
 import 'dart:async';
+
 class RecordShow extends StatefulWidget {
   @override
   _RecordShowState createState() => _RecordShowState();
 }
 
 class _RecordShowState extends State<RecordShow> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Testing1(),
-      ),
-    );
-  }
-}
-class Testing1 extends StatefulWidget {
-  @override
-  _Testing1State createState() => _Testing1State();
-}
-
-class _Testing1State extends State<Testing1> {
   Modal modal = new Modal();
   @override
   void initState() {
@@ -54,57 +40,82 @@ class _Testing1State extends State<Testing1> {
     }
   }
   @override
+
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(child: Text('SN'),flex: 1,),
-            Expanded(child: Text('Name'),flex: 4,),
-            Expanded(child: Text('Roll No'),flex: 3,),
-            Expanded(child: Text('Present'),flex: 3,),
-            Expanded(child: Text('Action'),flex: 2,),
-          ],
+    return Scaffold(
+      backgroundColor: Colors.blue[900],
+      body: SafeArea(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: purpleGradient
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(child: titleHead(context,'SN'),width:31),
+                    Expanded(child: titleHead(context,'Name')),
+                    Container(child: titleHead(context,'Roll No'),width:68,),
+                    Container(child: titleHead(context,'Present'),width:68,),
+                    Container(child: titleHead(context,'Action'),width:68,),
+                  ],
+                ),
+              ),
+              Expanded(
+                  child: Container(color: Colors.yellow[600].withOpacity(0.1),
+                    width: double.infinity,
+                    padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: FutureBuilder<List<GetRecord>>(
+                        future: fetchRecord(http.Client()),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError);
+                          return snapshot.hasData ? ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return FadeAnimation(
+                                0.2, Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(child: subTitle(context,'${index+1}'),width:31),
+                                      Expanded(child: subTitle(context,'${snapshot.data[index].studentName}')),
+                                      Container(child: subTitle(context,'${snapshot.data[index].rollNo}'),width:68,),
+                                      Container(child: subTitle(context,'${snapshot.data[index].presentDays}'),width:68,),
+                                      Container(child: InkWell(child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text('Details',style: TextStyle(color: Colors.orange,
+                                            fontSize: 14.5
+                                          ),),
+                                          Container(height: 1,color: Colors.orange[600], width: 46,)
+                                        ],
+                                      ),
+                                      onTap: () async {
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        prefs.setInt('studentIdPer', snapshot.data[index].studentId);
+                                          modal.mainBottomSheet(context,'${snapshot.data[index].studentName}',
+                                              '${snapshot.data[index].rollNo}',isMonthly,selectedMonth,fromDate,toDate
+                                          );
+                                      },
+                                      ),width: 68,),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ) : Loader(); }),
+                  )
+              ),
+            ],
+          ),
         ),
-        Container(
-            height: 600,
-            color: Colors.yellow[600].withOpacity(0.1),
-            width: double.infinity,
-            child: FutureBuilder<List<GetRecord>>(
-                future: fetchRecord(http.Client()),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError);
-                  return snapshot.hasData ? ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return FadeAnimation(
-                        0.5, Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(child: Text('${index+1}'),flex: 1,),
-                              Expanded(child: Text('${snapshot.data[index].studentName}'),flex: 4,),
-                              Expanded(child: Text('${snapshot.data[index].rollNo}'),flex: 3,),
-                              Expanded(child: Text('${snapshot.data[index].presentDays}'),flex: 3,),
-                              Expanded(child: InkWell(child: Text('Details',style: TextStyle(color: Colors.orange),),
-                              onTap: () async {
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                prefs.setInt('studentIdPer', snapshot.data[index].studentId);
-                                  modal.mainBottomSheet(context,'${snapshot.data[index].studentName}',
-                                      '${snapshot.data[index].rollNo}',isMonthly,selectedMonth,fromDate,toDate
-                                  );
-                              },
-                              ),flex: 2,),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ) : Loader(); })
-        ),
-      ],
+      ),
     );
   }
 //  perDetail() async {
@@ -118,5 +129,21 @@ class _Testing1State extends State<Testing1> {
 //    var url ="http://192.168.1.89:88/Api/Login/GetAttendanceOfStudent?schoolId=$schoolId&"
 //        "yearId=$yearId&monthId=$monthId&studentId=322&fromDate=$fromDate&toDate=$toDate";
 //  }
-
+  Text titleHead(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(
+        fontSize: 14.5,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.4, shadows: [
+      Shadow(
+        blurRadius: 4.0,
+        color: Colors.black12,
+        offset: Offset(2.0, 2.0),
+      ),
+    ], color: Colors.white ));
+  }
+  Text subTitle(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(
+        fontSize: 14.5,
+        letterSpacing: 0.2,));
+  }
 }

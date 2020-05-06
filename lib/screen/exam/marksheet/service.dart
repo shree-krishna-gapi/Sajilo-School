@@ -9,7 +9,7 @@ Future<List<AcademicMarksheetData>> FetchMarksheet(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var schoolId = prefs.getInt('schoolId');
   var studentId = prefs.getInt('studentId');
-  var academicPeriodId = prefs.getInt('academicPeriodId');
+  var academicPeriodId = prefs.getInt('educationalYearIdExam');
   String url = "${Urls.BASE_API_URL}/Login/GetAcademicExamMarks?schoolId=$schoolId&academicperiodId=$academicPeriodId&studentId=$studentId";
   try {
     final response =

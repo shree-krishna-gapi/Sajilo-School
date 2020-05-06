@@ -7,8 +7,8 @@ import 'package:sajiloschool/utils/api.dart';
 Future<List<CalenderData>> FetchCalender(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   int schoolId = prefs.getInt('schoolId');
-  int yearId = prefs.getInt('educationalYearId');
-  int monthId = prefs.getInt('monthId');
+  int yearId = prefs.getInt('educationalYearIdCalender');
+  int monthId = prefs.getInt('monthIdCalender');
   String url = '${Urls.BASE_API_URL}/Login/GetSchoolCalendar?schoolId=$schoolId&yearId=$yearId&monthId=$monthId&IsStudent=true';
   print(url);
   try {

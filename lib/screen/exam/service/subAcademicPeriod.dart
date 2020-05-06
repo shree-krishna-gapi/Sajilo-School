@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<List<SubAcademicPeriod>> FetchsubAcademicPeriod(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var schoolId = prefs.getInt('schoolId');
-  var academicPeriodId = prefs.getInt('academicPeriodId');
+  var academicPeriodId = prefs.getInt('educationalYearIdExam');
   String url = "${Urls.BASE_API_URL}/login/periodexams?schoolid=$schoolId&AcademicPeriodId=$academicPeriodId";
   try {
     final response =

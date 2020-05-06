@@ -9,6 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'homeworkReport/GetHomeworkReport.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class Teacher extends StatefulWidget {
   @override
   _TeacherState createState() => _TeacherState();
@@ -20,7 +23,7 @@ class _TeacherState extends State<Teacher> {
     DateTime currentTime = DateTime.now();
     //Statement 1 Or statement2
     bool backButton = backPressTime == null ||
-        currentTime.difference(backPressTime) > Duration(seconds: 3);
+        currentTime.difference(backPressTime) > Duration(seconds: 1);
     if (backButton) {
       backPressTime = currentTime;
       Fluttertoast.showToast(
@@ -30,6 +33,73 @@ class _TeacherState extends State<Teacher> {
       return false;
     }
     return true;
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getCurrentYear();
+    super.initState();
+  }
+  String url;
+  String yearName;
+  int i;
+  int yearId;
+  int indexYear;
+  getCurrentYear() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var schoolId = prefs.getInt('schoolId');
+    if(schoolId == 0) {
+      prefs.setBool('teacherStatus',false);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    }
+     url = "${Urls.BASE_API_URL}/login/GetEducationalYear?schoolid=$schoolId";
+    final response=await http.get(url);
+    print('Home Page Educational Year * Teacher -> $url');
+    if (response.statusCode == 200) {
+      // todo: shared preference saved
+      for(i=0;i<response.body.length;i++) {
+        if(jsonDecode(response.body)[i]['isCurrent'] == true){
+          yearId = jsonDecode(response.body)[i]['EducationalYearID'];
+          yearName = jsonDecode(response.body)[i]['sYearName'];
+          indexYear =i;
+          //todo : attenendanceEducationalYearId
+          break;
+        }
+      }
+      //Homework
+      prefs.setInt('indexYearHw',i);
+      prefs.setInt('educationalYearIdHw', yearId);
+      prefs.setString('educationalYearNameHw', yearName);
+      // end of Homework
+      //Homework
+//      prefs.setInt('indexYearHwR',i);
+//      prefs.setInt('educationalYearIdHwR', yearId);
+//      prefs.setString('educationalYearNameHwR', yearName);
+      // end of Homework
+
+      //Attendance
+      prefs.setInt('indexYearHwA',i);
+      prefs.setInt('educationalYearIdHwA', yearId);
+      prefs.setString('educationalYearNameHwA', yearName);
+      // end of Attendance
+
+      //Attendance report
+      prefs.setInt('indexYearHwAR',i);
+      prefs.setInt('educationalYearIdHwAR', yearId);
+      prefs.setString('educationalYearNameHwAR', yearName);
+      // end of Attendance Report
+      //todo : attendanceEducationalYearData
+      prefs.setString('getEducationalYearData',response.body);
+      // todo: GetEducationalYear save
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Teacher()),
+      );
+    }
   }
   @override
   Widget build(BuildContext context) {

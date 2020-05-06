@@ -23,79 +23,50 @@ class _HomeworkDataState extends State<HomeworkData> {
           if(snapshot.hasData) {
             return snapshot.data.length > 0 ?
             FadeAnimation(
-              0.5, ListView.builder(
+              0.2, ListView.builder(
                   itemCount: snapshot.data == null ? 0 : snapshot.data.length,
                   itemBuilder: (context, index) {
                     return Column(
                       children: <Widget>[
+                        SizedBox(height: 2,),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(15,8,15,8),
+                          padding: const EdgeInsets.fromLTRB(15,8,15,6),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Expanded(child: ChildTxt(title: '${index+1}'), flex: 1,),
                               Expanded(child: ChildTxt(title: '${snapshot.data[index].subjectName}'), flex: 2,),
-                              Expanded(child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                              Expanded(child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+
                                 children: <Widget>[
-                                  Align(child: ChildTxt(
+                                  Expanded(child: ChildTxt(
                                       title: '${snapshot.data[index].homeworkDetail}'),
-                                    alignment: Alignment.topLeft,),
+                                    ),
                                   snapshot.data[index].isFileExist ?
                                   Container(
-                                    margin: EdgeInsets.only(top: 6),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(14),
-                                      ),
-                                      color:Colors.orange[500].withOpacity(0.78),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 2.0, // has the effect of softening the shadow
-                                          spreadRadius: 1.0, // has the effect of extending the shadow
-                                          offset: Offset(
-                                            1.0, // horizontal, move right 10
-                                            1.0, // vertical, move down 10
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                    width: 28,
                                     child: GestureDetector(
-                                      onTap: () async{
-                                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        prefs.setInt('homeworkId', snapshot.data[index].homeworkId);
-//                                        downloadAlert();
+                                        onTap: () async{
+                                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                                          prefs.setInt('homeworkId', snapshot.data[index].homeworkId);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => Download(title:snapshot.data[index].subjectName)), //JsonApiDropdown
+                                          );
+                                        },
+                                        child: Icon(Icons.file_download,color: Colors.orange,size: 22,)
 
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => Download()), //JsonApiDropdown
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(12,6,12,6),
-                                        child: Text('Download File',style: TextStyle(fontSize: 13,color: Colors.white,
-                                            fontStyle: FontStyle.italic,
-                                          shadows: [
-                                            Shadow(
-                                              color: Colors.black12,
-                                              blurRadius: 2.0,  // has the effect of extending the shadow
-                                              offset: Offset(
-                                                1.0, // horizontal, move right 10
-                                                1.0, // vertical, move down 10
-                                              ),
-                                            )
-                                          ]
-                                        ),),
-                                      ),
                                     ),
                                   )
-                                      : Text(''),
+                                      : Container(width: 1,),
                                 ],
-                              ), flex: 4,),
+                              ), flex: 5,),
+
                             ],
                           ),
                         ),
-                        Divider(height: 10,),
+                        Container(height: 1,color: Colors.black12,),
                       ],
                     );
                   }
@@ -219,4 +190,100 @@ class Test extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text('this is $finalFileName');
   }
+}
+
+
+
+
+
+
+
+
+
+
+class HomeworkData1 extends StatefulWidget {
+  @override
+  _HomeworkData1State createState() => _HomeworkData1State();
+}
+
+class _HomeworkData1State extends State<HomeworkData1> {
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Hw1>>(
+        future: FetchHw1(http.Client()),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) ;
+          if(snapshot.hasData) {
+            return snapshot.data.length > 0 ?
+            FadeAnimation(
+              0.2, ListView.builder(
+                itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: <Widget>[
+                      SizedBox(height: 2,),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15,8,15,6),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(child: ChildTxt(title: '${index+1}'), flex: 1,),
+                            Expanded(child: ChildTxt(title: '${snapshot.data[index].subjectName}'), flex: 2,),
+                            Expanded(child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: <Widget>[
+                                Expanded(child: ChildTxt(
+                                    title: '${snapshot.data[index].homeworkDetail}'),
+                                ),
+                                snapshot.data[index].isFileExist ?
+                                Container(
+                                  width: 28,
+                                  child: GestureDetector(
+                                      onTap: () async{
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        prefs.setInt('homeworkId', snapshot.data[index].homeworkId);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => Download(title:snapshot.data[index].subjectName)), //JsonApiDropdown
+                                        );
+                                      },
+                                      child: Icon(Icons.file_download,color: Colors.orange,size: 22,)
+
+                                  ),
+                                )
+                                    : Container(width: 1,),
+                              ],
+                            ), flex: 5,),
+
+                          ],
+                        ),
+                      ),
+                      Container(height: 1,color: Colors.black12,),
+                    ],
+                  );
+                }
+            ),
+            ) : FadeAnimation(
+              0.2, Align(
+                alignment: Alignment.center,
+                child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                  letterSpacing: 0.4,),)
+            ),
+            );
+          }
+          else {
+            return Loader();
+          }
+        });
+  }
+//  downloadAlert() {
+//    showDialog<void>(
+//        context: context,
+//        builder: (BuildContext context) {
+//          return DownloadHomework();
+//        }
+//    );
+//  }
 }

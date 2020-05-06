@@ -31,31 +31,34 @@ class _LoginState extends State<Login> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       resizeToAvoidBottomPadding: false,
-      body: WillPopScope(
-        onWillPop: onWillPop,
-        child:  Container(
-          color: Colors.yellow.withOpacity(0.1),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(child: Container(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(child: Text(''),flex: 1,),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.only(top:40),
-                      child: FadeAnimation(1.0, Image.asset('assets/logo/logo.png')),
-                    ),flex: 1,),
-                    Expanded(child: Text(''),flex: 1,),
-                  ],
+
+      body: Center(
+        child: WillPopScope(
+          onWillPop: onWillPop,
+          child:  Container(
+            color: Colors.yellow.withOpacity(0.1),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(child: Text(''),flex: 1,),
+                      Expanded(child: Padding(
+                        padding: const EdgeInsets.only(top:40),
+                        child: FadeAnimation(1.0, Image.asset('assets/logo/logo.png')),
+                      ),flex: 1,),
+                      Expanded(child: Text(''),flex: 1,),
+                    ],
+                  ),
+                ),flex: 1,),
+                Expanded(
+                  flex: 3,
+                  child: LoginBody(),
                 ),
-              ),flex: 1,),
-              Expanded(
-                flex: 3,
-                child: LoginBody(),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -1,13 +1,17 @@
+
+
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sajiloschool/utils/fadeAnimation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'field/service/downloadService.dart';
+import 'service/downloadService.dart';
 import 'package:http/http.dart' as http;
 import 'package:sajiloschool/utils/api.dart';
 import 'dart:isolate';
 import 'dart:ui';
+
 
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
@@ -16,32 +20,30 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 const debug = false;
 class Download extends StatelessWidget {
-  Download({this.title});
+  Download({this.title,this.caption,this.description,this.publishDate});
   final String title;
+  final String caption; final String description; final String publishDate;
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    return Download1(platform: platform,);
+    return Download1(
+        platform: platform,
+        caption: caption,
+        description: description,
+        publishDate : publishDate
+    );
   }
 }
 
 class Download1 extends StatefulWidget {
   final TargetPlatform platform;
-
-  Download1({Key key, this.platform}) : super(key: key);
+  final String caption; final String description; final String publishDate;
+  Download1({Key key, this.platform,this.caption,this.description,this.publishDate}) : super(key: key);
   @override
   _Download1State createState() => _Download1State();
 }
 
 class _Download1State extends State<Download1> {
-//  final _videos = [
-//    {
-//      'name': 'Big Buck Bunny',
-//      'link':
-//      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-//    }
-//  ];
-
   List<_TaskInfo> _tasks;
   List<_ItemHolder> _items;
   bool _isLoading;
@@ -49,30 +51,9 @@ class _Download1State extends State<Download1> {
   String _localPath;
   ReceivePort _port = ReceivePort();
   bool loading = true;
-//  getDownload()async {
-//    String url = "${Urls.BASE_API_URL}/Login/GetHomeworksDetails?schoolId=1&homeworkId=19";
-//    try {
-//      final response =
-//          await http.get(url);
-//      if (response.body != null) {
-////        _videos = jsonDecode(response.body);
-//        setState(() {
-//          var a = jsonDecode(response.body);
-//          var b = jsonEncode(a);
-//          _videos = jsonEncode(a);
-//        });
-//        print('_videos : $_videos');
-//      } else {
-//        print("Error getting school.");
-//      }
-//    } catch (e) {
-//      print("Error getting school. $e");
-//    }
-//  }
   @override
   void initState() {
     super.initState();
-//    getDownload();
     _bindBackgroundIsolate();
 
     FlutterDownloader.registerCallback(downloadCallback);
@@ -134,59 +115,111 @@ class _Download1State extends State<Download1> {
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Download File'),
-        backgroundColor: Colors.blue[800],
-      ),
-      body:
-      FutureBuilder<List<DownloadFile>>(
-          future: FetchDownload(http.Client()),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) ;
-            if(snapshot.hasData) {
-              return snapshot.data.length > 0 ?
-              ListView.builder(
-                  itemCount: snapshot.data == null ? 0 : snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                        children: <Widget>[
+        appBar: AppBar(
+          title: Text('Download Notice File'),
+          backgroundColor: Colors.blue[800],
+        ),
+        body: Container(
+//          color: Color(0xfffbf9e7),
+          child: Column(
+            children: <Widget>[
+              Container(
 
-                          SizedBox(height: 12,),
-                          Row(
-                            children: <Widget>[
-                              Container(width:35, child: Align(alignment:Alignment.center,child: Text('${index+1}.',style: TextStyle(color: Colors.black),)),
-                              ),
-                              Expanded(child: Test(link:'${snapshot.data[index].fileLocation}'),flex: 4,),
-                              Expanded(child: InkWell(
-                                  onTap: (){
-                                    _requestDownload(snapshot.data[index].fileLocation);
-
-                                    print('${snapshot.data[index].fileLocation}');
-
-                                  },
-                                  child: Icon(Icons.file_download,color: Colors.orange, size: 24,)),flex: 1,)
-
-                            ],
-                          )
-                        ]
-
-                    );
-                  }
-
-              ) : FadeAnimation(
-                0.4, Align(
-                  alignment: Alignment.center,
-                  child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
-                    letterSpacing: 0.4,),)
+                width: double.infinity,
+                padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(child: Text(widget.caption,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15),)),
+                        Container(
+                          padding: EdgeInsets.only(top: 20),
+                          width: 80,
+                          child: Align(child: Text(widget.publishDate,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 13),),
+                            alignment: Alignment.topRight,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Text(widget.description)
+                  ],
+                ),
               ),
-              );
-            }
-            else {
-              return Align(child: Loader(),alignment: Alignment.center,);
-            }
-          }
+              Expanded(
+                child: FutureBuilder<List<DownloadFile>>(
+                    future: FetchDownload(http.Client()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) ;
+                      if(snapshot.hasData) {
+                        return snapshot.data.length > 0 ?
+                        ListView.builder(
+                            itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                  children: <Widget>[
 
-      )
+                                    SizedBox(height: 12,),
+                                    Row(
+                                      children: <Widget>[
+                                        Container(width:35, child: Align(alignment:Alignment.center,child: Text('${index+1}.',style: TextStyle(color: Colors.black),)),
+                                        ),
+                                        Expanded(child: Test(link:'${snapshot.data[index].fileLocation}'),flex: 4,),
+                                        Expanded(child: InkWell(
+                                            onTap: (){
+                                              _requestDownload(snapshot.data[index].fileLocation);
+
+                                              print('${snapshot.data[index].fileLocation}');
+
+                                            },
+                                            child: Icon(Icons.file_download,color: Colors.orange, size: 24,)),flex: 1,)
+
+                                      ],
+                                    )
+                                  ]
+
+                              );
+                            }
+
+                        ) : FadeAnimation(
+                          0.4, Align(
+                            alignment: Alignment.center,
+                            child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                              letterSpacing: 0.4,),)
+                        ),
+                        );
+                      }
+                      else {
+                        return Align(child: Loader(),alignment: Alignment.center,);
+                      }
+                    }
+
+                ),
+              ),
+            ],
+          ),
+        )
+//        Column(
+//          children: <Widget>[
+//            Container(height: 90,color: Colors.black12, width: double.infinity,
+//              padding: EdgeInsets.all(15.0),
+//              child: Column(
+//                crossAxisAlignment:CrossAxisAlignment.start,
+//                children: <Widget>[
+////                  Align(alignment: Alignment.topRight,child: Text(widget.publishDate,style: TextStyle(fontWeight: FontWeight.w500,
+////                  fontStyle: FontStyle.italic,fontSize: 14),),),
+////                  Text(widget.caption,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
+////                  SizedBox(height: 10,),
+////                  Text(widget.description,style: TextStyle(),)
+//                ],
+//              ),
+//            ),
+//            Expanded(
+//              child: ,
+//            ),
+//          ],
+//        )
 
 
     );

@@ -5,7 +5,7 @@ import 'service/notificationBoardService.dart';
 import 'package:sajiloschool/utils/api.dart';
 import 'package:sajiloschool/utils/fadeAnimation.dart';
 import 'notificationDownload.dart';
-
+import 'noticeDownload.dart';
 class NotificationBoard extends StatefulWidget {
   @override
   _NotificationBoardState createState() => _NotificationBoardState();
@@ -65,7 +65,16 @@ class _NotificationBoardState extends State<NotificationBoard> {
           0.5, InkWell( onTap: ()async{
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('noticeId', id);
-            notificationDetail();
+//            notificationDetail();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Download(
+              caption: caption,
+                description: description,
+              publishDate : publishDateNepali
+            )),
+          );
+
           },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),

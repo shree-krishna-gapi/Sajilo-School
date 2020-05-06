@@ -20,17 +20,79 @@ class Modal{
               child: ListView(
                 children: <Widget>[
                   Container(
-                    height: 60,
+//                    height: 60,
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 7),
                     child: isMonthly ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text('  Student: $name'),Text(' Roll No. $roll'),Text(' Report of. $selectedMonth'),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Container(child: keyText(context,"Name :"),width: 65,),
+                                valueText(context,"$name"),
+                              ],
+                            ),
+                            SizedBox(height: 3,),
+                            Row(
+                              children: <Widget>[
+                                Container(child: keyText(context,"Roll No. :"),width: 65,),
+                                valueText(context,"$roll"),
+                              ],
+                            )
+                          ],
+                        ),
+                       Row(
+                         children: <Widget>[
+                           keyText(context,'Report of. '),
+                           keyTextHead(context,'$selectedMonth'),
+                         ],
+                       )
                       ],
-                    ):Row(
+                    ):
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text('  Student: $name'),Text(' Roll No. $roll'),Text('Report from: $fromDate'),
-                        Text('Report from: $toDate')
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Container(child: keyText(context,"Name :"),width: 65,),
+                                valueText(context,"$name"),
+                              ],
+                            ),
+                            SizedBox(height: 3,),
+                            Row(
+                              children: <Widget>[
+                                Container(child: keyText(context,"Roll No. :"),width: 65,),
+                                valueText(context,"$roll"),
+                              ],
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                keyText(context,'Report From: '),
+                                keyTextHead(context,'$fromDate'),
+                              ],
+                            ),
+                            SizedBox(height: 3,),
+                            Row(
+                              children: <Widget>[
+                                keyText(context,'To: '),
+                                keyTextHead(context,'$fromDate'),
+                              ],
+                            )
+                          ],
+                        )
                       ],
-                    ),
+                    )
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -99,6 +161,22 @@ class Modal{
           );
         }
     );
+  }
+  Text keyTextHead(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(
+        fontWeight: FontWeight.w500,
+      fontSize: 15
+    ),);
+  }
+  Text keyText(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(
+      fontWeight: FontWeight.w500
+    ),);
+  }
+  Text valueText(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(
+        fontWeight: FontWeight.w500
+    ),);
   }
 }
 

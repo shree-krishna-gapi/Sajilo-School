@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../utils/sideBar.dart';
 import '../../utils/fadeAnimation.dart';
 import 'package:sajiloschool/screen/notification/notificationBoard.dart';
-import 'package:sajiloschool/global/educationalYear.dart';
+import 'pages/educationalYearFees.dart';
 import 'modal.dart';
 import 'package:sajiloschool/utils/pallate.dart';
 import 'package:fluttertoast/fluttertoast.dart';

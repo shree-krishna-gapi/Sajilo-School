@@ -23,7 +23,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
   PageController _pageController;
-  String selectedYear;
   String url;
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _HomeState extends State<Home> {
 
   final double itemHeight = double.infinity;
   final double itemWidth = double.infinity/2;
-
+  int indexYear;
   getCurrentYear() async {
     print('hello moto');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -59,20 +58,41 @@ class _HomeState extends State<Home> {
       int i;
       int yearId;
       String yearName;
+
       // todo: shared preference saved
       for(i=0;i<response.body.length;i++) {
         if(jsonDecode(response.body)[i]['isCurrent'] == true){
           yearId = jsonDecode(response.body)[i]['EducationalYearID'];
           yearName = jsonDecode(response.body)[i]['sYearName'];
-            selectedYear = yearName;
+            indexYear =i;
           //todo : attenendanceEducationalYearId
           break;
         }
       }
-      prefs.setString('educationalYearName', yearName);
-      prefs.setInt('educationalYearId', yearId);
-//      prefs.setInt('educationalYearIdExam', yearId);
+      //exam
+      prefs.setInt('indexYearExam',i);
+      prefs.setInt('educationalYearIdExam', yearId);
+      prefs.setString('educationalYearNameExam', yearName);
+      // end of exam
+
+      //Fees
+      prefs.setInt('indexYearFees',i);
       prefs.setInt('educationalYearIdFees', yearId);
+      prefs.setString('educationalYearNameFees', yearName);
+      // end of Fees
+
+      //Attendance
+      prefs.setInt('indexYearAttendance',i);
+      prefs.setInt('educationalYearIdAttendance', yearId);
+      prefs.setString('educationalYearNameAttendance', yearName);
+      // end of Attendance
+
+      prefs.setString('educationalYearName', yearName);
+
+      prefs.setInt('educationalYearId', yearId);
+
+
+
       prefs.setInt('educationalYearIdAttendance', yearId);
       //todo : attendanceEducationalYearData
       prefs.setString('getEducationalYearData',response.body);
@@ -86,12 +106,26 @@ class _HomeState extends State<Home> {
     }
 
   }
+  String monthName;
+  int monthId;
   getMonthData(int schoolId)async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final responseMonth = await  http.get("${Urls.BASE_API_URL}/login/GetNepaliMonths?schoolid=$schoolId");
+//    print('${Urls.BASE_API_URL}/login/GetNepaliMonths?schoolid=$schoolId');
     if (responseMonth.statusCode == 200) {
-      prefs.setString('monthName',jsonDecode(responseMonth.body)[0]['monthName']);
-      prefs.setInt('monthId',jsonDecode(responseMonth.body)[0]['monthId']);
+      monthName = jsonDecode(responseMonth.body)[0]['MonthName'];
+      monthId = jsonDecode(responseMonth.body)[0]['Month'];
+//      print('********************************************');
+//      print(jsonDecode(responseMonth.body)[0]['Month']);
+//      print(jsonDecode(responseMonth.body)[0]['MonthName']);
+
+      // Attendance
+      prefs.setInt('indexMonthAttendance',0);
+      prefs.setString('educationalMonthNameAttendance',monthName);
+      prefs.setInt('educationalMonthIdAttendance',monthId);
+      //end of Attendance
+
+
       prefs.setString('getMonthData', responseMonth.body);
     }
     else {

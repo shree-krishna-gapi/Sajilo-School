@@ -80,38 +80,36 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
           builder: (BuildContext context) {
             return Wait();
           });
-          var yearId = prefs.getInt('attenendanceEducationalYearId');
-
           var url = '${Urls.BASE_API_URL}/Login/GetAssignedHomework?schoolId=$schoolId&gradeId=$selectedGradeId&streamId=$selectedStreamId'
             '&classId=$selectedClassId&nepaliDate=$date&subjectId=$selectedSubjectId';
-
-
-        print(url);
+        print('Homework Report -> $url');
         final response =
         await http.get(url);
+          Navigator.of(context).pop();
         if (response.statusCode == 200) {
           final data = response.body;
           int count = jsonDecode(response.body).length;
+
+          prefs.setString('getHomeworkReportData',data);
           print('hdate $count');
-          prefs.setString('getHomeworkReportData', data);
-
-
             if(count > 0) {
-              homeworkDates= jsonDecode(data)['HomeworkDate'];
-              homeworkDetails= jsonDecode(data)['HomeworkDetail'];
-              subjectNames= jsonDecode(data)['SubjectName'];
-              Navigator.of(context).pop();//todo totalAttendance count
-              Timer(Duration(milliseconds: 400), () {
+              print('hdate******************* ');
+//              print(jsonDecode(data)[0]['HomeworkId']);
+              homeworkDates= jsonDecode(data)[0]['HomeworkDateNepali'];
+//              print(homeworkDates);
+              homeworkDetails= jsonDecode(data)[0]['HomeworkDetail'];
+              subjectNames= jsonDecode(data)[0]['SubjectName'];
+//              Timer(Duration(milliseconds: 400), () {
                 return showDialog<void>(
                   context: context,
                   builder: (BuildContext context) {
                     return ReportData(homeworkDates:homeworkDates,homeworkDetails:homeworkDetails,subjectNames:subjectNames);
                   },
                 );
-              });
+//              });
             }
             else {
-              Navigator.of(context).pop();
+
               showDialog<void>(
                   context: context,
                   barrierDismissible: true, // user must tap button!
@@ -150,7 +148,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 20,),
+                SizedBox(height: 40,),
 //                FadeAnimation(0.2, GetYear()),
 //                SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(
@@ -460,7 +458,27 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   ],
                 ),
                 ),
-                SizedBox(height: 5,),
+                SizedBox(height: 20,),
+                Center(
+                  child: Center(
+                    child: FlatButton(onPressed: () {
+                      Navigator.of(context).pop();},
+                      child: Container(
+                        margin: EdgeInsets.only(left: 15),
+                        height: 5,
+                        width: 90,
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.65),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(4)
+                            )
+                        ),
+
+                      ),
+                    ),
+                  ),
+                ),
+//                SizedBox(height: 5,),
 
               ],
             ),
@@ -522,9 +540,9 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              child: Container( height: 180,
+              child: Container( height: 260,
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                    padding: const EdgeInsets.fromLTRB(20,10,20,0),
                     child: FutureBuilder<List<Grade>>(
                       future: Fetch(http.Client()),
                       builder: (context, snapshot) {
@@ -597,9 +615,9 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetStream>>(
                         future: FetchStream(http.Client()),
                         builder: (context, snapshot) {
@@ -685,9 +703,9 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetSubject>>(
                         future: FetchSubject(http.Client()),
                         builder: (context, snapshot) {
@@ -773,9 +791,9 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetClass>>(
                         future: FetchClass(http.Client()),
                         builder: (context, snapshot) {

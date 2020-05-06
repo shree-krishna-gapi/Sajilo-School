@@ -23,7 +23,7 @@ class ReportData extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(15)),
                 color: Color(0xfffbf9e7),
               ),
-              height: 450,
+              height: 260,
               width: double.infinity,
               child: ListView(
                 children: <Widget>[
@@ -36,31 +36,37 @@ class ReportData extends StatelessWidget {
                         gradient: purpleGradient
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10,11,10,4),
+                      padding: const EdgeInsets.fromLTRB(10,11,10,11
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Row(
                             children: <Widget>[
-                              Expanded(child: RoutinHead(head:'Date'),flex: 1,),
-                              Expanded(child: RoutinHead(head:'Homework'),flex: 3),
-                              Expanded(child: RoutinHead(head:'Subject'),flex: 2,),
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: <Widget>[
-                              Expanded(child: Text(homeworkDates),flex: 1,),
-                              Expanded(child: Text(homeworkDetails),flex: 3,),
-                              Expanded(child: Text(subjectNames),flex: 2,),
+                              Container(child: RoutinHead(head:'Date'),width:80),
+                              Expanded(child: RoutinHead(head:'Subject'),flex: 3,),
+                              Expanded(child: RoutinHead(head:'Homework'),flex: 4),
+
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10,8,10,8),
+                    child: Row(
+                      children: <Widget>[
+                        Container(child: Text(homeworkDates),width: 80,),
+                        Expanded(child: Text(subjectNames),flex: 3,),
+                        Expanded(child: Text(homeworkDetails),flex: 4,),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    height: 1, color: Colors.black12,)
 
                 ],
               ),

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:sajiloschool/teacher/attendance/studentattendance.dart';
+//import 'package:sajiloschool/teacher/attendance/studentattendance.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:sajiloschool/utils/pallate.dart';
@@ -80,8 +80,7 @@ class _GetAttendanceState extends State<GetAttendance> {
       }
     }
     if (selectedClassId == 0 ) {
-      print('sdfs2');
-      _showSnackBar(context,'Please, Select The Field First!');
+      _showSnackBar(context,'Please, Select The Field!');
     }
     else {
       showDialog<void>(
@@ -107,8 +106,9 @@ class _GetAttendanceState extends State<GetAttendance> {
         print(url);
         final response =
         await http.get(url);
+        Navigator.of(context).pop();
         if (response.statusCode == 200) {
-          Navigator.of(context).pop(); //todo totalAttendance count
+          //todo totalAttendance count
           prefs.setString('attendanceRecord',response.body);
 //          prefs.setString('attendanceRecordEncode',jsonEncode(response.body));
             var responseJson = jsonDecode(response.body);
@@ -116,19 +116,10 @@ class _GetAttendanceState extends State<GetAttendance> {
           prefs.setInt('totalStudent', count);
           if(count>0) {
             prefs.setString('getStudentForAttendance',response.body);
-              showDialog<void>(
-                  context: context,
-                  barrierDismissible: true, // user must tap button!
-                  builder: (BuildContext context) {
-                    return Success(txt: 'Get Successfully',);
-                  }
-              );
-            Timer(Duration(milliseconds: 500), () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RecordShow()),
               );
-            });
           }
           else {
             showDialog<void>(
@@ -140,7 +131,6 @@ class _GetAttendanceState extends State<GetAttendance> {
             );
           }
         } else {
-          Navigator.of(context).pop();
           showDialog<void>(
               context: context,
               barrierDismissible: true, // user must tap button!
@@ -204,27 +194,27 @@ class _GetAttendanceState extends State<GetAttendance> {
                                 ]
                             ),),
                           )),flex: 3,),
-                            Expanded(child:  Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Expanded(child: Transform.scale( scale: 1,alignment: Alignment.bottomCenter,
-                                    child: Switch(
-                                      value: isMonthly,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isMonthly = value;
-                                        });
-                                      },
-                                      activeTrackColor: Colors.black26,
-                                      activeColor: Colors.white,
+                            Expanded(child:
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Container(
+                                      margin: EdgeInsets.only(left: 7,),
+                                      width: 70,
+                                      child: Switch(
+                                        value: isMonthly,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            isMonthly = value;
+                                          });
+                                        },
+                                        activeTrackColor: Colors.white38,
+                                        activeColor: Colors.white,
+
                                     ),
-                                  ), flex: 2,),
-                                  Expanded(child: Text(''),flex: 4,)
-                                ],
-                              ),
+                                ),
+                                Expanded(child: Text(''))
+                              ],
                             ),flex: 5,),
                           ],
                         ),
@@ -655,9 +645,9 @@ class _GetAttendanceState extends State<GetAttendance> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              child: Container( height: 180,
+              child: Container( height: 260,
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                    padding: const EdgeInsets.fromLTRB(20,10,20,0),
                     child: FutureBuilder<List<Grade>>(
                       future: Fetch(http.Client()),
                       builder: (context, snapshot) {
@@ -733,9 +723,9 @@ class _GetAttendanceState extends State<GetAttendance> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetStream>>(
                         future: FetchStream(http.Client()),
                         builder: (context, snapshot) {
@@ -819,9 +809,9 @@ class _GetAttendanceState extends State<GetAttendance> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetClass>>(
                         future: FetchClass(http.Client()),
                         builder: (context, snapshot) {
@@ -887,9 +877,9 @@ class _GetAttendanceState extends State<GetAttendance> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              child: Container(height: 180,
+              child: Container(height: 260,
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: FutureBuilder<List<GetMonth>>(
                       future: FetchMonth(http.Client()),
                       builder: (context, snapshot) {
@@ -931,7 +921,7 @@ class _GetAttendanceState extends State<GetAttendance> {
                     selectedMonth = changedNowMonth;
                     selectedMonthId = changedNowMonthId;
                   });
-                  Duration(milliseconds: 500);
+                  Duration(milliseconds: 100);
                   Navigator.of(context).pop();
                 },
               ),

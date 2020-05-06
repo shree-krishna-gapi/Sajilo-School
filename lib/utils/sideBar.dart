@@ -159,30 +159,32 @@ class SideBarBody extends StatefulWidget {
 
 class _SideBarBodyState extends State<SideBarBody> {
   String studentName = '';
-  getUser() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-//    setState(() {
-      studentName = pref.getString('studentName');
-//    });
-  }
+
   @override
   void initState() {
     super.initState();
-    this.getUser();
+    getUser();
   }
-
+  getUser() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String names  = pref.getString('studentName');
+//    setState(() {
+//      studentName = names;
+//    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-
+        decoration: BoxDecoration(
+          gradient: purpleGradient
+        ),
       child: ListView(
         children: <Widget>[
           Container(
-            child: new UserAccountsDrawerHeader(otherAccountsPictures: <Widget>[
-//              Icon(Icons.apps,color: Colors.white,),
-            ],
-//2
+            child: new UserAccountsDrawerHeader(
+//              accountName: Text(studentName),
+//              accountEmail: Text('$studentName@demo.com'),
               currentAccountPicture: GestureDetector(
                 child: new CircleAvatar(
                   backgroundColor: Colors.white,
@@ -191,23 +193,19 @@ class _SideBarBodyState extends State<SideBarBody> {
                       color: Colors.amber
                   ),
                 ),
-              ),
-
-//              image: DecorationImage(image: AssetImage('assets/banner3.jpg'),fit: BoxFit.fitWidth),
+              ),margin: EdgeInsets.all(0.0),
               decoration: BoxDecoration(
-//              color: Colors.red,
-//                image: DecorationImage(image: AssetImage('assets/banner3.jpg',),fit: BoxFit.fitWidth),
                   gradient: LinearGradient(colors: [const Color(0x0000000), const Color(0xD9333333)],
                       stops: [0.0,0.9], begin: FractionalOffset(0.0, 0.0), end: FractionalOffset(0.0, 4.0))
               ),
             ),
           ),
+
           Container(
               padding: EdgeInsets.all(0),
             margin: EdgeInsets.all(0),
             child: Column(
               children: <Widget>[
-                Container(color: Colors.black12.withOpacity(0.05),height: 1,),
                 Container(
                   padding: EdgeInsets.fromLTRB(15,12,15,12),
                   child: InkWell(
@@ -320,73 +318,81 @@ class _SideBarBodyState extends State<SideBarBody> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              height: 335,
+
               child: Column(
                 children: <Widget>[
-                  Align(alignment: Alignment.bottomCenter,child: Padding(
-                    padding: const EdgeInsets.only(top:15.0),
-                    child: Text('Educational Year'),
-                  )),
-                  Container( height: 124,
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20,20,20,10),
-                        child: FutureBuilder<List<OfflineFeeYear>>(
-                          future: FetchOffline(http.Client()),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) ;
-                            return snapshot.hasData ?
-                            CupertinoPicker(
-                              itemExtent: 60.0,
-                              backgroundColor: Color(0x00000000),
-                              onSelectedItemChanged: (index)async {
-                                changedNowYearId = snapshot.data[index].educationalYearID;
-                              },
-                              children: new List<Widget>.generate(snapshot.data.length, (index) {
-                                changedNowYearId = snapshot.data[0].educationalYearID;
-                                return Align(
-                                  alignment: Alignment.center,//
-                                  child: Text(snapshot.data[index].sYearName,
-                                    style: TextStyle(
-                                        fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8,color: Colors.black
-                                    ),),
-                                );
-                              }),
-                            ):Loader();
-                          },
-                        )
+                  Container(
+                    height: 50, color: Colors.black.withOpacity(0.04),
+                    child: Align(alignment: Alignment.center,
+
+                      child: Text('Educational Year',style: TextStyle(fontWeight: FontWeight.w500),),
                     ),
                   ),
-                  Align(alignment: Alignment.bottomCenter,child: Padding(
-                    padding: const EdgeInsets.only(top:30.0),
-                    child: Text('Month'),
-                  )),
-                  Container( height: 124,
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20,20,20,10),
-                        child: FutureBuilder<List<OfflineFeeMonth>>(
-                          future: FetchOfflineMonth(http.Client()),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) ;
-                            return snapshot.hasData ?
-                            CupertinoPicker(
-                              itemExtent: 60.0,
-                              backgroundColor: Color(0x00000000),
-                              onSelectedItemChanged: (index)async {
-                                changedNowMonthId = snapshot.data[index].month;
-                              },
-                              children: new List<Widget>.generate(snapshot.data.length, (index) {
-                                changedNowMonthId = snapshot.data[0].month;
-                                return Align(
-                                  alignment: Alignment.center,//
-                                  child: Text(snapshot.data[index].monthName,
-                                    style: TextStyle(
-                                        fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8,color: Colors.black
-                                    ),),
-                                );
-                              }),
-                            ):Loader();
-                          },
-                        )
+                  Expanded(
+                    child: Container(
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20,5,20,5),
+                          child: FutureBuilder<List<OfflineFeeYear>>(
+                            future: FetchOffline(http.Client()),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) ;
+                              return snapshot.hasData ?
+                              CupertinoPicker(
+                                itemExtent: 60.0,
+                                backgroundColor: Color(0x00000000),
+                                onSelectedItemChanged: (index)async {
+                                  changedNowYearId = snapshot.data[index].educationalYearID;
+                                },
+                                children: new List<Widget>.generate(snapshot.data.length, (index) {
+                                  changedNowYearId = snapshot.data[0].educationalYearID;
+                                  return Align(
+                                    alignment: Alignment.center,//
+                                    child: Text(snapshot.data[index].sYearName,
+                                      style: TextStyle(
+                                          fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8,color: Colors.black
+                                      ),),
+                                  );
+                                }),
+                              ):Loader();
+                            },
+                          )
+                      ),
+                    ),
+                  ),
+                  Container( height: 50, color: Colors.black.withOpacity(0.04),
+                    child: Align(alignment: Alignment.center,
+                      child: Text('Month',style: TextStyle(fontWeight: FontWeight.w500),),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20,5,20,0),
+                          child: FutureBuilder<List<OfflineFeeMonth>>(
+                            future: FetchOfflineMonth(http.Client()),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) ;
+                              return snapshot.hasData ?
+                              CupertinoPicker(
+                                itemExtent: 60.0,
+                                backgroundColor: Color(0x00000000),
+                                onSelectedItemChanged: (index)async {
+                                  changedNowMonthId = snapshot.data[index].month;
+                                },
+                                children: new List<Widget>.generate(snapshot.data.length, (index) {
+                                  changedNowMonthId = snapshot.data[0].month;
+                                  return Align(
+                                    alignment: Alignment.center,//
+                                    child: Text(snapshot.data[index].monthName,
+                                      style: TextStyle(
+                                          fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8,color: Colors.black
+                                      ),),
+                                  );
+                                }),
+                              ):Loader();
+                            },
+                          )
+                      ),
                     ),
                   ),
 
@@ -395,11 +401,11 @@ class _SideBarBodyState extends State<SideBarBody> {
             ),
             actions: <Widget>[
               FlatButton(
-                child: Text('Ok'),
+                child: Text('Ok',style: TextStyle(fontSize: 16),),
                 onPressed: ()async {
                   SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.setInt('educationalYearId',changedNowYearId);
-                  prefs.setInt('monthId',changedNowMonthId);
+                  prefs.setInt('educationalYearIdCalender',changedNowYearId);
+                  prefs.setInt('monthIdCalender',changedNowMonthId);
                   Navigator.of(context).pop();
                   Timer(Duration(milliseconds: 100), () {
                     showDialog<void>(

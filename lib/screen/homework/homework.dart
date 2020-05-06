@@ -122,7 +122,7 @@ class _BodySectionState extends State<BodySection> {
               ),
               SizedBox(height: 14,),
               FadeAnimation(
-                0.6, Container(child:
+                0.5, Container(child:
               MainRow(),
                 decoration: BoxDecoration(
                     gradient: purpleGradient
@@ -132,7 +132,7 @@ class _BodySectionState extends State<BodySection> {
                 decoration: BoxDecoration(
                     color: Color(0xfffbf9e7).withOpacity(0.5)
                 ),
-                child: loadDate ? HomeworkData() :HomeworkData(),
+                child: loadDate ? HomeworkData() :HomeworkData1(),
               ),
 
 
@@ -186,7 +186,7 @@ class MainRow extends StatelessWidget {
         children: <Widget>[
           Expanded(child: Txt(title:'SN'),flex: 1,),
           Expanded(child: Txt(title:'Subject'),flex: 2,),
-          Expanded(child: Txt(title:'Homework'),flex: 4,),
+          Expanded(child: Txt(title:'Homework'),flex: 5,),
         ],
       ),
     );

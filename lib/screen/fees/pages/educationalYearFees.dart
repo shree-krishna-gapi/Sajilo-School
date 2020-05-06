@@ -3,40 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:sajiloschool/utils/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../utils/pallate.dart';
-import 'service/offlineMonth.dart';
+import 'package:sajiloschool/utils/pallate.dart';
+import 'offlineYearFees.dart';
 import 'dart:async';
 import 'dart:convert';
-
-class SelectMonth extends StatefulWidget {
+class EducationalYear extends StatefulWidget {
   @override
-  _SelectMonthState createState() => _SelectMonthState();
+  _EducationalYearState createState() => _EducationalYearState();
 }
-class _SelectMonthState extends State<SelectMonth> {
-  int changedNowMonthId;
-  int selectedMonthId=0;
-  String selectedMonth;
-  String changedNowMonth;
-  String selectedMonthNow;
+class _EducationalYearState extends State<EducationalYear> {
+  int changedNowYearId;
+  int selectedYearId=0;
+  String selectedYear='';
+  String changedNowYear;
   @override
-  void initState() {
-    getMonthName();
+  void initState(){
+    getCurrentYear();
     super.initState();
   }
-  int indexMonthAttendance;
-  getMonthName() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentMonth =prefs.getString('educationalMonthNameAttendance');
-    indexMonthAttendance = prefs.getInt('indexMonthAttendance');
+  int indexYearFees;
+  getCurrentYear() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentYear = prefs.getString('educationalYearNameFees');
+    indexYearFees = prefs.getInt('indexYearFees');
     setState(() {
-      selectedMonth = currentMonth;
+      selectedYear = currentYear;
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
+            Text('Year:',style: TextStyle(fontStyle: FontStyle.italic,
+                fontSize: 15,fontWeight: FontWeight.w600),),
+            SizedBox(width: 15,),
             InkWell(
               onTap: (){_showDialog();},
               child: Row(
@@ -45,10 +49,10 @@ class _SelectMonthState extends State<SelectMonth> {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Text('$selectedMonth',style: TextStyle(
-                              fontWeight: FontWeight.w600,
+                          Text('$selectedYear',style: TextStyle(
+                              fontWeight: FontWeight.w500,
                               letterSpacing: 0.8,
-                              fontSize: 15,
+                              fontSize: 14.5,
                               fontStyle: FontStyle.italic
                           ),),
                           SizedBox(width: 5,),
@@ -58,7 +62,7 @@ class _SelectMonthState extends State<SelectMonth> {
                       SizedBox(height: 3,),
                       Container(
                         height: 2,
-                        width: 85,
+                        width: 60,
                         decoration: BoxDecoration(
                             gradient: purpleGradient
                         ),
@@ -70,7 +74,8 @@ class _SelectMonthState extends State<SelectMonth> {
               ),
             ),
           ],
-        );
+        )
+    );
   }
   Future<void> _showDialog() async {
 
@@ -84,12 +89,12 @@ class _SelectMonthState extends State<SelectMonth> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-                  padding: EdgeInsets.only(bottom: 40),
+
               child: Container(
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(20,15,20,10),
-                    child: FutureBuilder<List<OfflineFeeMonth>>(
-                      future: FetchOfflineMonth(http.Client()),
+                    child: FutureBuilder<List<OfflineFeeYear>>(
+                      future: FetchOffline(http.Client()),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) ;
                         return snapshot.hasData ?
@@ -97,18 +102,18 @@ class _SelectMonthState extends State<SelectMonth> {
                             itemCount: snapshot.data.length,
                             itemBuilder: (BuildContext context,int index) {
                               return
-                                index == indexMonthAttendance ? Container(
+                                index == indexYearFees ? Container(
                                   color: Colors.orange[400],
                                   child: InkWell(
                                     onTap: ()async {
-                                      indexMonthAttendance = index;
+                                      indexYearFees = index;
                                       setState(() {
-                                        selectedMonth = snapshot.data[index].monthName;
+                                        selectedYear = snapshot.data[index].sYearName;
                                       });
                                       SharedPreferences prefs = await SharedPreferences.getInstance();
-                                      prefs.setInt('indexMonthAttendance',index);
-                                      prefs.setString('educationalMonthNameAttendance',snapshot.data[index].monthName);
-                                      prefs.setInt('educationalMonthIdAttendance',snapshot.data[index].month);
+                                      prefs.setInt('indexYearFees',index);
+                                      prefs.setString('educationalYearNameFees',snapshot.data[index].sYearName);
+                                      prefs.setInt('educationalYearIdFees',snapshot.data[index].educationalYearID);
                                       Timer(Duration(milliseconds: 100), () {
                                         Navigator.of(context).pop();
                                       });
@@ -117,7 +122,7 @@ class _SelectMonthState extends State<SelectMonth> {
                                       children: <Widget>[
                                         Container(
                                           padding: EdgeInsets.symmetric(vertical: 8.5),
-                                          child: Center(child: Text(snapshot.data[index].monthName,style: TextStyle(
+                                          child: Center(child: Text(snapshot.data[index].sYearName,style: TextStyle(
                                               color: Colors.white
                                           ),)),
 //                                    color: Colors.black12,
@@ -132,14 +137,14 @@ class _SelectMonthState extends State<SelectMonth> {
                                 Container(
                                   child: InkWell(
                                     onTap: ()async {
-                                      indexMonthAttendance = index;
+                                      indexYearFees = index;
                                       setState(() {
-                                        selectedMonth = snapshot.data[index].monthName;
+                                        selectedYear = snapshot.data[index].sYearName;
                                       });
                                       SharedPreferences prefs = await SharedPreferences.getInstance();
-                                      prefs.setInt('indexMonthAttendance',index);
-                                      prefs.setString('educationalMonthNameAttendance',snapshot.data[index].monthName);
-                                      prefs.setInt('educationalMonthIdAttendance',snapshot.data[index].month);
+                                      prefs.setInt('indexYearFees',index);
+                                      prefs.setString('educationalYearNameFees',snapshot.data[index].sYearName);
+                                      prefs.setInt('educationalYearIdFees',snapshot.data[index].educationalYearID);
                                       Timer(Duration(milliseconds: 100), () {
                                         Navigator.of(context).pop();
                                       });
@@ -148,7 +153,7 @@ class _SelectMonthState extends State<SelectMonth> {
                                       children: <Widget>[
                                         Container(
                                           padding: EdgeInsets.symmetric(vertical: 8.5),
-                                          child: Center(child: Text(snapshot.data[index].monthName)),
+                                          child: Center(child: Text(snapshot.data[index].sYearName)),
 //                                    color: Colors.black12,
                                         ),
                                         Container(
@@ -165,7 +170,6 @@ class _SelectMonthState extends State<SelectMonth> {
                 ),
               ),
             ),
-
             elevation: 4,
           );}
     );

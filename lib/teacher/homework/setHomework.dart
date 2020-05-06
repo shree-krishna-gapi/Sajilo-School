@@ -15,6 +15,7 @@ import 'newservice/getYear.dart';
 import 'field/service/stream.dart';
 import 'field/service/subject.dart';
 import '../teacher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 class SetHomework extends StatefulWidget {
   @override
   _SetHomeworkState createState() => _SetHomeworkState();
@@ -23,7 +24,7 @@ class SetHomework extends StatefulWidget {
 class _SetHomeworkState extends State<SetHomework> {
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   final formKey = new GlobalKey<FormState>();
-  TextEditingController homework = TextEditingController();
+  TextEditingController homeworkController = TextEditingController();
   // auto
   final sizedBoxHeight = 10.0;
   // Grade
@@ -57,13 +58,13 @@ class _SetHomeworkState extends State<SetHomework> {
   bool isMonthly = true;
   @override
   void initState() {
-    getDate();
+//    getDate();
     super.initState();
   }
 
   void getDate()async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    schoolId = prefs.getInt('schoolId');
+
   }
 
 
@@ -81,8 +82,9 @@ class _SetHomeworkState extends State<SetHomework> {
             return Wait();
           });
 
-      var yearId = prefs.getInt('attenendanceEducationalYearId');
-      String hw = homework.text;
+      int yearId = prefs.getInt('educationalYearIdHwR');
+      schoolId = prefs.getInt('schoolId');
+      String hw = homeworkController.text;
         var url = '${Urls.BASE_API_URL}/login/SaveHomework?'
             'schoolId=$schoolId&educationyearId=$yearId&gradeId=$selectedGradeId&classId=$selectedClassId&subjectId=$selectedSubjectId&date'
             '=$date&isActive=$isActive&homework=$hw';
@@ -95,14 +97,20 @@ class _SetHomeworkState extends State<SetHomework> {
           print(json.decode(response.body)['Success']);
           final isUser = json.decode(response.body)['Success'];
             if(isUser == true) {
-              showDialog<void>(
-                  context: context,
-                  barrierDismissible: true, // user must tap button!
-                  builder: (BuildContext context) {
-                    return Success(txt: 'Create Successfully',);
-                  }
-              );
-              Timer(Duration(milliseconds: 500), () {
+//              showDialog<void>(
+//                  context: context,
+//                  barrierDismissible: true, // user must tap button!
+//                  builder: (BuildContext context) {
+//                    return Success(txt: 'Create Successfully',);
+//                  }
+//              );
+              Fluttertoast.showToast(
+                  msg: "HomeWork Create Successfully!",
+                  backgroundColor: Colors.black54,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  textColor: Colors.white);
+              Timer(Duration(milliseconds: 300), () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Teacher()), //StudentAttendance
@@ -110,7 +118,7 @@ class _SetHomeworkState extends State<SetHomework> {
               });
             }
             else {
-              Navigator.of(context).pop();
+//              Navigator.of(context).pop();
               showDialog<void>(
                   context: context,
                   barrierDismissible: true, // user must tap button!
@@ -283,7 +291,6 @@ class _SetHomeworkState extends State<SetHomework> {
                 ),
                 ),
                 SizedBox(height: sizedBoxHeight,),
-
                 FadeAnimation(
                   0.7, Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -349,7 +356,87 @@ class _SetHomeworkState extends State<SetHomework> {
                 ),
                 ),
                 SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(0.9, _test(context,'Homework','hw','Homework Task','')),
+                FadeAnimation(0.9,
+//                    _test(context,'Homework','hw','Homework Task','')
+                    Row(
+                      children: <Widget>[
+                        Expanded(child: Align(alignment: Alignment.centerRight,child: Padding(
+                          padding: const EdgeInsets.only(right: 20, left: 10),
+                          child: Text('Homework',style: TextStyle(
+                              color: Colors.white,
+                              letterSpacing: 0.6,
+                              fontSize: 16,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black12,
+                                  blurRadius: 4.0,
+
+                                )
+                              ]
+                          ),),
+                        )),flex: 3,),
+                        Expanded(child: Padding(
+                          padding: const EdgeInsets.only(right: 20),
+
+//                            child: TextFormField(
+//                              decoration: new InputDecoration(labelText: "Homework Task",labelStyle: TextStyle(
+//                                  color: Colors.white60
+//                              )),
+//                              maxLines: 2,
+//                              style: TextStyle(
+//                                  color: Colors.white.withOpacity(0.8)
+//                              ),
+//                              controller: homeworkController,
+//                              validator: (value){
+//                                if(value.isEmpty) {
+//                                  return "* Inser the Homework";
+//                                }
+//                                else {
+//                                  return null;
+//                                }
+//                              },
+//                            ),
+                          child: TextFormField(
+                            decoration: InputDecoration(hintText: "Homework Task",hintStyle: TextStyle(
+                                fontSize: 16, color: Colors.white60
+                            ),errorStyle: TextStyle(
+                              color: Colors.orange[600],
+                              wordSpacing: 2.0,
+                              letterSpacing: 0.4,
+                            ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                              ),
+                            ),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4.0,
+                                  color: Colors.black12,
+                                  offset: Offset(2.0, 2.0),
+                                ),
+                              ],
+                            ),
+                            maxLines: 2,
+                            controller: homeworkController,
+                            validator: (value){
+                              if(value.isEmpty) {
+                                return '* Insert the Homework Task';
+                              }
+                              else {
+                                return null;
+                              }
+                            },
+//                            minLines: 2, maxLength: 3,
+
+                          ),
+
+                        ),flex: 4,), //        Expanded(child: Text(''),flex: 1,)
+                      ],
+                    )
+                ),
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(
                   0.7, Row(
@@ -453,10 +540,9 @@ class _SetHomeworkState extends State<SetHomework> {
                           ),
                           splashColor: Colors.orange,
                           onTap: (){
-//                      if (_formKey.currentState.validate()) {
-//                        loginProcess();
-//                      }
-                            _submit(context);
+                            if (formKey.currentState.validate()) {
+                              _submit(context);
+                            }
 
                           },
                         ),
@@ -541,21 +627,27 @@ class _SetHomeworkState extends State<SetHomework> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Expanded(child: Transform.scale( scale: 1,alignment: Alignment.bottomCenter,
-                child: Switch(
-                  value: isMonthly,
-                  onChanged: (value) async{
-                    final SharedPreferences prefs= await SharedPreferences.getInstance();
-                    prefs.setBool('hwIsactive', value);
-                    setState(() {
-                      isMonthly = value;
-                    });
-                  },
-                  activeTrackColor: Colors.white38,
-                  activeColor: Colors.white,
-
-                ),
-              ), flex: 2,),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: 70,
+                      child: Switch(
+                        value: isMonthly,
+                        onChanged: (value) async{
+                          final SharedPreferences prefs= await SharedPreferences.getInstance();
+                          prefs.setBool('hwIsactive', value);
+                          setState(() {
+                            isMonthly = value;
+                          });
+                        },
+                        activeTrackColor: Colors.white38,
+                        activeColor: Colors.white,                      
+                      ),
+                    ),
+                    Expanded(child: Text(''))
+                  ],
+                ), flex: 2,),
               Expanded(child: Text(''),flex: 4,)
             ],
           ),
@@ -575,9 +667,9 @@ class _SetHomeworkState extends State<SetHomework> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              child: Container( height: 180,
+              child: Container( height: 260,
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                    padding: const EdgeInsets.fromLTRB(20,10,20,0),
                     child: FutureBuilder<List<Grade>>(
                       future: Fetch(http.Client()),
                       builder: (context, snapshot) {
@@ -650,9 +742,9 @@ class _SetHomeworkState extends State<SetHomework> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetStream>>(
                         future: FetchStream(http.Client()),
                         builder: (context, snapshot) {
@@ -738,9 +830,9 @@ class _SetHomeworkState extends State<SetHomework> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetSubject>>(
                         future: FetchSubject(http.Client()),
                         builder: (context, snapshot) {
@@ -826,9 +918,9 @@ class _SetHomeworkState extends State<SetHomework> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetClass>>(
                         future: FetchClass(http.Client()),
                         builder: (context, snapshot) {
@@ -922,8 +1014,9 @@ class _SetHomeworkState extends State<SetHomework> {
               style: TextStyle(
                   color: Colors.white.withOpacity(0.8)
               ),
-              controller: homework,
+              controller: homeworkController,
               validator: (value){
+                print('this is value of hw-> $value');
                 if(value.isEmpty) {
                   return "* Inser the Homework";
                 }

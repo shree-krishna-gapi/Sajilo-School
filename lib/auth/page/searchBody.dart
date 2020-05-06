@@ -6,6 +6,7 @@ import 'user.dart';
 import 'services.dart';
 import 'dart:async';
 import 'package:sajiloschool/utils/pallate.dart';
+import 'dart:convert';
 class UserFilterDemo extends StatefulWidget {
   final int schoolId;
   final int gradeId;
@@ -100,6 +101,7 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                       onTap: () async{
                         SharedPreferences prefs = await SharedPreferences.getInstance();
                         prefs.setInt('studentId', filteredUsers[index].id);
+                        prefs.setString('studentName', filteredUsers[index].name);
                         Navigator.pop(context,filteredUsers[index].name);
                       },
                       child: Padding(

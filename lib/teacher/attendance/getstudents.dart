@@ -54,8 +54,8 @@ class _GetStudentsState extends State<GetStudents> {
           builder: (BuildContext context) {
             return Wait();
           });
-
-      var yearId = prefs.getInt('attenendanceEducationalYearId');
+      schoolId = prefs.getInt('schoolId');
+      var yearId = prefs.getInt('educationalYearIdHwA');
       try {
         var url = '${Urls.BASE_API_URL}/login/GetStudentsListForAttendance?'
             'schoolId=$schoolId&EducationYearId=$yearId&GradeId=$selectedGradeId&StreamId=$selectedStreamId&ClassId=$selectedClassId&DateOfYear'
@@ -63,8 +63,8 @@ class _GetStudentsState extends State<GetStudents> {
         print(url);
         final response =
         await http.get(url);
+        Navigator.of(context).pop();
         if (response.statusCode == 200) {
-          Navigator.of(context).pop();
           prefs.setInt('totalAttendance1', response.body.length); //todo totalAttendance count
           var responseJson = jsonDecode(response.body);
           int count = responseJson.length;
@@ -72,20 +72,12 @@ class _GetStudentsState extends State<GetStudents> {
           if(count>0) {
             prefs.setString('getStudentForAttendance',response.body);
 
-            showDialog<void>(
-                context: context,
-                barrierDismissible: true, // user must tap button!
-                builder: (BuildContext context) {
-                  return Success(txt: 'Get Successfully',);
-                }
-            );
-
-            Timer(Duration(milliseconds: 500), () {
+//            Timer(Duration(milliseconds: 500), () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => StudentAttendance(selectedDate:date)),
               );
-            });
+//            });
           }
           else {
             showDialog<void>(
@@ -97,7 +89,6 @@ class _GetStudentsState extends State<GetStudents> {
             );
           }
         } else {
-          Navigator.of(context).pop();
           showDialog<void>(
               context: context,
               barrierDismissible: true, // user must tap button!
@@ -120,14 +111,14 @@ class _GetStudentsState extends State<GetStudents> {
   }
   @override
   void initState() {
-    getDate();
+//    getDate();
     super.initState();
   }
 
-  void getDate()async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    schoolId = prefs.getInt('schoolId');
-  }
+//  void getDate()async {
+//    final SharedPreferences prefs = await SharedPreferences.getInstance();
+//
+//  }
   @override
 
 
@@ -147,7 +138,7 @@ class _GetStudentsState extends State<GetStudents> {
             child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-
+                SizedBox(height: 40,),
                 FadeAnimation(0.4, GetYear()),
                 SizedBox(height: 20,),
                 FadeAnimation(
@@ -381,10 +372,10 @@ class _GetStudentsState extends State<GetStudents> {
                             ),
                             splashColor: Colors.orange,
                             onTap: (){
-//                      if (_formKey.currentState.validate()) {
-//                        loginProcess();
-//                      }
-                              _submit(context);
+                              if (formKey.currentState.validate()) {
+                                _submit(context);
+                              }
+
 
                             },
                           ),
@@ -396,55 +387,73 @@ class _GetStudentsState extends State<GetStudents> {
                   ),
                 ),
                 SizedBox(height: 5,),
-                FadeAnimation(
-                  0.8, Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 1,),
-                      Expanded(child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.only(left: 20,top: 40),
-                        child: Material(
-                          color: Color(0x00000000),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10.0),
-                            side: BorderSide(
-                                color: Colors.white.withOpacity(0.75),width: 1.5
-                            ),
-                          ),
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(Icons.arrow_back,size: 20, color: Colors.white,),
-                                  SizedBox(width: 5,),
-                                  Text('Back',style: TextStyle(
-                                    color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.8,shadows:[
-                                    Shadow(
-                                      blurRadius: 4.0,
-                                      color: Colors.black26,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                  ),),
-                                ],
-                              ),
-                            ),
-                            splashColor: Colors.orange,
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
-                          ),
+//                FadeAnimation(
+//                  0.8, Row(
+//                    children: <Widget>[
+//                      Expanded(child: Text(''),flex: 1,),
+//                      Expanded(child: Container(
+//                        width: double.infinity,
+//                        padding: EdgeInsets.only(left: 20,top: 40),
+//                        child: Material(
+//                          color: Color(0x00000000),
+//                          shape: RoundedRectangleBorder(
+//                            borderRadius: new BorderRadius.circular(10.0),
+//                            side: BorderSide(
+//                                color: Colors.white.withOpacity(0.75),width: 1.5
+//                            ),
+//                          ),
+//                          child: InkWell(
+//                            child: Padding(
+//                              padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
+//                              child: Row(
+//                                mainAxisAlignment: MainAxisAlignment.center,
+//                                children: <Widget>[
+//                                  Icon(Icons.arrow_back,size: 20, color: Colors.white,),
+//                                  SizedBox(width: 5,),
+//                                  Text('Back',style: TextStyle(
+//                                    color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500,
+//                                    letterSpacing: 0.8,shadows:[
+//                                    Shadow(
+//                                      blurRadius: 4.0,
+//                                      color: Colors.black26,
+//                                      offset: Offset(2.0, 2.0),
+//                                    ),
+//                                  ],
+//                                  ),),
+//                                ],
+//                              ),
+//                            ),
+//                            splashColor: Colors.orange,
+//                            onTap: (){
+//                              Navigator.pop(context);
+//                            },
+//                          ),
+//                        ),
+//                      ),flex: 2,),
+//                      Expanded(child: Text(''),flex: 1,),
+//
+//                    ],
+//                  ),
+//                ),
+                SizedBox(height: 20,),
+                Center(
+                  child: Center(
+                    child: FlatButton( onPressed:() {Navigator.of(context).pop();},
+                      child: Container(
+                        margin: EdgeInsets.only(left: 20),
+                        height: 5,
+                        width: 90,
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.65),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(4)
+                            )
                         ),
-                      ),flex: 2,),
-                      Expanded(child: Text(''),flex: 1,),
-
-                    ],
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(height: 15,),
+
               ],
             ),
           ),
@@ -504,9 +513,9 @@ class _GetStudentsState extends State<GetStudents> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container( height: 180,
+                child: Container( height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                      padding: const EdgeInsets.fromLTRB(20,10,20,0),
                       child: FutureBuilder<List<Grade>>(
                         future: Fetch(http.Client()),
                         builder: (context, snapshot) {
@@ -575,9 +584,9 @@ class _GetStudentsState extends State<GetStudents> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetStream>>(
                         future: FetchStream(http.Client()),
                         builder: (context, snapshot) {
@@ -662,9 +671,9 @@ class _GetStudentsState extends State<GetStudents> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 180,
+                child: Container(height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetClass>>(
                         future: FetchClass(http.Client()),
                         builder: (context, snapshot) {

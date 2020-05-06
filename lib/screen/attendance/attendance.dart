@@ -39,6 +39,7 @@ class _AttendanceState extends State<Attendance> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         body: WillPopScope(
           onWillPop : onWillPop,
           child: Stack(
@@ -71,11 +72,11 @@ class BodySection extends StatefulWidget {
 
 class _BodySectionState extends State<BodySection> {
   bool isMonthly = false;
-  bool isSearch = false;
-//  void initState(){
-//    setMonth();
-//    super.initState();
-//  }
+  bool isSearch = true;
+  void initState(){
+    setMonth();
+    super.initState();
+  }
   void setMonth()async {
     SharedPreferences prefs= await SharedPreferences.getInstance();
     prefs.setBool('parentAttendanceIsMonthly', isMonthly);
@@ -112,6 +113,7 @@ class _BodySectionState extends State<BodySection> {
                         isMonthly = value;
                       });
                       setMonth();
+
                     },
                     activeTrackColor: Colors.blue[700].withOpacity(0.5),
                     activeColor: Colors.blue[700].withOpacity(0.8),
@@ -123,7 +125,7 @@ class _BodySectionState extends State<BodySection> {
                       color: Colors.orange,
                     ),
                     padding: EdgeInsets.fromLTRB(11,7,11,7),
-                    child: InkWell(onTap: (){
+                    child: InkWell(onTap: () {
                       setState(() {
                         isSearch =! isSearch;
                       });
@@ -147,8 +149,8 @@ class _BodySectionState extends State<BodySection> {
           ),),
         isSearch ? Container(
           height: 400,
-          child:FutureBuilder<List<StudentAttendanceData>>(
-              future: FetchParentAttendance(http.Client()),
+          child:FutureBuilder<List<StudentAttendanceData1>>(
+              future: FetchParentAttendance1(http.Client()),
               builder: (context, snapshot) {
                 if (snapshot.hasError) ;
                 if(snapshot.hasData) {

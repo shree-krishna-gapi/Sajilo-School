@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<List<AttendancePerStudents>>fetchService(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var schoolId = prefs.getInt('schoolId');
-  var educationalYearId = prefs.getInt('educationalYearId');
+  var educationalYearId = prefs.getInt('educationalYearIdHwAR');
   var studentId = prefs.getInt('studentIdPer');
   bool isMonthly = prefs.getBool('isMonthlyPer');
   int monthId = prefs.getInt('monthIdPer');

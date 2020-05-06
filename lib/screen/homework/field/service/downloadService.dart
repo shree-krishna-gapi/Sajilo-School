@@ -8,10 +8,10 @@ import '../../../../utils/api.dart';
 Future<List<DownloadFile>> FetchDownload(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var schoolId = prefs.getInt('schoolId');
-  var homeworkId = prefs.getInt('studentId');
+  var homeworkId = prefs.getInt('homeworkId');
   try {
-    http://192.168.1.89:88/Api/Login/GetHomeworksDetails?schoolId=1&homeworkId=19
-    String url = "${Urls.BASE_API_URL}/Login/GetHomeworksDetails?schoolId=$schoolId&homeworkId=19";
+    //http://192.168.1.89:88/Api/Login/GetHomeworksDetails?schoolId=1&homeworkId=19
+    String url = "${Urls.BASE_API_URL}/Login/GetHomeworksDetails?schoolId=$schoolId&homeworkId=$homeworkId";
   print(url);
     final response =
     await http.get(url);

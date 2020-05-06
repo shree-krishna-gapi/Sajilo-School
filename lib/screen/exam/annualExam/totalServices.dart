@@ -9,7 +9,7 @@ Future<Album> fetchAlbum() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var schoolId = prefs.getInt('schoolId');
   var studentId = prefs.getInt('studentId');
-  var yearId = prefs.getInt('educationalYearId');
+  var yearId = prefs.getInt('educationalYearIdExam');
   String url = "${Urls.BASE_API_URL}/Login/getAnnualExamMarks?schoolId=$schoolId&yearId=$yearId&studentId=$studentId";
   final response =
   await http.get(url);
@@ -17,7 +17,7 @@ Future<Album> fetchAlbum() async {
   if (response.statusCode == 200) {
     return Album.fromJson(json.decode(response.body));
   } else {
-    throw Exception('Failed to load album');
+    throw Exception('Failed to load Data');
   }
 }
 

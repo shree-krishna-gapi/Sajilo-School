@@ -12,6 +12,7 @@ import 'service/getAttendance.dart';
 import 'package:sajiloschool/utils/api.dart';
 import 'package:sajiloschool/teacher/attendance/pages/forceAttendance.dart';
 import 'package:sajiloschool/teacher/attendance/pages/normalAttendance.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 class StudentAttendance extends StatefulWidget {
   StudentAttendance({this.selectedDate});
   final String selectedDate;
@@ -54,6 +55,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
+
                     Row(
                       children: <Widget>[
                         Text('Attendance Date:',style: TextStyle(fontStyle: FontStyle.italic,
@@ -68,6 +70,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
               ),
             ),
           ),
+          SizedBox(height: 10,),
           FadeAnimation(
             0.5, Container(
               height: 35,
@@ -246,19 +249,18 @@ class _StudentAttendanceState extends State<StudentAttendance> {
       if(response.statusCode == 200) {
         Navigator.of(context).pop();
         if(jsonDecode(response.body)['Success']) {
-          showDialog<void>(
-              context: context,
-              barrierDismissible: true, // user must tap button!
-              builder: (BuildContext context) {
-                return Success(txt: 'Successfully',);
-              }
-          );
-          Timer(Duration(milliseconds: 500), () {
+          Fluttertoast.showToast(
+              msg: "Attendance Create Successfully!",
+              backgroundColor: Colors.black54,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              textColor: Colors.white);
+//          Timer(Duration(milliseconds: 500), () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Teacher()), //StudentAttendance
             );
-          });
+//          });
         }
         else {
           showDialog<void>(

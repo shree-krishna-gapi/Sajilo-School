@@ -378,8 +378,6 @@ class _LoginBodyState extends State<LoginBody> {
                   ],
                 ),)
                 ),
-
-
                 SizedBox(
                   height: 0,
                 ),
@@ -547,8 +545,6 @@ class _LoginBodyState extends State<LoginBody> {
                       )
                   ),
                 ),
-
-
               ],
             )
               ,

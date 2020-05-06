@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sajiloschool/utils/api.dart';
-import 'educationalYear.dart';
+import 'package:sajiloschool/teacher/generic/educationalYear.dart';
 import 'dart:async';
-import 'dart:convert';
 class GetYear extends StatefulWidget {
   @override
   _GetYearState createState() => _GetYearState();
@@ -14,40 +13,17 @@ class _GetYearState extends State<GetYear> {
   String selectedYear;
   int selectedYearId;
   @override
-
   void initState(){
     getCurrentYear();
     super.initState();
   }
+  String currentYear;
   Future getCurrentYear() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var schoolId = prefs.getInt('schoolId');
-    final response=await http.get("${Urls.BASE_API_URL}/login/GetEducationalYear?schoolid=$schoolId");
-    if (response.statusCode == 200) {
-      int i;
-      int yearId;
-      String yearD;
-      // todo: shared preference saved
-      for(i=0;i<response.body.length;i++) {
-        if(jsonDecode(response.body)[i]['isCurrent'] == true){
-          yearId = jsonDecode(response.body)[i]['EducationalYearID'];
-          yearD = jsonDecode(response.body)[i]['sYearName'];
-          setState(() {
-            selectedYear = yearD;
-          });
-          //todo : attenendanceEducationalYearId
-          prefs.setInt('attenendanceEducationalYearId',yearId);
-          break;
-        }
-      }
-      //todo : attendanceEducationalYearData
-      prefs.setString('attendanceEducationalYearData',response.body);
-      // todo: GetEducationalYear save
-      final stringData = response.body.toString();
-      prefs.setString('getEducationalYear',stringData);
-    } else {
-      print("Error getting catch.1");
-    }
+    currentYear = prefs.getString('educationalYearNameHw');
+    setState(() {
+      selectedYear = currentYear;
+    });
   }
 
 
@@ -62,7 +38,7 @@ class _GetYearState extends State<GetYear> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child:  TextFormField(
               style: TextStyle(
-                color: Colors.yellow,
+                color: Colors.white,
                 fontSize: 16,
                 shadows: [
                   Shadow(
@@ -76,7 +52,7 @@ class _GetYearState extends State<GetYear> {
               onTap: (){_showDialog();},
               textAlign: TextAlign.left,
               initialValue: selectedYear,
-              decoration: InputDecoration(hintText: "$selectedYear",hintStyle: TextStyle(
+              decoration: InputDecoration(hintText: selectedYear,hintStyle: TextStyle(
                   fontSize: 15, color: Colors.white
               ),
                 focusedBorder: UnderlineInputBorder(
@@ -102,9 +78,9 @@ class _GetYearState extends State<GetYear> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container( height: 180,
+                child: Container( height: 260,
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                      padding: const EdgeInsets.fromLTRB(20,10,20,0),
                       child: FutureBuilder<List<EducationalYear>>(
                         future: FetchYear(http.Client()),
                         builder: (context, snapshot) {
@@ -142,10 +118,11 @@ class _GetYearState extends State<GetYear> {
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     setState(() {
                       selectedYear = changedNowYear;
-                      selectedYearId = changedNowYearId;
                     });
-                    prefs.setInt('attenendanceEducationalYearId',changedNowYearId);
-                    Duration(milliseconds: 500);
+                    selectedYearId = changedNowYearId;
+                    prefs.setInt('educationalYearIdHw',selectedYearId);
+                    prefs.setString('educationalYearNameHw',selectedYear);
+                    Duration(milliseconds: 100);
                     Navigator.of(context).pop();
                   },
                 ),
