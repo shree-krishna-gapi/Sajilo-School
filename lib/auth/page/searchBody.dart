@@ -42,6 +42,7 @@ class UserFilterDemoState extends State<UserFilterDemo> {
     super.initState();
     Services.getUsers(widget.schoolId,widget.gradeId).then((usersFromServer) {
       loader = false;
+      print('this is no. of student ${usersFromServer.length}');
       setState(() {
         users = usersFromServer;
         filteredUsers = users;
@@ -59,11 +60,11 @@ class UserFilterDemoState extends State<UserFilterDemo> {
           ),
           child: Column(
             children: <Widget>[
-              Container(height: 40,
+              Container(height: 50,
                 color: Color(0xfffbfbef),
                 child: Row(
                   children: <Widget>[
-                    Expanded(child: InkWell(child: Icon(Icons.arrow_back),onTap: (){
+                    Expanded(child: InkWell(child: Icon(Icons.arrow_back,color: Colors.blue[900],),onTap: (){
                       Navigator.of(context).pop();
                     },),flex: 1,),
                     Expanded(child: TextField(
@@ -84,16 +85,18 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                           });
                         });
                       },
+
                     ),flex: 8,),
                   ],
                 ),
               ),
-              
-              Expanded(child: loader ? WaitLoader() : ListView.builder(
+
+              Expanded(child: loader ? WaitLoader() :
+              filteredUsers.length > 0 ? ListView.builder(
                 padding: EdgeInsets.all(10.0),
                 itemCount: filteredUsers.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return filteredUsers.length > 0 ?
+                  return
                   FadeAnimation(
                     0.1, Card(color: Color(0xfffbfbef),
                     elevation: 2,
@@ -134,8 +137,12 @@ class UserFilterDemoState extends State<UserFilterDemo> {
                       ),
                     ),
                   ),
-                  ) : Empty();
+                  );
                 },
+              ): Align(
+                  alignment: Alignment.center,
+                  child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                    letterSpacing: 0.4,color: Colors.white),)
               )  )
             ],
           ),

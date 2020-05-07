@@ -11,12 +11,13 @@ import '../screen/home.dart';
 import 'dart:async';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'service/user.dart';
-import 'service/grade.dart';
-import 'service/student.dart';
+//import 'service/grade.dart';
+//import 'service/student.dart';
 import 'package:sajiloschool/teacher/teacher.dart';
 import 'page/searchBody.dart';
-import 'grade/studentGrade.dart';
-import 'pages/getGrade.dart';
+//import 'grade/studentGrade.dart';
+//import 'pages/getGrade.dart';
+import 'service/grade.dart';
 class LoginBody extends StatefulWidget {
   final String title = "AutoComplete Demo";
   @override
@@ -42,7 +43,6 @@ class _LoginBodyState extends State<LoginBody> {
   TextEditingController studentNameController = TextEditingController();
   // school
   int selectedSchoolId;
-
 //  bool loader = true;
   String tt;
   bool loading = true;
@@ -116,7 +116,7 @@ class _LoginBodyState extends State<LoginBody> {
               0.2, ListView(
               children: <Widget>[
                 FadeAnimation(
-                  0.0, Container(
+                  0.3, Container(
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text(''),flex: 2,),
@@ -195,94 +195,66 @@ class _LoginBodyState extends State<LoginBody> {
                     height: 10
                 ),
                 FadeAnimation(
-                    0.0, Container(height: 65,child: Row(
+                    0.4, Container(height: 65,child: Row(
                   children: <Widget>[
-                    Expanded(child: Text(''),flex: 2,),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child:  selectedGrade == '' || selectedGrade == null ? TextFormField(
-                        onTap: ()async {
-
-                          print('selectedSchoolId $selectedSchoolId');
-                          if(selectedSchoolId == 0 || selectedSchoolId == null) {
-                            showSnack('Please, Select The School Name.');
-                          }
-                          else {
-                            List message = await Navigator.push(context, MaterialPageRoute(builder: (context) => GetGrade(
-                                schoolId:selectedSchoolId
-                            )));
-                            selectedGradeId = message[0];
-                            if(message != null){
-                              setState(() {
-                                selectedGrade = message[1];
-                              });
-                            }
-                          }
-                        },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black12,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        readOnly: true,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(hintText: "Select Grade",hintStyle: TextStyle(
-                            fontSize: 16, color: Colors.white60
-                        ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                    Expanded(child:
+                    Text(''),flex: 2,),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child:  selectedGrade == '' ?
+                        TextFormField(
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4.0,
+                                color: Colors.black12,
+                                offset: Offset(2.0, 2.0),
+                              ),
+                            ],
                           ),
-
-                        ),
-                      ):TextFormField(
-                        onTap: ()async {
-
-                          print('selectedSchoolId $selectedSchoolId');
-                          if(selectedSchoolId == 0 || selectedSchoolId == null) {
-                            showSnack('Please, Select The SchoolName.');
-                          }
-                          else {
-                            List message = await Navigator.push(context, MaterialPageRoute(builder: (context) => GetGrade(
-                                schoolId:selectedSchoolId
-                            )));
-                            selectedGradeId = message[0];
-                            if(message != null){
-                              setState(() {
-                                selectedGrade = message[1];
-                              });
-                            }
-                          }
-                        },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black12,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        readOnly: true,
-                        decoration: InputDecoration(hintText: selectedGrade,hintStyle: TextStyle(
-                            fontSize: 18, color: Colors.white
-                        ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,width: 1.5),
+                          readOnly: true,
+                          onTap: (){_showDialog();},
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
+                              fontSize: 16, color: Colors.white60
                           ),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                            ),
 
+                          ),
+                        ):
+                        TextFormField(
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4.0,
+                                color: Colors.black12,
+                                offset: Offset(2.0, 2.0),
+                              ),
+                            ],
+                          ),
+                          readOnly: true,
+                          onTap: (){_showDialog();},
+                          textAlign: TextAlign.center,
+                          initialValue: selectedGrade,
+                          decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
+                              fontSize: 18, color: Colors.white
+                          ),
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                            ),
+
+                          ),
                         ),
-                      ),
-
-                    ),flex: 6,),
+                      )
+                      ,flex: 6,
+                    ),
                     Expanded(child: Container(
                     ),flex: 2,)
                   ],
@@ -290,7 +262,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 // todo Student Name Field
                 FadeAnimation(
-                    0.0, Container(height: 65,child: Row(
+                    0.4, Container(height: 65,child: Row(
                   children: <Widget>[
                     Expanded(child: Text(''),flex: 2,),
                     Expanded(child: Padding(
@@ -382,7 +354,7 @@ class _LoginBodyState extends State<LoginBody> {
                   height: 0,
                 ),
                 FadeAnimation(
-                  0.8, Container(
+                  0.4, Container(
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text(''),flex: 2,),
@@ -437,7 +409,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 SizedBox(height: 35,),
                 FadeAnimation(
-                  0.9, Padding(
+                  0.5, Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: <Widget>[
@@ -551,10 +523,10 @@ class _LoginBodyState extends State<LoginBody> {
             ):
             // Teacher Login
             FadeAnimation(
-              0.6, ListView(
+              0.2, ListView(
               children: <Widget>[
                 FadeAnimation(
-                  0.6, Container(
+                  0.3, Container(
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text(''),flex: 2,),
@@ -630,7 +602,7 @@ class _LoginBodyState extends State<LoginBody> {
                     height: 0
                 ),
                 FadeAnimation(
-                  0.7, Container(
+                  0.4, Container(
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text(''),flex: 2,),
@@ -683,7 +655,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 ),
                 FadeAnimation(
-                  0.8, Container(
+                  0.5, Container(
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text(''),flex: 2,),
@@ -738,7 +710,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 SizedBox(height: 35,),
                 FadeAnimation(
-                  0.9, Padding(
+                  0.5, Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: <Widget>[
@@ -807,7 +779,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 SizedBox(height: 30,),
                 FadeAnimation(
-                  1.2, Padding(
+                  0.5, Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 80),
                   child: InkWell(
                       onTap: () {
@@ -959,6 +931,7 @@ class _LoginBodyState extends State<LoginBody> {
 
     final response =
     await http.get(url);
+    Navigator.of(context).pop();
     if (response.statusCode == 200) {
       final isUser = json.decode(response.body)['Success'];
       if(isUser == true) {
@@ -970,8 +943,7 @@ class _LoginBodyState extends State<LoginBody> {
             }
         );
         prefs.setBool('teacherStatus',true);
-        Navigator.of(context).pop();
-        Timer(Duration(milliseconds: 600), () {
+        Timer(Duration(milliseconds: 400), () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Teacher()),
@@ -1002,7 +974,163 @@ class _LoginBodyState extends State<LoginBody> {
       duration: Duration(milliseconds: 800),
     ));
   }
+  int indexGrade;
+  Future<void> _showDialog() async {
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int schoolId =  prefs.getInt('schoolId');
+
+    if(schoolId == 0) {
+      final scaff = Scaffold.of(context);
+      scaff.showSnackBar(SnackBar(
+        content: Text("Please, Select The School Name"),
+        backgroundColor: Colors.black26,
+        duration: Duration(milliseconds: 800),
+      ));
+    }
+    else {
+      return showDialog<void>(
+          context: context,
+          barrierDismissible: true, // user must tap button!
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Color(0xfffbf9e7),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+              content: Container(
+                child: Container(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20,10,20,0),
+                      child: FutureBuilder<List<Grade>>(
+                        future: Fetch(http.Client()),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) ;
+                          if(snapshot.hasData) {
+                            return snapshot.data.length > 0 ? ListView.builder(
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return
+                                    index == indexGrade ? FadeAnimation(
+                                      0.2, Container(
+                                      color: Colors.orange[400],
+                                      child: InkWell(
+                                        onTap: () async {
+                                          changedNowGrade =
+                                              snapshot.data[index].gradeNameEng;
+                                          changedNowId =
+                                              snapshot.data[index].gradeId;
+                                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                                          int oldGradeId = prefs.getInt('gradeId');
+                                          setState(() {
+                                            selectedGrade = changedNowGrade;
+
+                                          });
+                                          if(oldGradeId == 0) {
+                                          }
+                                          else if(oldGradeId!=changedNowId) {
+                                            prefs.setInt('gradeId',0);
+                                            prefs.setInt('studentId',0);
+                                            setState(() {
+                                              selectedStudentName = '';
+                                            });
+                                          }
+                                          selectedGradeId = changedNowId;
+                                          indexGrade = index;
+                                          prefs.setInt('gradeId',changedNowId);
+                                          Duration(milliseconds: 100);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.5),
+                                              child: Center(child: Text(
+                                                snapshot.data[index]
+                                                    .gradeNameEng,
+                                                style: TextStyle(
+                                                    color: Colors.white
+                                                ),)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    ) :
+                                    FadeAnimation(
+                                      0.2, Container(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          changedNowGrade =
+                                              snapshot.data[index].gradeNameEng;
+                                          changedNowId =
+                                              snapshot.data[index].gradeId;
+                                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                                          int oldGradeId = prefs.getInt('gradeId');
+                                          setState(() {
+                                            selectedGrade = changedNowGrade;
+
+                                          });
+                                          if(oldGradeId == 0) {
+                                          }
+                                          else if(oldGradeId!=changedNowId) {
+                                            prefs.setInt('gradeId',0);
+                                            prefs.setInt('studentId',0);
+                                            setState(() {
+                                              selectedStudentName = '';
+                                            });
+                                          }
+                                          selectedGradeId = changedNowId;
+                                          indexGrade = index;
+                                          prefs.setInt('gradeId',changedNowId);
+                                          Duration(milliseconds: 100);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.5),
+                                              child: Center(child: Text(
+                                                  snapshot.data[index]
+                                                      .gradeNameEng)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    );
+                                }
+                            )
+                                :
+                            Empty                          (
+                            );
+
+
+                          } else { return Loader(); }
+                        },
+                      )
+                  ),
+                ),
+              ),
+
+              elevation: 4,
+            );} );
+    }
+  }
 
 
 

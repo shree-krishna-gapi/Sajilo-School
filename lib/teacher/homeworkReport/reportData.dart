@@ -15,83 +15,62 @@ class ReportData extends StatelessWidget {
       body: InkWell( onTap: () {
         Navigator.of(context).pop();
       },
-        child: Center(
-          child: Container(
-            padding: EdgeInsets.all(20),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                color: Color(0xfffbf9e7),
-              ),
-              height: 260,
-              width: double.infinity,
-              child: ListView(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15)
-                        ),
-                        gradient: purpleGradient
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10,11,10,11
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: Color(0xfffbf9e7),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                     Row(
+                       children: <Widget>[
+                         headText(context,'Subject:-  '),
+                         subText(context,subjectNames)
+                       ],
+                     ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(child: RoutinHead(head:'Date'),width:80),
-                              Expanded(child: RoutinHead(head:'Subject'),flex: 3,),
-                              Expanded(child: RoutinHead(head:'Homework'),flex: 4),
-
-                            ],
-                          ),
+                          headText(context,'Date:-  '),
+                          subText(context,homeworkDates)
                         ],
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10,8,10,8),
-                    child: Row(
-                      children: <Widget>[
-                        Container(child: Text(homeworkDates),width: 80,),
-                        Expanded(child: Text(subjectNames),flex: 3,),
-                        Expanded(child: Text(homeworkDetails),flex: 4,),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    height: 1, color: Colors.black12,)
+                      SizedBox(height: 5,),
+                      headText(context,'Homework Task:'),
+                      SizedBox(height: 5,),
+                      Row(
+                        children: <Widget>[
+                          Flexible(
+                            child:
+                              subText(context,'sdfds I have a problem with button expanded in flutter, I need align the icon to the left of the'),
+                          )
+                        ],
+                      ),
 
-                ],
-              ),
 
+
+                    ],
+                  ),width: double.infinity, ),
+              ],
             ),
-
-
-          ),
-        ),
+          ],
+        )
       ),
     );
   }
-}
-
-
-class RoutinHead extends StatelessWidget {
-  final String head;
-  RoutinHead({this.head});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(head,
-      style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600,
-        color: Colors.white,
-        letterSpacing: 0.4,
-      ),);
+  Text subText(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 14.5,letterSpacing: 0.2),);
+  }
+  Text headText(BuildContext context,String txt) {
+    return Text(txt,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15,color: Colors.black.withOpacity(0.8)),);
   }
 }

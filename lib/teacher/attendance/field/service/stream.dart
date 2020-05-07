@@ -30,13 +30,13 @@ List<GetStream> parseData1(String responseBody) {
   return parsed.map<GetStream>((json) => GetStream.fromJson(json)).toList();
 }
 class GetStream {
-  final int gradeId;
-  final String gradeNameEng;
-  GetStream({this.gradeId,this.gradeNameEng,
+  final int streamId;
+  final String streamName;
+  GetStream({this.streamId,this.streamName,
   });
   factory GetStream.fromJson(Map<String, dynamic> json) {
     return GetStream(
-      gradeId: json['StreamId'] as int,
-      gradeNameEng: json['StreamNameEnglish'] as String,
+      streamId: json['StreamId'] as int,
+      streamName: json['StreamNameEnglish'] as String,
     );}
 }

@@ -15,7 +15,7 @@ Future<List<GetSubject>> FetchSubject(http.Client client) async {
     await http.get("${Urls.BASE_API_URL}/login/GetSubjects?schoolid=$schoolId&streamId=$streamId");
 //    print("${Urls.BASE_API_URL}/login/GetSubjects?schoolid=$schoolId&streamId=$hwStreamId");
     if (response.statusCode == 200) {
-      print('sdfdsf');
+
       final stringData = response.body;
       return compute(parseData1, stringData);
     } else {
@@ -31,13 +31,13 @@ List<GetSubject> parseData1(String responseBody) {
   return parsed.map<GetSubject>((json) => GetSubject.fromJson(json)).toList();
 }
 class GetSubject {
-  final int gradeId;
-  final String gradeNameEng;
-  GetSubject({this.gradeId,this.gradeNameEng,
+  final int subjectId;
+  final String subjectName;
+  GetSubject({this.subjectId,this.subjectName,
   });
   factory GetSubject.fromJson(Map<String, dynamic> json) {
     return GetSubject(
-      gradeId: json['SubjectId'] as int,
-      gradeNameEng: json['SubjectNameEnglish'] as String,
+      subjectId: json['SubjectId'] as int,
+      subjectName: json['SubjectNameEnglish'] as String,
     );}
 }

@@ -16,19 +16,19 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 const debug = false;
 class Download extends StatelessWidget {
-  Download({this.title});
-  final String title;
+  Download({this.subject,this.description});
+  final String subject; final String description;
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    return Download1(platform: platform,);
+    return Download1(platform: platform,subject: subject,description:description);
   }
 }
 
 class Download1 extends StatefulWidget {
   final TargetPlatform platform;
-
-  Download1({Key key, this.platform}) : super(key: key);
+  final String subject; final String description;
+  Download1({Key key, this.platform, this.subject, this.description}) : super(key: key);
   @override
   _Download1State createState() => _Download1State();
 }
@@ -135,57 +135,89 @@ class _Download1State extends State<Download1> {
     final platform = Theme.of(context).platform;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Download File'),
+        title: Text('Download Homework '),
         backgroundColor: Colors.blue[800],
       ),
       body:
-      FutureBuilder<List<DownloadFile>>(
-          future: FetchDownload(http.Client()),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) ;
-            if(snapshot.hasData) {
-              return snapshot.data.length > 0 ?
-              ListView.builder(
-                  itemCount: snapshot.data == null ? 0 : snapshot.data.length,
-                  itemBuilder: (context, index) {
-                    return Column(
+      Container(
+        child: Column(
+          children: <Widget>[
+            Container(
+
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 10,),
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: Row(
                         children: <Widget>[
+                          Text('Subject: ',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
+                          Text(widget.subject,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 15),),
+                        ],
+                      )),
 
-                          SizedBox(height: 12,),
-                          Row(
-                            children: <Widget>[
-                              Container(width:35, child: Align(alignment:Alignment.center,child: Text('${index+1}.',style: TextStyle(color: Colors.black),)),
-                              ),
-                              Expanded(child: Test(link:'${snapshot.data[index].fileLocation}'),flex: 4,),
-                              Expanded(child: InkWell(
-                                  onTap: (){
-                                    _requestDownload(snapshot.data[index].fileLocation);
+                    ],
+                  ),
+                  SizedBox(height: 5,),
+                  Text(widget.description)
+                ],
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder<List<DownloadFile>>(
+                  future: FetchDownload(http.Client()),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) ;
+                    if(snapshot.hasData) {
+                      return snapshot.data.length > 0 ?
+                      ListView.builder(
+                          itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                                children: <Widget>[
 
-                                    print('${snapshot.data[index].fileLocation}');
+                                  SizedBox(height: 12,),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(width:35, child: Align(alignment:Alignment.center,child: Text('${index+1}.',style: TextStyle(color: Colors.black),)),
+                                      ),
+                                      Expanded(child: Test(link:'${snapshot.data[index].fileLocation}'),flex: 4,),
+                                      Expanded(child: InkWell(
+                                          onTap: (){
+                                            _requestDownload(snapshot.data[index].fileLocation);
 
-                                  },
-                                  child: Icon(Icons.file_download,color: Colors.orange, size: 24,)),flex: 1,)
+                                            print('${snapshot.data[index].fileLocation}');
 
-                            ],
-                          )
-                        ]
+                                          },
+                                          child: Icon(Icons.file_download,color: Colors.orange, size: 24,)),flex: 1,)
 
-                    );
+                                    ],
+                                  )
+                                ]
+
+                            );
+                          }
+
+                      ) : FadeAnimation(
+                        0.4, Align(
+                          alignment: Alignment.center,
+                          child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                            letterSpacing: 0.4,),)
+                      ),
+                      );
+                    }
+                    else {
+                      return Align(child: Loader(),alignment: Alignment.center,);
+                    }
                   }
 
-              ) : FadeAnimation(
-                0.4, Align(
-                  alignment: Alignment.center,
-                  child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
-                    letterSpacing: 0.4,),)
               ),
-              );
-            }
-            else {
-              return Align(child: Loader(),alignment: Alignment.center,);
-            }
-          }
-
+            ),
+          ],
+        ),
       )
 
 

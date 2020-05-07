@@ -12,6 +12,7 @@ class GetYear extends StatefulWidget {
 class _GetYearState extends State<GetYear> {
   String selectedYear;
   int selectedYearId;
+  int indexYear;
   @override
   void initState(){
     getCurrentYear();
@@ -20,6 +21,7 @@ class _GetYearState extends State<GetYear> {
   Future getCurrentYear() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String currentYear = prefs.getString('educationalYearNameHwAR');
+    indexYear = prefs.getInt('indexYearHwAR');
     setState(() {
       selectedYear = currentYear;
     });
@@ -76,55 +78,86 @@ class _GetYearState extends State<GetYear> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container( height: 180,
+                child: Container(
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20,20,20,10),
+                      padding: const EdgeInsets.fromLTRB(20,10,20,0),
                       child: FutureBuilder<List<EducationalYear>>(
                         future: FetchYear(http.Client()),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) ;
                           return snapshot.hasData ?
-                          CupertinoPicker(
-                            itemExtent: 60.0,
-                            backgroundColor: Color(0x00000000),
-                            onSelectedItemChanged: (index) {
-
-                              changedNowYear = snapshot.data[index].sYearName;
-                              changedNowYearId = snapshot.data[index].educationalYearID;
-
-                            },
-                            children: new List<Widget>.generate(snapshot.data.length, (index) {
-                              changedNowYear = snapshot.data[0].sYearName;
-                              changedNowYearId = snapshot.data[0].educationalYearID;
-                              return Align(
-                                alignment: Alignment.center,
-                                child: Text(snapshot.data[index].sYearName,style: TextStyle(
-                                    fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8
-                                ),),
-                              );
-                            }),
+                          ListView.builder(
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (BuildContext context,int index) {
+                                return
+                                  index == indexYear ? Container(
+                                    color: Colors.orange[400],
+                                    child: InkWell(
+                                      onTap: ()async {
+                                        indexYear = index;
+                                        setState(() {
+                                          selectedYear = snapshot.data[index].sYearName;
+                                        });
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        prefs.setInt('indexYearHwAR',index);
+                                        prefs.setString('educationalYearNameHwAR',snapshot.data[index].sYearName);
+                                        prefs.setInt('educationalYearIdHwAR',snapshot.data[index].educationalYearID);
+                                        Timer(Duration(milliseconds: 100), () {
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.symmetric(vertical: 8.5),
+                                            child: Center(child: Text(snapshot.data[index].sYearName,style: TextStyle(
+                                                color: Colors.white
+                                            ),)),
+//                                    color: Colors.black12,
+                                          ),
+                                          Container(
+                                            height: 1, color: Colors.black.withOpacity(0.05),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ):
+                                  Container(
+                                    child: InkWell(
+                                      onTap: ()async {
+                                        indexYear = index;
+                                        setState(() {
+                                          selectedYear = snapshot.data[index].sYearName;
+                                        });
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        prefs.setInt('indexYearHwAR',index);
+                                        prefs.setString('educationalYearNameHwAR',snapshot.data[index].sYearName);
+                                        prefs.setInt('educationalYearIdHwAR',snapshot.data[index].educationalYearID);
+                                        Timer(Duration(milliseconds: 100), () {
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.symmetric(vertical: 8.5),
+                                            child: Center(child: Text(snapshot.data[index].sYearName)),
+//                                    color: Colors.black12,
+                                          ),
+                                          Container(
+                                            height: 1, color: Colors.black.withOpacity(0.05),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                              }
                           ):Center(child: Loader());
                         },
                       )
                   ),
                 ),
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: ()async {
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                    setState(() {
-                      selectedYear = changedNowYear;
-                    });
-                    selectedYearId = changedNowYearId;
-                    prefs.setInt('educationalYearIdHwAR',changedNowYearId);
-                    prefs.setString('educationalYearNameHwAR',selectedYear);
-                    Duration(milliseconds: 100);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
               elevation: 4,
             );} );
 

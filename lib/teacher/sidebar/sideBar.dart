@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:sajiloschool/auth/service/user.dart';
-import '../utils/pallate.dart';
-import '../auth/login.dart';
+import 'package:sajiloschool/utils/pallate.dart';
+import 'package:sajiloschool/auth/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'api.dart';
-import 'sidebar/profile.dart';
+import 'package:sajiloschool/utils/api.dart';
+import 'package:sajiloschool/utils/sidebar/profile.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'sidebar/calender.dart';
+import 'calender.dart';
 import 'package:sajiloschool/screen/hh.dart';
 import 'package:sajiloschool/global/service/offlineYear.dart';
 import 'package:sajiloschool/global/service/offlineMonth.dart';
@@ -158,21 +158,6 @@ class SideBarBody extends StatefulWidget {
 }
 
 class _SideBarBodyState extends State<SideBarBody> {
-  String studentName = '';
-
-  @override
-  void initState() {
-    super.initState();
-    getUser();
-  }
-  getUser() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String names  = pref.getString('studentName');
-    setState(() {
-      studentName = names;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -183,8 +168,8 @@ class _SideBarBodyState extends State<SideBarBody> {
         children: <Widget>[
           Container(
             child: new UserAccountsDrawerHeader(
-              accountName: Text('$studentName'),
-              accountEmail: Text('$studentName@demo.com'),
+//              accountName: Text(studentName),
+//              accountEmail: Text('$studentName@demo.com'),
               currentAccountPicture: GestureDetector(
                 child: new CircleAvatar(
                   backgroundColor: Colors.white,
@@ -206,26 +191,26 @@ class _SideBarBodyState extends State<SideBarBody> {
             margin: EdgeInsets.all(0),
             child: Column(
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(15,12,15,12),
-                  child: InkWell(
-                    onTap: () {
-                      showDialog<void>(
-                          context: context,
-                          barrierDismissible: true, // user must tap button!
-                          builder: (BuildContext context) {
-                            return Profile();
-                          });
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        ListText(txt: 'Profile Details',),
-                        Icon(Icons.contact_mail,color: SideBarColor.color),
-                      ],
-                    ),
-                  ),
-                ),
+//                Container(
+//                  padding: EdgeInsets.fromLTRB(15,12,15,12),
+//                  child: InkWell(
+//                    onTap: () {
+//                      showDialog<void>(
+//                          context: context,
+//                          barrierDismissible: true, // user must tap button!
+//                          builder: (BuildContext context) {
+//                            return Profile();
+//                          });
+//                    },
+//                    child: Row(
+//                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                      children: <Widget>[
+//                        ListText(txt: 'Profile Details',),
+//                        Icon(Icons.contact_mail,color: SideBarColor.color),
+//                      ],
+//                    ),
+//                  ),
+//                ),
                 Container(color: Colors.black12.withOpacity(0.05),height: 1,),
                 Container(
                   padding: EdgeInsets.fromLTRB(15,12,15,12),
@@ -586,7 +571,7 @@ class _SideBarBodyState extends State<SideBarBody> {
         }
     );
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('userStatus',false);
+    prefs.setBool('teacherStatus',false);
     Timer(Duration(milliseconds: 200), () {
       Navigator.of(context).pop();
     });
@@ -600,7 +585,7 @@ class _SideBarBodyState extends State<SideBarBody> {
           }
       );
     });
-    Timer(Duration(milliseconds: 700), () {
+    Timer(Duration(milliseconds: 600), () {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Login()),

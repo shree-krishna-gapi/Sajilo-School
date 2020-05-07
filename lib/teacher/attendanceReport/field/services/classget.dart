@@ -9,7 +9,7 @@ Future<List<GetClass>> FetchClass(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var schoolId = prefs.getInt('schoolId');
   var streamId = prefs.getInt('tempChangedGradeId');
-  var yearId = prefs.getInt('attenendanceEducationalYearId');
+  var yearId = prefs.getInt('educationalYearIdHwAR');
   try {
     final response =
     await http.get("${Urls.BASE_API_URL}/login/GetClass?schoolId=$schoolId"

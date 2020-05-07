@@ -7,7 +7,7 @@ import 'package:sajiloschool/utils/api.dart';
 class Services {
   static Future<List<User>> getUsers(schoolId,gradeId) async {
    String url = '${Urls.BASE_API_URL}/login/getstudent?schoolid=$schoolId&gradeid=$gradeId';
-    print(url);
+    print('get Student-> $url');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {

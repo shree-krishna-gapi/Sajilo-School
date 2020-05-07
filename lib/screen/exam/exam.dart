@@ -132,7 +132,7 @@ class _BodySectionState extends State<BodySection> {
   String selectedYear='';
   String changedNowYear;
   // Year
-  bool loading;
+  bool loading = true;
 
   FixedExtentScrollController scrollController;
 
@@ -155,7 +155,6 @@ class _BodySectionState extends State<BodySection> {
     setState(() {
       selectedYear = currentYear;
     });
-
   }
 
   @override
@@ -181,7 +180,7 @@ class _BodySectionState extends State<BodySection> {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Text(selectedYear,style: TextStyle(
+                                Text('$selectedYear',style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.8,
                                     fontSize: 15,

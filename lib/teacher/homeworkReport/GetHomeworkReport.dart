@@ -14,6 +14,7 @@ import 'field/service/classget.dart';
 import 'field/service/stream.dart';
 import 'field/service/subject.dart';
 import 'reportData.dart';
+import 'newservice/getYear.dart';
 class GetHomeworkReport extends StatefulWidget {
   @override
   _GetHomeworkReportState createState() => _GetHomeworkReportState();
@@ -148,11 +149,31 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 40,),
-//                FadeAnimation(0.2, GetYear()),
-//                SizedBox(height: sizedBoxHeight,),
+                SizedBox(height: 20,),
                 FadeAnimation(
-                  0.5, Row(
+                  0.2, Row(
+                    children: <Widget>[
+                      Expanded(child: LabelText(labelTitle:''),flex: 3,),
+                      Expanded(child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text('HomeWork Report',style: TextStyle(fontSize: 20,color: Colors.white,letterSpacing: 0.4,
+                            shadows:[
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 3.0,
+                                color: Colors.black12,
+                              ),
+                            ]
+                        ),),
+                      ),flex: 5,)
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20,),
+                FadeAnimation(0.2, GetYear()),
+                SizedBox(height: sizedBoxHeight,),
+                FadeAnimation(
+                  0.3, Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(child: LabelText(labelTitle:'Grade'),flex: 3,),
@@ -217,7 +238,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 ),
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(
-                  0.6, Row(
+                  0.4, Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(child: LabelText(labelTitle: 'Stream',),flex: 3,),
@@ -282,7 +303,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 ),
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(
-                  0.7, Row(
+                  0.5, Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(child: LabelText(labelTitle: 'Subject',),flex: 3,),
@@ -347,7 +368,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 ),
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(
-                  0.7, Row(
+                  0.6, Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Expanded(child: LabelText(labelTitle: 'Class',),flex: 3,),
@@ -413,14 +434,13 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(0.7, _hwDate(context,'Date','date')),
                 SizedBox(height: 20,),
-
                 FadeAnimation(
-                  0.8, Row(
+                  0.7, Row(
                   children: <Widget>[
                     Expanded(child: Text(''),flex: 1,),
                     Expanded(child: Container(
                       width: double.infinity,
-                      padding: EdgeInsets.only(left: 20,top: 40),
+                      padding: EdgeInsets.only(left: 20,top: 20),
                       child: Material(
                         color: Color(0x00000000),
                         shape: RoundedRectangleBorder(
@@ -459,21 +479,24 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 ),
                 ),
                 SizedBox(height: 20,),
-                Center(
-                  child: Center(
-                    child: FlatButton(onPressed: () {
-                      Navigator.of(context).pop();},
-                      child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 5,
-                        width: 90,
-                        decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.65),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)
-                            )
-                        ),
+                FadeAnimation(
+                  0.7, Center(
+                    child: Center(
+                      child: FlatButton(onPressed: () {
+                        Navigator.of(context).pop();},
+                        child: Container(
+                          margin: EdgeInsets.only(left: 15),
+                          height: 5,
+                          width: 90,
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.65),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(4)
+                              )
+                          ),
 
+                        ),
+                        splashColor: Color(0x0000000),
                       ),
                     ),
                   ),
@@ -527,7 +550,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
       ],
     );
   }
-
+  int indexGrade;
   Future<void> _showGradeDialog() {
 
     return showDialog<void>(
@@ -540,66 +563,160 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-              child: Container( height: 260,
-                child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,10,20,0),
-                    child: FutureBuilder<List<Grade>>(
-                      future: Fetch(http.Client()),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) ;
-                        return snapshot.hasData ?
-                        CupertinoPicker(
-                          itemExtent: 60.0,
-                          backgroundColor: Color(0x00000000),
-                          onSelectedItemChanged: (index) {
-                            changedNowGrade = snapshot.data[index].gradeNameEng;
-                            changedGradeId = snapshot.data[index].gradeId;
-                          },
-                          children: new List<Widget>.generate(snapshot.data.length, (index) {
-                            changedNowGrade = snapshot.data[0].gradeNameEng;
-                            changedGradeId = snapshot.data[0].gradeId;
-                            return Align(
-                              alignment: Alignment.center,
-                              child: Text(snapshot.data[index].gradeNameEng,style: TextStyle(
-                                  fontSize: 17,fontWeight: FontWeight.w600, letterSpacing: 0.8
-                              ),),
+              child: Container(
+                child: Center(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20,10,20,0),
+                      child: FutureBuilder<List<Grade>>(
+                        future: Fetch(http.Client()),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) ;
+                          if(snapshot.hasData) {
+                            return snapshot.data.length > 0 ? ListView.builder(
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return
+                                    index == indexGrade ? FadeAnimation(
+                                      0.2, Container(
+                                        color: Colors.orange[400],
+                                        child: InkWell(
+                                          onTap: () async {
+                                            changedNowGrade =
+                                                snapshot.data[index].gradeNameEng;
+                                            changedGradeId =
+                                                snapshot.data[index].gradeId;
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            prefs.setInt('tempChangedGradeId',changedGradeId);
+                                            prefs.setInt('gradeId',changedGradeId);
+                                            if(selectedGradeId != changedGradeId) {
+                                              selectedStreamId = 0;
+                                              selectedStream = '';
+                                              selectedSubjectId = 0;
+                                              selectedSubject = '';
+                                              selectedClassId = 0;
+                                              selectedClass = '';
+                                            }
+                                            setState(() {
+                                              selectedGrade = changedNowGrade;
+                                            });
+                                            selectedGradeId = changedGradeId;
+                                            indexGrade = index;
+                                            Duration(milliseconds: 100);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8.5),
+                                                child: Center(child: Text(
+                                                  snapshot.data[index]
+                                                      .gradeNameEng,
+                                                  style: TextStyle(
+                                                      color: Colors.white
+                                                  ),)),
+//                                    color: Colors.black12,
+                                              ),
+                                              Container(
+                                                height: 1,
+                                                color: Colors.black.withOpacity(
+                                                    0.05),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ) :
+                                    FadeAnimation(
+                                      0.2, Container(
+                                        child: InkWell(
+                                          onTap: () async {
+                                            changedNowGrade =
+                                                snapshot.data[index].gradeNameEng;
+                                            changedGradeId =
+                                                snapshot.data[index].gradeId;
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            prefs.setInt('tempChangedGradeId',changedGradeId);
+                                            prefs.setInt('gradeId',changedGradeId);
+                                            if(selectedGradeId != changedGradeId) {
+                                              selectedStreamId = 0;
+                                              selectedStream = '';
+                                              selectedSubjectId = 0;
+                                              selectedSubject = '';
+                                              selectedClassId = 0;
+                                              selectedClass = '';
+                                            }
+                                            setState(() {
+                                              selectedGrade = changedNowGrade;
+                                            });
+                                            selectedGradeId = changedGradeId;
+                                            indexGrade = index;
+                                            Duration(milliseconds: 100);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8.5),
+                                                child: Center(child: Text(
+                                                    snapshot.data[index]
+                                                        .gradeNameEng)),
+//                                    color: Colors.black12,
+                                              ),
+                                              Container(
+                                                height: 1,
+                                                color: Colors.black.withOpacity(
+                                                    0.05),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                }
+                            )
+                                :
+                            Empty                          (
                             );
-                          }),
-                        ):Center(child: Loader());
-                      },
-                    )
+
+
+                          } else { return Loader(); }
+                        },
+                      )
+                  ),
                 ),
               ),
             ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: ()async {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.setInt('tempChangedGradeId',changedGradeId);
-                  prefs.setInt('gradeId',changedGradeId);
-                  if(selectedGradeId != changedGradeId) {
-                    selectedStreamId = 0;
-                    selectedStream = '';
-                    selectedSubjectId = 0;
-                    selectedSubject = '';
-                    selectedClassId = 0;
-                    selectedClass = '';
-
-                  }
-                  setState(() {
-                    selectedGrade = changedNowGrade;
-                    selectedGradeId = changedGradeId;
-                  });
-                  Duration(milliseconds: 500);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+//            actions: <Widget>[
+//              FlatButton(
+//                child: Text('Ok'),
+//                onPressed: ()async {
+//                  SharedPreferences prefs = await SharedPreferences.getInstance();
+//                  prefs.setInt('tempChangedGradeId',changedGradeId);
+//                  prefs.setInt('gradeId',changedGradeId);
+//                  if(selectedGradeId != changedGradeId) {
+//                    selectedStreamId = 0;
+//                    selectedStream = '';
+//                    selectedSubjectId = 0;
+//                    selectedSubject = '';
+//                    selectedClassId = 0;
+//                    selectedClass = '';
+//                  }
+//                  setState(() {
+//                    selectedGrade = changedNowGrade;
+//                    selectedGradeId = changedGradeId;
+//                  });
+//                  Duration(milliseconds: 500);
+//                  Navigator.of(context).pop();
+//                },
+//              ),
+//            ],
             elevation: 4,
           );} );
 
   }
+  int indexStream;
   _showStreamDialog() {
     if(selectedGradeId == 0) {
       _showSnackBar(context,'Please, Select The Grade.');
@@ -615,79 +732,145 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 260,
+                child: Container(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetStream>>(
                         future: FetchStream(http.Client()),
                         builder: (context, snapshot) {
                           if (snapshot.hasError);
-                          if (snapshot.hasData) {
-                            return snapshot.data.length > 0 ?
-                            CupertinoPicker(
-                              itemExtent: 60.0,
-                              backgroundColor: Color(0x00000000),
-                              onSelectedItemChanged: (index) {
-                                changedNowStream =
-                                    snapshot.data[index].gradeNameEng;
-                                changedNowStreamId =
-                                    snapshot.data[index].gradeId;
-                                print(index);
-                              },
-                              children: new List<Widget>.generate(
-                                  snapshot.data.length, (index) {
-                                changedNowStream =
-                                    snapshot.data[0].gradeNameEng;
-                                changedNowStreamId = snapshot.data[0].gradeId;
-                                return Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    snapshot.data[index].gradeNameEng,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.8
-                                    ),),
-                                );
-                              }),
-                            ) : Empty();
-                          }
-                          else {
-                            return Loader();
-                          }
+                          if(snapshot.hasData) {
+                            return snapshot.data.length > 0 ? Center(
+                              child: ListView.builder(
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return
+                                      index == indexStream? FadeAnimation(
+                                        0.2, Container(
+                                        color: Colors.orange[400],
+                                        child: InkWell(
+                                          onTap: () async {
+                                            changedNowStream =
+                                                snapshot.data[index].streamName;
+                                            changedNowStreamId =
+                                                snapshot.data[index].streamId;
+                                            SharedPreferences prefs = await SharedPreferences
+                                                .getInstance();
+                                            prefs.setInt('tempChangedClassId', changedGradeId);
+                                            if (selectedGradeId != changedGradeId) {
+                                              selectedStreamId = 0;
+                                              selectedStream = '';
+                                              selectedClassId = 0;
+                                              selectedClass = '';
+                                            }
+                                            setState(() {
+                                              selectedStream = changedNowStream;
+
+                                            });
+                                            prefs.setInt('streamId',changedGradeId);
+                                            selectedStreamId = changedNowStreamId;
+                                            indexStream = index;
+                                            Duration(milliseconds: 100);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8.5),
+                                                child: Center(child: Text(
+                                                  snapshot.data[index]
+                                                      .streamName,
+                                                  style: TextStyle(
+                                                      color: Colors.white
+                                                  ),)),
+//                                    color: Colors.black12,
+                                              ),
+                                              Container(
+                                                height: 1,
+                                                color: Colors.black.withOpacity(
+                                                    0.05),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      ) :
+                                      FadeAnimation(
+                                        0.2, Container(
+                                        child: InkWell(
+                                          onTap: () async {
+                                            changedNowStream =
+                                                snapshot.data[index].streamName;
+                                            changedNowStreamId =
+                                                snapshot.data[index].streamId;
+                                            SharedPreferences prefs = await SharedPreferences
+                                                .getInstance();
+                                            prefs.setInt('tempChangedClassId', changedGradeId);
+                                            if (selectedGradeId != changedGradeId) {
+                                              selectedStreamId = 0;
+                                              selectedStream = '';
+                                              selectedClassId = 0;
+                                              selectedClass = '';
+                                            }
+                                            setState(() {
+                                              selectedStream = changedNowStream;
+
+                                            });
+                                            prefs.setInt('streamId',changedGradeId);
+                                            selectedStreamId = changedNowStreamId;
+                                            indexStream = index;
+                                            Duration(milliseconds: 100);
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8.5),
+                                                child: Center(child: Text(
+                                                    snapshot.data[index]
+                                                        .streamName)),
+//                                    color: Colors.black12,
+                                              ),
+                                              Container(
+                                                height: 1,
+                                                color: Colors.black.withOpacity(
+                                                    0.05),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      );
+                                  }
+                              ),
+                            )
+                                :
+                            Empty                          (
+                            );
+
+
+                          } else { return Loader(); }
                         },
                       )
                   ),
                 ),
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () async {
-                    SharedPreferences prefs = await SharedPreferences
-                        .getInstance();
-                    prefs.setInt('tempChangedClassId', changedGradeId);
-                    if (selectedGradeId != changedGradeId) {
-                      selectedStreamId = 0;
-                      selectedStream = '';
-                      selectedClassId = 0;
-                      selectedClass = '';
-                    }
-                    setState(() {
-                      selectedStream = changedNowStream;
-                      selectedStreamId = changedNowStreamId;
-                    });
-                    prefs.setInt('streamId',changedGradeId);
-                    Duration(milliseconds: 500);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+//              actions: <Widget>[
+//                FlatButton(
+//                  child: Text('Ok'),
+//                  onPressed: () async {
+//
+//                  },
+//                ),
+//              ],
               elevation: 4,
             );
           });
     }
   }
+  int indexSubject;
   _showSubjectDialog() {
     if(selectedStreamId == 0) {
       _showSnackBar(context,'Please, Select The Stream.');
@@ -703,79 +886,118 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 260,
+                child: Container(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetSubject>>(
                         future: FetchSubject(http.Client()),
                         builder: (context, snapshot) {
                           if (snapshot.hasError);
-                          if (snapshot.hasData) {
-                            return snapshot.data.length > 0 ?
-                            CupertinoPicker(
-                              itemExtent: 60.0,
-                              backgroundColor: Color(0x00000000),
-                              onSelectedItemChanged: (index) {
-                                changedNowSubject =
-                                    snapshot.data[index].gradeNameEng;
-                                changedNowSubjectId =
-                                    snapshot.data[index].gradeId;
-                                print(index);
-                              },
-                              children: new List<Widget>.generate(
-                                  snapshot.data.length, (index) {
-                                changedNowSubject =
-                                    snapshot.data[0].gradeNameEng;
-                                changedNowSubjectId = snapshot.data[0].gradeId;
-                                return Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    snapshot.data[index].gradeNameEng,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.8
-                                    ),),
-                                );
-                              }),
-                            ) : Empty();
-                          }
-                          else {
-                            return Loader();
+                          if(snapshot.hasData) {
+                            return snapshot.data.length > 0 ? Center(
+                              child: ListView.builder(
+                                  itemCount: snapshot.data.length,
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (BuildContext context, int index)
+
+                                  {
+                                    return index == indexSubject ? FadeAnimation(
+                                      0.2, Container(
+                                      color: Colors.orange[400],
+                                      child: InkWell(
+                                        onTap: () {
+                                          changedNowSubject =
+                                              snapshot.data[index].subjectName;
+                                          changedNowSubjectId =
+                                              snapshot.data[index].subjectId;
+                                          setState(() {
+                                            selectedSubject = changedNowSubject;
+                                          });
+                                          selectedSubjectId = changedNowSubjectId;
+                                          Duration(milliseconds: 100);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.5),
+                                              child: Center(child: Text(
+                                                snapshot.data[index]
+                                                    .subjectName,
+                                                style: TextStyle(
+                                                    color: Colors.white
+                                                ),)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    ) :
+                                    FadeAnimation(
+                                      0.2, Container(
+                                      child: InkWell(
+                                        onTap: () {
+                                          changedNowSubject =
+                                              snapshot.data[index].subjectName;
+                                          changedNowSubjectId =
+                                              snapshot.data[index].subjectId;
+                                          setState(() {
+                                            selectedSubject = changedNowSubject;
+                                          });
+                                          selectedSubjectId = changedNowSubjectId;
+                                          Duration(milliseconds: 100);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.5),
+                                              child: Center(child: Text(
+                                                  snapshot.data[index]
+                                                      .subjectName)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    );
+                                  }
+                              ),
+                            )
+                                :
+                            Empty                          (
+                            );
+
+
+                          } else { return Loader();
                           }
                         },
                       )
                   ),
                 ),
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () async {
-                    SharedPreferences prefs = await SharedPreferences
-                        .getInstance();
-                    prefs.setInt('streamId', changedNowStreamId);
-//                    if (selectedStreamId != changedNowStreamId) {
-//                      selectedSubjectId = 0;
-//                      selectedSubject = '';
-//                      selectedId = 0;
-//                      selectedClass = '';
-//                    }
-                    setState(() {
-                      selectedSubject = changedNowSubject;
-                      selectedSubjectId = changedNowSubjectId;
-                    });
-                    Duration(milliseconds: 500);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+
               elevation: 4,
             );
           });
     }
   }
-
+  int indexClass;
   _showClassDialog() {
     if(selectedStreamId == 0) {
       _showSnackBar(context,'Please, Select The Stream.');
@@ -791,61 +1013,116 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(height: 260,
+                child: Container(
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: FutureBuilder<List<GetClass>>(
                         future: FetchClass(http.Client()),
                         builder: (context, snapshot) {
                           if (snapshot.hasError);
-                          if (snapshot.hasData) {
-                            return snapshot.data.length > 0 ?
-                            CupertinoPicker(
-                              itemExtent: 60.0,
-                              backgroundColor: Color(0x00000000),
-                              onSelectedItemChanged: (index) {
-                                changedNowClass =
-                                    snapshot.data[index].className;
-                                changedNowClassId =
-                                    snapshot.data[index].classId;
-                                print(index);
-                              },
-                              children: new List<Widget>.generate(
-                                  snapshot.data.length, (index) {
-                                changedNowClass = snapshot.data[0].className;
-                                changedNowClassId = snapshot.data[0].classId;
-                                return Align(
-                                  alignment: Alignment.center,
-                                  child: Text(snapshot.data[index].className,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.8
-                                    ),),
-                                );
-                              }),
-                            ) : Empty();
-                          }else {
-                            return Loader();
+                          if(snapshot.hasData) {
+                            return snapshot.data.length > 0 ? Center(
+                              child: ListView.builder(
+                                  itemCount: snapshot.data.length,
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (BuildContext context, int index)
+
+                                  {
+                                    return index == indexGrade ? FadeAnimation(
+                                      0.2, Container(
+                                      color: Colors.orange[400],
+                                      child: InkWell(
+                                        onTap: () async {
+                                          changedNowClass =
+                                              snapshot.data[index].className;
+                                          changedNowClassId =
+                                              snapshot.data[index].classId;
+                                          setState(() {
+                                            selectedClass = changedNowClass;
+
+                                          });
+                                          selectedClassId = changedNowClassId;
+                                          indexClass = index;
+                                          Duration(milliseconds: 100);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.5),
+                                              child: Center(child: Text(
+                                                snapshot.data[index]
+                                                    .className,
+                                                style: TextStyle(
+                                                    color: Colors.white
+                                                ),)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    ) :
+                                    FadeAnimation(
+                                      0.2, Container(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          changedNowClass =
+                                              snapshot.data[index].className;
+                                          changedNowClassId =
+                                              snapshot.data[index].classId;
+                                          setState(() {
+                                            selectedClass = changedNowClass;
+
+                                          });
+                                          selectedClassId = changedNowClassId;
+                                          indexClass = index;
+                                          Duration(milliseconds: 100);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.5),
+                                              child: Center(child: Text(
+                                                  snapshot.data[index]
+                                                      .className)),
+//                                    color: Colors.black12,
+                                            ),
+                                            Container(
+                                              height: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    );
+                                  }
+                              ),
+                            )
+                                :
+                            Empty                          (
+                            );
+
+
+                          } else { return Loader();
                           }
                         },
                       )
                   ),
                 ),
               ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () {
-                    setState(() {
-                      selectedClass = changedNowClass;
-                      selectedClassId = changedNowClassId;
-                    });
-                    Duration(milliseconds: 500);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+
               elevation: 4,
             );
           });

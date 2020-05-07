@@ -116,7 +116,7 @@ class _Download1State extends State<Download1> {
     final platform = Theme.of(context).platform;
     return Scaffold(
         appBar: AppBar(
-          title: Text('Download Notice File'),
+          title: Text('Download Notice '),
           backgroundColor: Colors.blue[800],
         ),
         body: Container(

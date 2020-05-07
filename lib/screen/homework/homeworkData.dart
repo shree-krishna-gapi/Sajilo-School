@@ -52,7 +52,8 @@ class _HomeworkDataState extends State<HomeworkData> {
                                           prefs.setInt('homeworkId', snapshot.data[index].homeworkId);
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => Download(title:snapshot.data[index].subjectName)), //JsonApiDropdown
+                                            MaterialPageRoute(builder: (context) => Download(subject:snapshot.data[index].subjectName,
+                                                description:snapshot.data[index].homeworkDetail)), //JsonApiDropdown
                                           );
                                         },
                                         child: Icon(Icons.file_download,color: Colors.orange,size: 22,)
@@ -246,7 +247,8 @@ class _HomeworkData1State extends State<HomeworkData1> {
                                         prefs.setInt('homeworkId', snapshot.data[index].homeworkId);
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => Download(title:snapshot.data[index].subjectName)), //JsonApiDropdown
+                                          MaterialPageRoute(builder: (context) => Download(subject:snapshot.data[index].subjectName,
+                                          description:snapshot.data[index].homeworkDetail)), //JsonApiDropdown
                                         );
                                       },
                                       child: Icon(Icons.file_download,color: Colors.orange,size: 22,)

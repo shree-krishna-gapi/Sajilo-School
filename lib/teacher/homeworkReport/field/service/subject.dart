@@ -31,13 +31,13 @@ List<GetSubject> parseData1(String responseBody) {
   return parsed.map<GetSubject>((json) => GetSubject.fromJson(json)).toList();
 }
 class GetSubject {
-  final int gradeId;
-  final String gradeNameEng;
-  GetSubject({this.gradeId,this.gradeNameEng,
+  final int subjectId;
+  final String subjectName;
+  GetSubject({this.subjectId,this.subjectName,
   });
   factory GetSubject.fromJson(Map<String, dynamic> json) {
     return GetSubject(
-      gradeId: json['SubjectId'] as int,
-      gradeNameEng: json['SubjectNameEnglish'] as String,
+      subjectId: json['SubjectId'] as int,
+      subjectName: json['SubjectNameEnglish'] as String,
     );}
 }

@@ -4,7 +4,7 @@ import 'fadeAnimation.dart';
 import 'package:shimmer/shimmer.dart';
 class Urls {
 //  static const BASE_API_URL = "http://mobileapp.karmathalo.com/Api";  // live server
-  static const BASE_API_URL = "http://192.168.1.89:88/api"; // Ramesh Laptop
+  static const BASE_API_URL = "http://192.168.1.89:88/api"; // Ramesh Laptop192.168.100.12:88
   static const Image_API_URL = "http://192.168.1.89:88";
 //  static const BASE_API_URL = "http://192.168.100.12/School/Api"; // Bikesh Laptop
 //  static const BASE_API_URL = "http://192.168.0.140:88/api";  // mining wifi

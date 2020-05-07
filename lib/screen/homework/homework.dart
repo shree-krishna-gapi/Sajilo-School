@@ -18,19 +18,19 @@ class _BodySectionState extends State<BodySection> {
   String date =('${NepaliDateFormat("y-MM-dd",).format(NepaliDateTime.now())}');
   void initState() {
     setDate();
-    getImageLink();
+//    getImageLink();
     super.initState();
   }
   setDate() async {
     SharedPreferences prefs= await SharedPreferences.getInstance();
     prefs.setString('hwDate',date);
   }
-  getImageLink() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      logoImage = prefs.getString('logoImage');
-    });
-  }
+//  getImageLink() async{
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    setState(() {
+//      logoImage = prefs.getString('logoImage');
+//    });
+//  }
   DateTime backPressTime;
   Future<bool> onWillPop() async {
     DateTime currentTime = DateTime.now();

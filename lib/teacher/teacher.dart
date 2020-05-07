@@ -11,7 +11,7 @@ import 'homeworkReport/GetHomeworkReport.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'sidebar/sideBar.dart';
 class Teacher extends StatefulWidget {
   @override
   _TeacherState createState() => _TeacherState();
@@ -75,9 +75,9 @@ class _TeacherState extends State<Teacher> {
       prefs.setString('educationalYearNameHw', yearName);
       // end of Homework
       //Homework
-//      prefs.setInt('indexYearHwR',i);
-//      prefs.setInt('educationalYearIdHwR', yearId);
-//      prefs.setString('educationalYearNameHwR', yearName);
+      prefs.setInt('indexYearHwR',i);
+      prefs.setInt('educationalYearIdHwR', yearId);
+      prefs.setString('educationalYearNameHwR', yearName);
       // end of Homework
 
       //Attendance
@@ -106,97 +106,68 @@ class _TeacherState extends State<Teacher> {
     return Scaffold(
       body: WillPopScope(
           onWillPop:onWillPop,
-        child: Container(
-          padding: EdgeInsets.all(30),
-          child: Center(
-            child: new Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                InkWell(onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
-                  );
-                },
-                  child: TapDesign(txt:'Homework',tab:'one'),
+        child: Stack(
+          children: <Widget>[
+
+            Container(
+              padding: EdgeInsets.all(30),
+              child: Center(
+                child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+
+                    InkWell(onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
+                      );
+                    },
+                      child: TapDesign(txt:'Homework',tab:'one'),
+                    ),
+                    InkWell(onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
+                      );
+                    },
+                      child: TapDesign(txt:'Homework Report',tab:'two'),
+                    ),
+                    InkWell(onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
+                      );
+                    },
+                      child: TapDesign(txt:'Attendance',tab:'three'),
+                    ),
+                    InkWell(onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
+                      );
+                    },
+                      child: TapDesign(txt:'Attendance Report',tab:'four'),
+                    ),
+                  ],
                 ),
-                InkWell(onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
-                  );
-                },
-                  child: TapDesign(txt:'Homework Report',tab:'two'),
-                ),
-                InkWell(onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
-                  );
-                },
-                  child: TapDesign(txt:'Attendance',tab:'three'),
-                ),
-                InkWell(onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
-                  );
-                },
-                  child: TapDesign(txt:'Attendance Report',tab:'four'),
-                ),
-                InkWell(onTap: (){
-                 signOut();
-                },
-                  child: TapDesign(txt:'Sign Out',tab:'five'),
-                ),
-              ],
-            ),
-          ),
-          decoration: new BoxDecoration(
-//        color: const Color(0xff7c94b6),
-            gradient: purpleGradient,
+              ),
+              decoration: new BoxDecoration(
+                color: Colors.yellow.withOpacity(0.1),
+//                gradient: purpleGradient,
 //          image: new DecorationImage(
 //              fit: BoxFit.cover,
 //              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0), BlendMode.dstATop),
 //              image: ExactAssetImage('assets/banner.jpg')
 //          ),
-          ),
+              ),
+            ),
+            SideBar(),
+          ],
         ),
       )
     );
   }
-  signOut() async {
-    showDialog<void>(
-        context: context,
-        barrierDismissible: true, // user must tap button!
-        builder: (BuildContext context) {
-          return Wait();
-        }
-    );
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-//    prefs.setBool('userStatus',false);
-    prefs.setBool('teacherStatus',false);
-    Timer(Duration(milliseconds: 200), () {
-      Navigator.of(context).pop();
-    });
-    Timer(Duration(milliseconds: 400), () {
-      Navigator.of(context).pop();
-      showDialog<void>(
-          context: context,
-          barrierDismissible: true, // user must tap button!
-          builder: (BuildContext context) {
-            return Success(txt: 'Sign Out',);
-          }
-      );
-    });
-    Timer(Duration(milliseconds: 700), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Login()),
-      );
-    });
 
-  }
 }
 
 
@@ -209,12 +180,14 @@ class TapDesign extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: 5,bottom: 5),
-      child: Container(child:
+      child: Container(
+
+        child:
       Container(child: Row(
         children: <Widget>[
           Expanded(child: Align(
             alignment: Alignment.center,
-            child: Text(txt,style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
+            child: Text('$txt',style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
                 shadows: [
                   Shadow(
                     blurRadius: 2.0,
@@ -224,21 +197,21 @@ class TapDesign extends StatelessWidget {
                 ],
                 color: Colors.orange[500]), ),
           ),flex: 3,),
-          tab == 'five' ?
+          tab == 'one' ?
             Expanded(child: Align(
               alignment: Alignment.center,
-              child: Icon(Icons.settings_power,color: Colors.orange[700],),
+              child: Icon(Icons.account_balance_wallet,color: Colors.orange[700],),
             ),flex: 2
               ,) :
             Expanded(child: Align(
               alignment: Alignment.center,
-              child: Icon(Icons.insert_chart,color: Colors.orange[700]),
+              child: Icon(Icons.graphic_eq,color: Colors.orange[700]),
             ),flex: 2
             ,),
         ],
       ),width: double.infinity,
-        height: 80,), decoration: BoxDecoration(
-        color: Color(0xfffdf9f7).withOpacity(0.9),
+        height: 100,), decoration: BoxDecoration(
+        color: Color(0xfffdf9f7), //
         borderRadius: BorderRadius.all(
             Radius.circular(10)
         ),
