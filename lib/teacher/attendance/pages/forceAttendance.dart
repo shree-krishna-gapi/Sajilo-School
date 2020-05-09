@@ -32,7 +32,7 @@ class _ForceAttendanceState extends State<ForceAttendance> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FadeAnimation( 0.6,
+      child: FadeAnimation( 0.0,
           widget.forcePresent ?  //|| widget.forcePresent
           InkWell(
             onTap: ()async {

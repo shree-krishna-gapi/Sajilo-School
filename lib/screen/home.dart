@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    getCurrentYear();
+    this.getCurrentYear();
     _pageController = PageController();
   }
 
@@ -191,7 +191,7 @@ class _HomeState extends State<Home> {
               setState(() => _currentIndex = index);
             },
             children: <Widget>[
-              Exam(),
+              FadeAnimation(0.3, Exam()),
               Fees(),
               HomeWork(),
               Attendance()

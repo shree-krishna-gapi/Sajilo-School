@@ -11,7 +11,9 @@ class Urls {
 //  static const BASE_API_URL = Future((oo));
 //  static const BASE_API_URL = "http://192.168.1.100:88/api"; // Ramesh Laptop
 }
-
+class Single {
+  static const height = 40.0;
+}
 class Loader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

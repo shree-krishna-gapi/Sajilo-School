@@ -733,127 +733,129 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
                 child: Container(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                      child: FutureBuilder<List<GetStream>>(
-                        future: FetchStream(http.Client()),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError);
-                          if(snapshot.hasData) {
-                            return snapshot.data.length > 0 ? Center(
-                              child: ListView.builder(
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return
-                                      index == indexStream? FadeAnimation(
-                                        0.2, Container(
-                                        color: Colors.orange[400],
-                                        child: InkWell(
-                                          onTap: () async {
-                                            changedNowStream =
-                                                snapshot.data[index].streamName;
-                                            changedNowStreamId =
-                                                snapshot.data[index].streamId;
-                                            SharedPreferences prefs = await SharedPreferences
-                                                .getInstance();
-                                            prefs.setInt('tempChangedClassId', changedGradeId);
-                                            if (selectedGradeId != changedGradeId) {
-                                              selectedStreamId = 0;
-                                              selectedStream = '';
-                                              selectedClassId = 0;
-                                              selectedClass = '';
-                                            }
-                                            setState(() {
-                                              selectedStream = changedNowStream;
+                  child: Center(
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        child: FutureBuilder<List<GetStream>>(
+                          future: FetchStream(http.Client()),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError);
+                            if(snapshot.hasData) {
+                              return snapshot.data.length > 0 ? Center(
+                                child: ListView.builder(
+                                    itemCount: snapshot.data.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return
+                                        index == indexStream? FadeAnimation(
+                                          0.2, Container(
+                                          color: Colors.orange[400],
+                                          child: InkWell(
+                                            onTap: () async {
+                                              changedNowStream =
+                                                  snapshot.data[index].streamName;
+                                              changedNowStreamId =
+                                                  snapshot.data[index].streamId;
+                                              SharedPreferences prefs = await SharedPreferences
+                                                  .getInstance();
+                                              prefs.setInt('tempChangedClassId', changedGradeId);
+                                              if (selectedGradeId != changedGradeId) {
+                                                selectedStreamId = 0;
+                                                selectedStream = '';
+                                                selectedClassId = 0;
+                                                selectedClass = '';
+                                              }
+                                              setState(() {
+                                                selectedStream = changedNowStream;
 
-                                            });
-                                            prefs.setInt('streamId',changedGradeId);
-                                            selectedStreamId = changedNowStreamId;
-                                            indexStream = index;
-                                            Duration(milliseconds: 100);
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Column(
-                                            children: <Widget>[
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 8.5),
-                                                child: Center(child: Text(
-                                                  snapshot.data[index]
-                                                      .streamName,
-                                                  style: TextStyle(
-                                                      color: Colors.white
-                                                  ),)),
-//                                    color: Colors.black12,
-                                              ),
-                                              Container(
-                                                height: 1,
-                                                color: Colors.black.withOpacity(
-                                                    0.05),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      ) :
-                                      FadeAnimation(
-                                        0.2, Container(
-                                        child: InkWell(
-                                          onTap: () async {
-                                            changedNowStream =
-                                                snapshot.data[index].streamName;
-                                            changedNowStreamId =
-                                                snapshot.data[index].streamId;
-                                            SharedPreferences prefs = await SharedPreferences
-                                                .getInstance();
-                                            prefs.setInt('tempChangedClassId', changedGradeId);
-                                            if (selectedGradeId != changedGradeId) {
-                                              selectedStreamId = 0;
-                                              selectedStream = '';
-                                              selectedClassId = 0;
-                                              selectedClass = '';
-                                            }
-                                            setState(() {
-                                              selectedStream = changedNowStream;
-
-                                            });
-                                            prefs.setInt('streamId',changedGradeId);
-                                            selectedStreamId = changedNowStreamId;
-                                            indexStream = index;
-                                            Duration(milliseconds: 100);
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Column(
-                                            children: <Widget>[
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 8.5),
-                                                child: Center(child: Text(
+                                              });
+                                              prefs.setInt('streamId',changedGradeId);
+                                              selectedStreamId = changedNowStreamId;
+                                              indexStream = index;
+                                              Duration(milliseconds: 100);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Column(
+                                              children: <Widget>[
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 8.5),
+                                                  child: Center(child: Text(
                                                     snapshot.data[index]
-                                                        .streamName)),
+                                                        .streamName,
+                                                    style: TextStyle(
+                                                        color: Colors.white
+                                                    ),)),
 //                                    color: Colors.black12,
-                                              ),
-                                              Container(
-                                                height: 1,
-                                                color: Colors.black.withOpacity(
-                                                    0.05),
-                                              )
-                                            ],
+                                                ),
+                                                Container(
+                                                  height: 1,
+                                                  color: Colors.black.withOpacity(
+                                                      0.05),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      );
-                                  }
-                              ),
-                            )
-                                :
-                            Empty                          (
-                            );
+                                        ) :
+                                        FadeAnimation(
+                                          0.2, Container(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              changedNowStream =
+                                                  snapshot.data[index].streamName;
+                                              changedNowStreamId =
+                                                  snapshot.data[index].streamId;
+                                              SharedPreferences prefs = await SharedPreferences
+                                                  .getInstance();
+                                              prefs.setInt('tempChangedClassId', changedGradeId);
+                                              if (selectedGradeId != changedGradeId) {
+                                                selectedStreamId = 0;
+                                                selectedStream = '';
+                                                selectedClassId = 0;
+                                                selectedClass = '';
+                                              }
+                                              setState(() {
+                                                selectedStream = changedNowStream;
+
+                                              });
+                                              prefs.setInt('streamId',changedGradeId);
+                                              selectedStreamId = changedNowStreamId;
+                                              indexStream = index;
+                                              Duration(milliseconds: 100);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Column(
+                                              children: <Widget>[
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 8.5),
+                                                  child: Center(child: Text(
+                                                      snapshot.data[index]
+                                                          .streamName)),
+//                                    color: Colors.black12,
+                                                ),
+                                                Container(
+                                                  height: 1,
+                                                  color: Colors.black.withOpacity(
+                                                      0.05),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        );
+                                    }
+                                ),
+                              )
+                                  :
+                              Empty                          (
+                              );
 
 
-                          } else { return Loader(); }
-                        },
-                      )
+                            } else { return Loader(); }
+                          },
+                        )
+                    ),
                   ),
                 ),
               ),

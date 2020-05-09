@@ -22,7 +22,7 @@ class StudentAttendance extends StatefulWidget {
 }
 
 class _StudentAttendanceState extends State<StudentAttendance> {
-  bool _snap = false;
+  bool selectAll = false;
   int o;
 
   @override
@@ -31,184 +31,208 @@ class _StudentAttendanceState extends State<StudentAttendance> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
 
-          FadeAnimation(
-            0.4, Container(
-              height: 70,
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.orange.withOpacity(0.04),
-                        offset: Offset(4,4),
-                        blurRadius: 4
-                    ),
+      body: SafeArea(top: false,
+        child: Stack(
+          children: <Widget>[
+            Positioned(child: Container(height: 24, color: Colors.blue[900],)),
+            Column(
+              children: <Widget>[
+                Container(
+                    height: 74,
 
-                  ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top:40.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
 
-                    Row(
-                      children: <Widget>[
-                        Text('Attendance Date:',style: TextStyle(fontStyle: FontStyle.italic,
-                          fontSize: 15,fontWeight: FontWeight.w500,),), SizedBox(width: 5,),
-                        Text(widget.selectedDate,style: TextStyle(fontStyle: FontStyle.italic,
-                          fontSize: 15,fontWeight: FontWeight.w500,),),
-                      ],
-                    )
-
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 10,),
-          FadeAnimation(
-            0.5, Container(
-              height: 35,
-              child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      SizedBox(width: 15,),
-                      Text('Select All ', style: TextStyle(
-                          fontWeight: FontWeight.w600
-                      ),),
-                      Container(
-                        child: FittedBox(
-                          fit: BoxFit.fitHeight,
-                          child: Transform.scale( scale: 1,alignment: Alignment.centerLeft,
-                              child: Switch(
-                                inactiveThumbColor: Colors.blue[600].withOpacity(0.8),
-                                inactiveTrackColor: Colors.blue[600].withOpacity(0.4),
-                                onChanged: (bool val) async {
-                                  setState(() {
-                                    _snap = val;
-                                  });
-                                  final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                  int tot =  prefs.getInt('totalAttendance');
-                                  int i;
-                                  for(i=0;i<tot;i++) {
-                                    prefs.setBool('stdPresent$i',_snap); //attendance$i
-                                  }
-                                },
-                                value: this._snap,)
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right:15.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(12)
-                        ),
-                        color: Colors.orange[400],
+                    padding: EdgeInsets.fromLTRB(15,27,15,0),
+                    decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 5,
-                            offset: Offset(1.0,3.0),
-                          )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10,5.5,10,5.5),
-                        child:InkWell(
-                          child: Text('Set Attendance',style: TextStyle(fontStyle: FontStyle.italic,
-                              fontSize: 15,fontWeight: FontWeight.w600,color: Colors.white),),
-                          onTap: () {
-                            submitAttendance();
-                          },
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Expanded(child: FadeAnimation(
-            0.5, Container(color: Colors.orange[700].withOpacity(0.02),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(4,0,4,4),
-                child: FutureBuilder<List<AttendanceGet>>(
-                    future: fetchAttendance(http.Client()),
-                    builder: (context,snapshot){
-                      if (snapshot.hasError);
-                      return snapshot.hasData ?
-                      GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, //4
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8
+                              color: Colors.black12,
+                              offset: Offset(4,4),
+                              blurRadius: 4,
                           ),
-                          itemCount: snapshot.data == null ?0 : snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            return snapshot.data.length > 0 ? FadeAnimation(
-                              0.6, Center(
-                                child: _snap == false ? NormalAttendance(
-                                    indexing: index,
-                                    attendanceId:snapshot.data[index].attendanceId,
-                                    studentName:snapshot.data[index].studentName,
-                                    studentId:snapshot.data[index].studentId,
-                                    isPresent:snapshot.data[index].isPresent,
-                                    rollId:snapshot.data[index].rollNo,
-                                    total:snapshot.data.length
-                                ):
-                                    ForceAttendance(
-                                    indexing: index,
-                                    attendanceId:snapshot.data[index].attendanceId,
-                                    forcePresent: _snap,
-                                    studentName:snapshot.data[index].studentName,
-                                    studentId:snapshot.data[index].studentId,
-//                                    isPresent:snapshot.data[index].isPresent,
-                                    rollId:snapshot.data[index].rollNo,
-                                    total:snapshot.data.length
-                                ),
-                              ),
-                            ):
-                            Align(
-                                alignment: Alignment.center,
-                                child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
-                                  letterSpacing: 0.4,),)
-                            );
-                          }
-                      ): Loader();
-                    }
-                ),
-              ),
-            ),
-          )),
-          FadeAnimation(
-            0.8, Container(height: 0.1,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    blurRadius: 60.0, // has the effect of softening the shadow
-                    spreadRadius: 5.0, // has the effect of extending the shadow
-                    offset: Offset(
-                      8.0, // horizontal, move right 10
-                      8.0, // vertical, move down 10
+                        ],
+                      gradient: purpleGradient
                     ),
-                  )
-                ],
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Row(crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Align(
+                                child: Text('Select All', style: TextStyle(
+                                    fontWeight: FontWeight.w600,color: Colors.white,fontSize: 15
+                                ),),
+                                alignment: Alignment.center,
+                              ),
+                              selectAll ? Checkbox(value: selectAll,
+                                  activeColor: Colors.green,
+                                  onChanged:(bool newValue) async{
+                                    setState(() {
+                                      selectAll = newValue;
+                                    });
+                                    final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    int tot =  prefs.getInt('totalAttendance');
+                                    int i;
+                                    for(i=0;i<tot;i++) {
+                                      prefs.setBool('stdPresent$i',selectAll); //attendance$i
+                                    }
+                                  }):
+
+                                Theme(
+                                    data: ThemeData(unselectedWidgetColor: Colors.white),
+                                    child: Checkbox(value: false, tristate: false, onChanged: (bool value)async {
+                                      setState(() {
+                                        selectAll = value;
+                                      });
+                                      final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      int tot =  prefs.getInt('totalAttendance');
+                                      int i;
+                                      for(i=0;i<tot;i++) {
+                                        prefs.setBool('stdPresent$i',selectAll); //attendance$i
+                                      }
+                                    }))
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text('Date:',style: TextStyle(
+                                fontSize: 15,fontWeight: FontWeight.w500,color: Colors.white),), SizedBox(width: 5,),
+                              Text(widget.selectedDate,style: TextStyle(fontStyle: FontStyle.italic,
+                                fontSize: 14,fontWeight: FontWeight.w500,color: Colors.white),),
+                            ],
+                          ),
+
+
+                        ],
+
+                    ),
+                  ),
+
+
+
+                Expanded(child: Container(color: Colors.orange[700].withOpacity(0.02),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4,0,4,4),
+                      child: FutureBuilder<List<AttendanceGet>>(
+                          future: fetchAttendance(http.Client()),
+                          builder: (context,snapshot){
+                            if (snapshot.hasError);
+                            return snapshot.hasData ?
+                            GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4, //4
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8
+                                ),
+                                itemCount: snapshot.data == null ?0 : snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return snapshot.data.length > 0 ? FadeAnimation(
+                                    0.2, Center(
+                                      child: selectAll == false ? NormalAttendance(
+                                          indexing: index,
+                                          attendanceId:snapshot.data[index].attendanceId,
+                                          studentName:snapshot.data[index].studentName,
+                                          studentId:snapshot.data[index].studentId,
+                                          isPresent:snapshot.data[index].isPresent,
+                                          rollId:snapshot.data[index].rollNo,
+                                          total:snapshot.data.length
+                                      ):
+                                          ForceAttendance(
+                                          indexing: index,
+                                          attendanceId:snapshot.data[index].attendanceId,
+                                          forcePresent: selectAll,
+                                          studentName:snapshot.data[index].studentName,
+                                          studentId:snapshot.data[index].studentId,
+//                                    isPresent:snapshot.data[index].isPresent,
+                                          rollId:snapshot.data[index].rollNo,
+                                          total:snapshot.data.length
+                                      ),
+                                    ),
+                                  ):
+                                  Align(
+                                      alignment: Alignment.center,
+                                      child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                                        letterSpacing: 0.4,),)
+                                  );
+                                }
+                            ): Loader();
+                          }
+                      ),
+                    ),
+                )),
+                FadeAnimation(
+                  0.3, Container(height: 0.1,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 30.0, // has the effect of softening the shadow
+                          spreadRadius: 5.0, // has the effect of extending the shadow
+                          offset: Offset(
+                            8.0, // horizontal, move right 10
+                            8.0, // vertical, move down 10
+                          ),
+                        )
+                      ],
+                    ),
+                 ),
+                )
+              ],
+            ),
+            Positioned(child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(14)
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 3.0, // has the effect of softening the shadow
+                      spreadRadius: 2.0, // has the effect of extending the shadow
+                      offset: Offset(
+                        3.0, // horizontal, move right 10
+                        3.0, // vertical, move down 10
+                      ),
+                    )
+                  ],
+                  color: Colors.orange[500].withOpacity(0.8)
               ),
-           ),
-          )
-        ],
+              child: Container(  decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(14)
+                  ),
+                  color: Colors.orange[500].withOpacity(0.8)
+              ),
+                  child: InkWell(splashColor: Colors.deepPurpleAccent,child: Padding(
+                    padding: const EdgeInsets.fromLTRB(13,8,13,8),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.save,color: Colors.white, size: 18,),
+                        Text('  Save Attendance',style: TextStyle(
+                            color: Colors.white,fontSize: 14,fontWeight: FontWeight.w600,
+                            shadows: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 2.0, // has the effect of softening the shadow
+                                spreadRadius: 1.0, // has the effect of extending the shadow
+                                offset: Offset(
+                                  2.0, // horizontal, move right 10
+                                  2.0, // vertical, move down 10
+                                ),
+                              )
+                            ]
+                        ),),
+                      ],
+                    ),
+                  ),onTap: (){
+                    submitAttendance();
+                  },)),
+            ),
+              bottom: 40, right: 15,),
+          ],
+        ),
       ),
     );
   }

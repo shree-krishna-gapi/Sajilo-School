@@ -1,7 +1,3 @@
-
-
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sajiloschool/utils/fadeAnimation.dart';
@@ -170,7 +166,7 @@ class _Download1State extends State<Download1> {
                                             onTap: (){
                                               _requestDownload(snapshot.data[index].fileLocation);
 
-                                              print('${snapshot.data[index].fileLocation}');
+
 
                                             },
                                             child: Icon(Icons.file_download,color: Colors.orange, size: 24,)),flex: 1,)
@@ -200,27 +196,6 @@ class _Download1State extends State<Download1> {
             ],
           ),
         )
-//        Column(
-//          children: <Widget>[
-//            Container(height: 90,color: Colors.black12, width: double.infinity,
-//              padding: EdgeInsets.all(15.0),
-//              child: Column(
-//                crossAxisAlignment:CrossAxisAlignment.start,
-//                children: <Widget>[
-////                  Align(alignment: Alignment.topRight,child: Text(widget.publishDate,style: TextStyle(fontWeight: FontWeight.w500,
-////                  fontStyle: FontStyle.italic,fontSize: 14),),),
-////                  Text(widget.caption,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
-////                  SizedBox(height: 10,),
-////                  Text(widget.description,style: TextStyle(),)
-//                ],
-//              ),
-//            ),
-//            Expanded(
-//              child: ,
-//            ),
-//          ],
-//        )
-
 
     );
   }
@@ -311,13 +286,16 @@ class _Download1State extends State<Download1> {
     int schoolId = prefs.getInt('schoolId');
     String urll ="${Urls.BASE_API_URL}/login/getfile?schoolid=$schoolId&filepath=$task";
     print(urll);
-    task.taskId = await FlutterDownloader.enqueue(
+    print('******************************');
+    await FlutterDownloader.enqueue(
         url: urll,
 //        headers: {"auth": "test_for_sql_encoding"},
         savedDir: _localPath,
         showNotification: true,
         openFileFromNotification: true);
+    print('////////////////////////////');
 //    print(task.taskId);
+
   }
 
 
@@ -452,12 +430,13 @@ class _TaskInfo {
   final String name;
   final String link;
 
-  String taskId;
+  String taskId='';
   int progress = 0;
   DownloadTaskStatus status = DownloadTaskStatus.undefined;
 
-  _TaskInfo({this.name, this.link});
+  _TaskInfo({this.name, this.link,this.taskId});
 }
+
 
 class _ItemHolder {
   final String name;

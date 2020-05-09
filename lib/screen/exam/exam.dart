@@ -14,6 +14,7 @@ import '../../utils/fadeAnimation.dart';
 import 'package:sajiloschool/global/service/offlineYear.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:sajiloschool/screen/home.dart';
 //import 'package:school/test.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -151,6 +152,12 @@ class _BodySectionState extends State<BodySection> {
   getCurrentYear() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String currentYear =  prefs.getString('educationalYearNameExam');
+    if(currentYear == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+    }
     indexYear = prefs.getInt('indexYearExam');
     setState(() {
       selectedYear = currentYear;
@@ -285,90 +292,91 @@ class _BodySectionState extends State<BodySection> {
             content: Container(
               child: Container(
 //                height: 380,
-                child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,15,20,10),
-                    child: FutureBuilder<List<OfflineFeeYear>>(
-                      future: FetchOffline(http.Client()),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) ;
-                        return snapshot.hasData ?
-                            ListView.builder(
-                              itemCount: snapshot.data.length,
-                                itemBuilder: (BuildContext context,int index) {
-                                  return
-                                    index == indexYear ? Container(
-                                      color: Colors.orange[400],
-                                      child: InkWell(
-                                        onTap: ()async {
-                                          indexYear = index;
-                                          setState(() {
-                                            selectedYear = snapshot.data[index].sYearName;
-                                          });
-                                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                                          int old = prefs.getInt('educationalYearIdExam');
-                                          prefs.setInt('indexYearExam',index);
-                                          prefs.setString('educationalYearNameExam',snapshot.data[index].sYearName);
+                child: FadeAnimation(
+                  0.3, Padding(
+                      padding: const EdgeInsets.fromLTRB(20,15,20,10),
+                      child: FutureBuilder<List<OfflineFeeYear>>(
+                        future: FetchOffline(http.Client()),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) ;
+                          return snapshot.hasData ?
+                              ListView.builder(
+                                itemCount: snapshot.data.length,
+                                  itemBuilder: (BuildContext context,int index) {
+                                    return
+                                      index == indexYear ? Container(
+                                        color: Colors.orange[400],
+                                        child: InkWell(
+                                          onTap: ()async {
+                                            indexYear = index;
+                                            setState(() {
+                                              selectedYear = snapshot.data[index].sYearName;
+                                            });
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            int old = prefs.getInt('educationalYearIdExam');
+                                            prefs.setInt('indexYearExam',index);
+                                            prefs.setString('educationalYearNameExam',snapshot.data[index].sYearName);
 
-                                          if(old != snapshot.data[index].educationalYearID) {
-                                            loadAgain = true;
-                                          }
-                                          prefs.setInt('educationalYearIdExam',snapshot.data[index].educationalYearID);
-                                          Timer(Duration(milliseconds: 100), () {
-                                            Navigator.of(context).pop();
-                                          });
-                                        },
-                                        child: Column(
-                                          children: <Widget>[
-                                            Container(
-                                              padding: EdgeInsets.symmetric(vertical: 8.5),
-                                              child: Center(child: Text(snapshot.data[index].sYearName,style: TextStyle(
-                                                color: Colors.white
-                                              ),)),
+                                            if(old != snapshot.data[index].educationalYearID) {
+                                              loadAgain = true;
+                                            }
+                                            prefs.setInt('educationalYearIdExam',snapshot.data[index].educationalYearID);
+                                            Timer(Duration(milliseconds: 100), () {
+                                              Navigator.of(context).pop();
+                                            });
+                                          },
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(vertical: 8.5),
+                                                child: Center(child: Text(snapshot.data[index].sYearName,style: TextStyle(
+                                                  color: Colors.white
+                                                ),)),
 //                                    color: Colors.black12,
-                                            ),
-                                            Container(
-                                              height: 1, color: Colors.black.withOpacity(0.05),
-                                            )
-                                          ],
+                                              ),
+                                              Container(
+                                                height: 1, color: Colors.black.withOpacity(0.05),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ):
-                                    Container(
-                                      child: InkWell(
-                                        onTap: ()async {
-                                          indexYear = index;
-                                          setState(() {
-                                            selectedYear = snapshot.data[index].sYearName;
-                                          });
-                                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                                          int old = prefs.getInt('educationalYearIdExam');
-                                          prefs.setInt('indexYearExam',index);
-                                          prefs.setString('educationalYearNameExam',snapshot.data[index].sYearName);
+                                      ):
+                                      Container(
+                                        child: InkWell(
+                                          onTap: ()async {
+                                            indexYear = index;
+                                            setState(() {
+                                              selectedYear = snapshot.data[index].sYearName;
+                                            });
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            int old = prefs.getInt('educationalYearIdExam');
+                                            prefs.setInt('indexYearExam',index);
+                                            prefs.setString('educationalYearNameExam',snapshot.data[index].sYearName);
 
-                                          if(old != snapshot.data[index].educationalYearID) {
-                                            loadAgain = true;
-                                          }
-                                          prefs.setInt('educationalYearIdExam',snapshot.data[index].educationalYearID);
-                                          Timer(Duration(milliseconds: 100), () {
-                                            Navigator.of(context).pop();
-                                          });
-                                        },
-                                        child: Column(
-                                          children: <Widget>[
-                                            Container(
-                                              padding: EdgeInsets.symmetric(vertical: 8.5),
-                                              child: Center(child: Text(snapshot.data[index].sYearName)),
+                                            if(old != snapshot.data[index].educationalYearID) {
+                                              loadAgain = true;
+                                            }
+                                            prefs.setInt('educationalYearIdExam',snapshot.data[index].educationalYearID);
+                                            Timer(Duration(milliseconds: 100), () {
+                                              Navigator.of(context).pop();
+                                            });
+                                          },
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.symmetric(vertical: 8.5),
+                                                child: Center(child: Text(snapshot.data[index].sYearName)),
 //                                    color: Colors.black12,
-                                            ),
-                                            Container(
-                                              height: 1, color: Colors.black.withOpacity(0.05),
-                                            )
-                                          ],
+                                              ),
+                                              Container(
+                                                height: 1, color: Colors.black.withOpacity(0.05),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                }
-                            )
+                                      );
+                                  }
+                              )
 //                        CupertinoPicker(
 //                          itemExtent: 60.0,
 //                          backgroundColor: Color(0x00000000),
@@ -389,10 +397,11 @@ class _BodySectionState extends State<BodySection> {
 //                            );
 //                          }),
 //                        )
-                            
-                            :Loader();
-                      },
-                    )
+
+                              :Loader();
+                        },
+                      )
+                  ),
                 ),
               ),
             ),

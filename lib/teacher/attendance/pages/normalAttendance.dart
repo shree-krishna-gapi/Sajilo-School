@@ -33,7 +33,7 @@ class _NormalAttendanceState extends State<NormalAttendance> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: FadeAnimation( 0.6,
+      child: FadeAnimation( 0.0,
           widget.isPresent ?  //|| widget.forcePresent
           InkWell(
             onTap: ()async {

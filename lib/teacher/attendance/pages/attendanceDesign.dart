@@ -11,11 +11,11 @@ class ActiveDesign extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(14)
           ),
-          color: Colors.blue,
+          color: Colors.green,
           boxShadow: [
             BoxShadow(
                 offset: Offset(0, 0),
-                color: Colors.black38,
+                color: Colors.black26,
                 blurRadius: 2
             )
           ]
@@ -64,7 +64,7 @@ class InActiveDesign extends StatelessWidget {
           boxShadow: [
             BoxShadow(
                 offset: Offset(0, 0),
-                color: Colors.black38,
+                color: Colors.black12,
                 blurRadius: 2
             )
           ]
