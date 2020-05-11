@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sajiloschool/teacher/generic/textStyle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:sajiloschool/utils/pallate.dart';
@@ -106,9 +107,9 @@ class _SetHomeworkState extends State<SetHomework> {
 //              );
               Fluttertoast.showToast(
                   msg: "HomeWork Create Successfully!",
-                  backgroundColor: Colors.black54,
+                  backgroundColor: Colors.black45,
                   toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
+                  gravity: ToastGravity.BOTTOM,
                   textColor: Colors.white);
               Timer(Duration(milliseconds: 300), () {
                 Navigator.push(
@@ -160,25 +161,9 @@ class _SetHomeworkState extends State<SetHomework> {
               scrollDirection: Axis.vertical,
 //              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 20,),
-                Row(
-                  children: <Widget>[
-                    Expanded(child: LabelText(labelTitle:''),flex: 3,),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('HomeWork',style: TextStyle(fontSize: 20,color: Colors.white,letterSpacing: 0.4,
-                      shadows:[
-                        Shadow(
-                          offset: Offset(1.0, 1.0),
-                          blurRadius: 3.0,
-                          color: Colors.black12,
-                        ),
-                      ]
-                      ),),
-                    ),flex: 5,)
-                  ],
-                ),
-                SizedBox(height: 20,),
+                SizedBox(height: 30,),
+                TitleText(txt:'Homework'),
+
                 FadeAnimation(0.2, GetYear()),
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sajiloschool/utils/pallate.dart';
 class ActiveDesign extends StatelessWidget {
   ActiveDesign({this.roll,this.name});
   final int roll;
@@ -14,8 +15,8 @@ class ActiveDesign extends StatelessWidget {
           color: Colors.green,
           boxShadow: [
             BoxShadow(
-                offset: Offset(0, 0),
-                color: Colors.black26,
+                offset: Offset(1, 1),
+                color: Colors.black12,
                 blurRadius: 2
             )
           ]
@@ -25,9 +26,9 @@ class ActiveDesign extends StatelessWidget {
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(14)
+            borderRadius: BorderRadius.all(Radius.circular(8)
             ),
-            color: Colors.white
+            color: Colors.green[400]
         ),
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Center(
@@ -36,9 +37,9 @@ class ActiveDesign extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text('$roll',style: TextStyle(
-                  fontSize: 17
+                  fontSize: 17,color: Colors.white
               ),),
-              Text('$name',textAlign: TextAlign.center,),
+              Text('$name',textAlign: TextAlign.center,style: TextStyle(color: Colors.white),),
             ],
           ),
         ),
@@ -57,10 +58,10 @@ class InActiveDesign extends StatelessWidget {
       height: double.infinity,
       width: double.infinity,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(14)
+          borderRadius: BorderRadius.all(Radius.circular(8)
           ),
 //          color: Colors.blue,
-          color: Colors.blue[700].withOpacity(0.1),
+          color: Color(0xFF28588e).withOpacity(0.7),
           boxShadow: [
             BoxShadow(
                 offset: Offset(0, 0),
@@ -72,7 +73,7 @@ class InActiveDesign extends StatelessWidget {
       padding: EdgeInsets.all(1.5),
       child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(14)
+              borderRadius: BorderRadius.all(Radius.circular(8)
               ),
 //          color: Colors.orange.withOpacity(0.02),
               color: Colors.white

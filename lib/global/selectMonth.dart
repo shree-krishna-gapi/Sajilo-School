@@ -20,18 +20,70 @@ class _SelectMonthState extends State<SelectMonth> {
   String selectedMonthNow;
   @override
   void initState() {
-    getMonthName();
+    getMonthName(0,1,'Baisakh');
     super.initState();
   }
   int indexMonthAttendance;
-  getMonthName() async{
+  getMonthName(index,id,name) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentMonth =prefs.getString('educationalMonthNameAttendance');
-    indexMonthAttendance = prefs.getInt('indexMonthAttendance');
+    prefs.setString('educationalMonthNameAttendance',name);
+    prefs.setInt('educationalMonthIdAttendance',id);
     setState(() {
-      selectedMonth = currentMonth;
+      selectedMonth = name;
     });
+    print('moth is $name');print('moth Id is $id');
+    indexMonthAttendance = index;
   }
+  final staticMonth = [
+    {
+      "Month": 1,
+      "MonthName": "Baisakh"
+    },
+    {
+      "Month": 2,
+      "MonthName": "Jestha"
+    },
+    {
+      "Month": 3,
+      "MonthName": "Ashadh"
+    },
+    {
+      "Month": 4,
+      "MonthName": "Shrawan"
+    },
+    {
+      "Month": 5,
+      "MonthName": "Bhadra"
+    },
+    {
+      "Month": 6,
+      "MonthName": "Ashoj"
+    },
+    {
+      "Month": 7,
+      "MonthName": "Kartik"
+    },
+    {
+      "Month": 8,
+      "MonthName": "Mangsir"
+    },
+    {
+      "Month": 9,
+      "MonthName": "Poush"
+    },
+    {
+      "Month": 10,
+      "MonthName": "Magh"
+    },
+    {
+      "Month": 11,
+      "MonthName": "Falgun"
+    },
+    {
+      "Month": 12,
+      "MonthName": "Chaitra"
+    }
+  ];
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -84,83 +136,80 @@ class _SelectMonthState extends State<SelectMonth> {
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
-                  padding: EdgeInsets.only(bottom: 40),
+//                  padding: EdgeInsets.only(bottom: 40),
               child: Container(
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20,15,20,10),
-                    child: FutureBuilder<List<OfflineFeeMonth>>(
-                      future: FetchOfflineMonth(http.Client()),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) ;
-                        return snapshot.hasData ?
-                        ListView.builder(
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context,int index) {
-                              return
-                                index == indexMonthAttendance ? Container(
-                                  color: Colors.orange[400],
-                                  child: InkWell(
-                                    onTap: ()async {
-                                      indexMonthAttendance = index;
-                                      setState(() {
-                                        selectedMonth = snapshot.data[index].monthName;
-                                      });
-                                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                                      prefs.setInt('indexMonthAttendance',index);
-                                      prefs.setString('educationalMonthNameAttendance',snapshot.data[index].monthName);
-                                      prefs.setInt('educationalMonthIdAttendance',snapshot.data[index].month);
-                                      Timer(Duration(milliseconds: 100), () {
-                                        Navigator.of(context).pop();
-                                      });
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          padding: EdgeInsets.symmetric(vertical: 8.5),
-                                          child: Center(child: Text(snapshot.data[index].monthName,style: TextStyle(
-                                              color: Colors.white
-                                          ),)),
+                    padding: const EdgeInsets.fromLTRB(20,10,20,0),
+                    child:
+                        Center(
+                          child: ListView.builder(
+                              itemCount: staticMonth.length,
+                              itemBuilder: (context,int index) {
+                                return
+                                  index == indexMonthAttendance ? Container(
+                                    color: Colors.orange[400],
+                                    child: InkWell(
+                                      onTap: (){
+    getMonthName(index,staticMonth[index]['Month'],staticMonth[index]['MonthName']);
+
+    Timer(Duration(milliseconds: 100), () {
+    Navigator.of(context).pop();
+    });
+
+
+//                                        indexMonthAttendance = index;
+//                                        setState(() {
+//                                          selectedMonth = staticMonth[index]['MonthName'];
+//                                        });
+//                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+//                                        prefs.setInt('indexMonthAttendance',index);
+//                                        prefs.setString('educationalMonthNameAttendance',staticMonth[index]['MonthName']);
+//                                        prefs.setInt('educationalMonthIdAttendance',staticMonth[index]['Month']);
+//                                        Timer(Duration(milliseconds: 100), () {
+//                                          Navigator.of(context).pop();
+//                                        });
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.symmetric(vertical: 8.5),
+                                            child: Center(child: Text('${staticMonth[index]['MonthName']}',style: TextStyle(
+                                                color: Colors.white
+                                            ),)),
 //                                    color: Colors.black12,
-                                        ),
-                                        Container(
-                                          height: 1, color: Colors.black.withOpacity(0.05),
-                                        )
-                                      ],
+                                          ),
+                                          Container(
+                                            height: 1, color: Colors.black.withOpacity(0.05),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ):
-                                Container(
-                                  child: InkWell(
-                                    onTap: ()async {
-                                      indexMonthAttendance = index;
-                                      setState(() {
-                                        selectedMonth = snapshot.data[index].monthName;
-                                      });
-                                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                                      prefs.setInt('indexMonthAttendance',index);
-                                      prefs.setString('educationalMonthNameAttendance',snapshot.data[index].monthName);
-                                      prefs.setInt('educationalMonthIdAttendance',snapshot.data[index].month);
-                                      Timer(Duration(milliseconds: 100), () {
-                                        Navigator.of(context).pop();
-                                      });
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          padding: EdgeInsets.symmetric(vertical: 8.5),
-                                          child: Center(child: Text(snapshot.data[index].monthName)),
+                                  ):
+                                  Container(
+                                    child: InkWell(
+                                      onTap: () {
+    getMonthName(index,staticMonth[index]['Month'],staticMonth[index]['MonthName']);
+
+    Timer(Duration(milliseconds: 100), () {
+    Navigator.of(context).pop();});
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.symmetric(vertical: 8.5),
+                                            child: Center(child: Text('${staticMonth[index]['MonthName']}')),
 //                                    color: Colors.black12,
-                                        ),
-                                        Container(
-                                          height: 1, color: Colors.black.withOpacity(0.05),
-                                        )
-                                      ],
+                                          ),
+                                          Container(
+                                            height: 1, color: Colors.black.withOpacity(0.05),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                            }
-                        ):Loader();
-                      },
+                                  );
+                              }
+                          ),
+
                     )
                 ),
               ),

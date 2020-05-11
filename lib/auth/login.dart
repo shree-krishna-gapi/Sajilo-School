@@ -3,12 +3,17 @@ import '../utils/fadeAnimation.dart';
 import 'package:flutter/cupertino.dart';
 import 'loginBody.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sajiloschool/student/student.dart';
+import 'package:sajiloschool/teacher/teacher.dart';
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
 class _LoginState extends State<Login> {
+
+
+
   DateTime backPressTime;
   bool loader;
   Future<bool> onWillPop() async {
@@ -20,7 +25,7 @@ class _LoginState extends State<Login> {
       backPressTime = currentTime;
       Fluttertoast.showToast(
           msg: "Double Tap to Exit App",
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.black54,
           textColor: Colors.white);
       return false;
     }
@@ -31,7 +36,6 @@ class _LoginState extends State<Login> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       resizeToAvoidBottomPadding: false,
-
       body: Center(
         child: WillPopScope(
           onWillPop: onWillPop,

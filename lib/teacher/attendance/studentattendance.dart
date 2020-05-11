@@ -120,43 +120,47 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                           builder: (context,snapshot){
                             if (snapshot.hasError);
                             return snapshot.hasData ?
-                            GridView.builder(
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4, //4
-                                  crossAxisSpacing: 8,
-                                  mainAxisSpacing: 8
-                                ),
-                                itemCount: snapshot.data == null ?0 : snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return snapshot.data.length > 0 ? FadeAnimation(
-                                    0.2, Center(
-                                      child: selectAll == false ? NormalAttendance(
-                                          indexing: index,
-                                          attendanceId:snapshot.data[index].attendanceId,
-                                          studentName:snapshot.data[index].studentName,
-                                          studentId:snapshot.data[index].studentId,
-                                          isPresent:snapshot.data[index].isPresent,
-                                          rollId:snapshot.data[index].rollNo,
-                                          total:snapshot.data.length
-                                      ):
-                                          ForceAttendance(
-                                          indexing: index,
-                                          attendanceId:snapshot.data[index].attendanceId,
-                                          forcePresent: selectAll,
-                                          studentName:snapshot.data[index].studentName,
-                                          studentId:snapshot.data[index].studentId,
-//                                    isPresent:snapshot.data[index].isPresent,
-                                          rollId:snapshot.data[index].rollNo,
-                                          total:snapshot.data.length
-                                      ),
+                            OrientationBuilder(
+                              builder: (context, orientation) {
+                                return GridView.builder(
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: orientation == Orientation.portrait ? 4 : 6,
+                                        crossAxisSpacing: 5,
+                                        mainAxisSpacing: 6
                                     ),
-                                  ):
-                                  Align(
-                                      alignment: Alignment.center,
-                                      child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
-                                        letterSpacing: 0.4,),)
-                                  );
-                                }
+                                    itemCount: snapshot.data == null ?0 : snapshot.data.length,
+                                    itemBuilder: (context, index) {
+                                      return snapshot.data.length > 0 ? FadeAnimation(
+                                        0.2, Center(
+                                        child: selectAll == false ? NormalAttendance(
+                                            indexing: index,
+                                            attendanceId:snapshot.data[index].attendanceId,
+                                            studentName:snapshot.data[index].studentName,
+                                            studentId:snapshot.data[index].studentId,
+                                            isPresent:snapshot.data[index].isPresent,
+                                            rollId:snapshot.data[index].rollNo,
+                                            total:snapshot.data.length
+                                        ):
+                                        ForceAttendance(
+                                            indexing: index,
+                                            attendanceId:snapshot.data[index].attendanceId,
+                                            forcePresent: selectAll,
+                                            studentName:snapshot.data[index].studentName,
+                                            studentId:snapshot.data[index].studentId,
+//                                    isPresent:snapshot.data[index].isPresent,
+                                            rollId:snapshot.data[index].rollNo,
+                                            total:snapshot.data.length
+                                        ),
+                                      ),
+                                      ):
+                                      Align(
+                                          alignment: Alignment.center,
+                                          child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+                                            letterSpacing: 0.4,),)
+                                      );
+                                    }
+                                );
+                              }
                             ): Loader();
                           }
                       ),

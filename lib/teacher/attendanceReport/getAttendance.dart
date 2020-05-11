@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:sajiloschool/utils/api.dart';
 import 'package:sajiloschool/utils/fadeAnimation.dart';
 import 'dart:async';
-
+import 'package:sajiloschool/teacher/generic/textStyle.dart';
 import 'field/services/grade.dart';
 import 'field/services/classget.dart';
 
@@ -170,30 +170,8 @@ class _GetAttendanceState extends State<GetAttendance> {
             child: ListView(shrinkWrap: true,
               scrollDirection: Axis.vertical,
               children: <Widget>[
-//                Column(
-//                    crossAxisAlignment: CrossAxisAlignment.center,
-//                    mainAxisAlignment: MainAxisAlignment.center,
-//                    children: <Widget>[
-                      FadeAnimation(
-                        0.2, Row(
-                          children: <Widget>[
-                            Expanded(child: LabelText(labelTitle:''),flex: 3,),
-                            Expanded(child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text('Attendance Report',style: TextStyle(fontSize: 20,color: Colors.white,letterSpacing: 0.4,
-                                  shadows:[
-                                    Shadow(
-                                      offset: Offset(1.0, 1.0),
-                                      blurRadius: 3.0,
-                                      color: Colors.black12,
-                                    ),
-                                  ]
-                              ),),
-                            ),flex: 5,)
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 20,),
+
+                      TitleText(txt:'Attendance Report'),
                       FadeAnimation(
                         0.2, Row(
                           crossAxisAlignment: CrossAxisAlignment.end,

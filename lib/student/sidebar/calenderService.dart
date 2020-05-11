@@ -7,10 +7,10 @@ import 'package:sajiloschool/utils/api.dart';
 Future<List<CalenderData>> FetchCalender(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   int schoolId = prefs.getInt('schoolId');
-  int yearId = prefs.getInt('educationalYearIdCalenderT');
-  int monthId = prefs.getInt('teacherCalenderMonthId');
-  String url = '${Urls.BASE_API_URL}/Login/GetSchoolCalendar?schoolId=$schoolId&yearId=$yearId&monthId=$monthId&IsStudent=false';
-  print('Teacher calender $url');
+  int yearId = prefs.getInt('educationalYearIdCalender');
+  int monthId = prefs.getInt('studentCalenderMonthId');
+  String url = '${Urls.BASE_API_URL}/Login/GetSchoolCalendar?schoolId=$schoolId&yearId=$yearId&monthId=$monthId&IsStudent=true';
+  print('calender $url');
   try {
     final response = await http.get(url);
     return compute(parseData, response.body);
@@ -46,10 +46,10 @@ isHoliday: json['IsHoliday'] as bool
 Future<List<CalenderData1>> FetchCalender1(http.Client client) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   int schoolId = prefs.getInt('schoolId');
-  int yearId = prefs.getInt('educationalYearIdCalenderT');
-  int monthId = prefs.getInt('teacherCalenderMonthId');
-  String url = '${Urls.BASE_API_URL}/Login/GetSchoolCalendar?schoolId=$schoolId&yearId=$yearId&monthId=$monthId&IsStudent=false';
-  print('Teacher calender $url');
+  int yearId = prefs.getInt('educationalYearIdCalender');
+  int monthId = prefs.getInt('studentCalenderMonthId');
+  String url = '${Urls.BASE_API_URL}/Login/GetSchoolCalendar?schoolId=$schoolId&yearId=$yearId&monthId=$monthId&IsStudent=true';
+  print('calender $url');
   try {
     final response = await http.get(url);
     return compute(parseData1, response.body);

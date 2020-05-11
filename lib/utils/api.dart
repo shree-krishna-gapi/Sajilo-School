@@ -177,3 +177,19 @@ class EmptyData extends StatelessWidget {
     );
   }
 }
+
+class ModalTitle extends StatelessWidget {
+  ModalTitle({this.txt});
+  final String txt;
+  @override
+  Widget build(BuildContext context) {
+    return Text(txt,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500, color: Colors.white,
+        letterSpacing: 0.4, shadows: [
+          Shadow(
+            blurRadius: 4.0,
+            color: Colors.black38,
+            offset: Offset(2.0, 2.0),
+          ),
+        ]));
+  }
+}

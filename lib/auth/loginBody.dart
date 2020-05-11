@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import '../utils/api.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../screen/home.dart';
+import '../student/student.dart';
 import 'dart:async';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'service/user.dart';
@@ -18,6 +18,8 @@ import 'page/searchBody.dart';
 //import 'grade/studentGrade.dart';
 //import 'pages/getGrade.dart';
 import 'service/grade.dart';
+import 'package:sajiloschool/auth/login.dart';
+import 'package:sajiloschool/main.dart';
 class LoginBody extends StatefulWidget {
   final String title = "AutoComplete Demo";
   @override
@@ -864,51 +866,52 @@ class _LoginBodyState extends State<LoginBody> {
     );
   }
   String url;
+  String getYearUrl;
+  int getStudentId;
   studentLoginProcess() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var  getStudentId = prefs.getInt('studentId');
+    getStudentId = prefs.getInt('studentId');
     var mobileNo = mobileNumber.text;
-    showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return Wait();});
-    url = '${Urls.BASE_API_URL}/login/checkcredential?schoolid=$selectedSchoolId&gradeid=$selectedGradeId&studentid=$getStudentId&mobileno=$mobileNo';
-    print(url);
-    if(getStudentId !=0) {
-      final response =
-      await http.get(url);
-      if (response.statusCode == 200) {
-        final isUser = json.decode(response.body)['Success'];
-        if(isUser == true) {
-          showDialog<void>(
-              context: context,
-              barrierDismissible: false, // user must tap button!
-              builder: (BuildContext context) {
-                return Success();
-              }
-          );
-          prefs.setBool('userStatus',true);
-          Navigator.of(context).pop();
-          Timer(Duration(milliseconds: 400), () {
+    if(getStudentId == null || getStudentId == 0) {
+      showSnack('Please, Select the Field.');
+    }
+    else {
+      showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return Wait();});
+      url = '${Urls.BASE_API_URL}/login/checkcredential?schoolid=$selectedSchoolId&gradeid=$selectedGradeId&studentid=$getStudentId&mobileno=$mobileNo';
+      print(url);
+        final response =
+        await http.get(url);
+      Navigator.of(context).pop();
+        if (response.statusCode == 200) {
+          final isUser = json.decode(response.body)['Success'];
+          if(isUser == true) {
+            prefs.setBool('studentStatus',true);
+            showDialog<void>(
+                context: context,
+                barrierDismissible: false, // user must tap button!
+                builder: (BuildContext context) {
+                  return Success();
+                }
+            );
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Home()),
+              MaterialPageRoute(builder: (context) => LoginStatus()),
             );
-          });
-        }
-        else {
-          Navigator.of(context).pop();
-          showSnack('Login Failled! Please, Try Again');
+          }
+          else {
+
+            showSnack('Login Failled! Please, Try Again');
+          }
+
+        } else {
+
+          showSnack('Login Failled! Please, Contact To The Developer');
         }
 
-      } else {
-        Navigator.of(context).pop();
-        showSnack('Login Failled! Please, Contact To The Developer');
-      }
-    } else {
-      Navigator.of(context).pop();
-      showSnack('Login Failled! Please, Try Again');
     }
 
 
@@ -917,47 +920,53 @@ class _LoginBodyState extends State<LoginBody> {
   }
   teacherLoginProcess() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var teacherName = userName.text;
+    var teacherMobileNo = teacherNumber.text;
+    print('lllll');
+    if(selectedSchoolId == null || selectedSchoolId == 0) {
+      showSnack('Please, Select the Field.');
+    }
+    else {
+      showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return Wait();});
+      url = '${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$selectedSchoolId&username=$teacherName&password=$teacherMobileNo';
+      print(url);
 
-    var username = userName.text;
-    var mobileNo = teacherNumber.text;
-    showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return Wait();});
-    url = '${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$selectedSchoolId&username=$username&password=$mobileNo';
-    print(url);
+      final response =
+      await http.get(url);
+      Navigator.of(context).pop();
+      if (response.statusCode == 200) {
+        final isUser = json.decode(response.body)['Success'];
+        if(isUser == true) {
+          prefs.setBool('teacherStatus',true);
+          showDialog<void>(
+              context: context,
+              barrierDismissible: false, // user must tap button!
+              builder: (BuildContext context) {
+                return Success();
+              }
+          );
 
-
-    final response =
-    await http.get(url);
-    Navigator.of(context).pop();
-    if (response.statusCode == 200) {
-      final isUser = json.decode(response.body)['Success'];
-      if(isUser == true) {
-        showDialog<void>(
-            context: context,
-            barrierDismissible: false, // user must tap button!
-            builder: (BuildContext context) {
-              return Success();
-            }
-        );
-        prefs.setBool('teacherStatus',true);
-        Timer(Duration(milliseconds: 400), () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Teacher()),
+            MaterialPageRoute(builder: (context) => LoginStatus()),
           );
-        });
-      }
-      else {
-        showSnack('Login Failled!. Please Try Again.');
-      }
+        }
+        else {
 
-    } else {
-      showSnack('Login Failled!. Urls not Exist.');
+          showSnack('Login Failled!. Please Try Again.');
+        }
 
+      } else {
+
+        showSnack('Login Failled!. Urls not Exist.');
+
+      }
     }
+
 
   }
 
@@ -966,10 +975,17 @@ class _LoginBodyState extends State<LoginBody> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('gradeId',0);
   }
+  int indexYear;
+//  String url;
+  String yearName;
+  int yearId;
+//  int schoolId;
+  int i;
+
 
   showSnack(message) {
     Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(message),
+      content: Text('$message'),
       backgroundColor: Colors.black26,
       duration: Duration(milliseconds: 800),
     ));
@@ -1047,8 +1063,8 @@ class _LoginBodyState extends State<LoginBody> {
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 8.5),
                                               child: Center(child: Text(
-                                                snapshot.data[index]
-                                                    .gradeNameEng,
+                                                '${snapshot.data[index]
+                                                    .gradeNameEng}',
                                                 style: TextStyle(
                                                     color: Colors.white
                                                 ),)),
@@ -1099,8 +1115,8 @@ class _LoginBodyState extends State<LoginBody> {
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 8.5),
                                               child: Center(child: Text(
-                                                  snapshot.data[index]
-                                                      .gradeNameEng)),
+                                                  '${snapshot.data[index]
+                                                  .gradeNameEng}')),
 //                                    color: Colors.black12,
                                             ),
                                             Container(

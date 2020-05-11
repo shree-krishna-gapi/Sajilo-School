@@ -34,137 +34,68 @@ class _TeacherState extends State<Teacher> {
     }
     return true;
   }
-  @override
-  void initState() {
-    // TODO: implement initState
-    getCurrentYear();
-    super.initState();
-  }
-  String url;
-  String yearName;
-  int i;
-  int yearId;
-  int indexYear;
-  getCurrentYear() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var schoolId = prefs.getInt('schoolId');
-    if(schoolId == 0) {
-      prefs.setBool('teacherStatus',false);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Login()),
-      );
-    }
-     url = "${Urls.BASE_API_URL}/login/GetEducationalYear?schoolid=$schoolId";
-    final response=await http.get(url);
-    print('Home Page Educational Year * Teacher -> $url');
-    if (response.statusCode == 200) {
-      // todo: shared preference saved
-      for(i=0;i<response.body.length;i++) {
-        if(jsonDecode(response.body)[i]['isCurrent'] == true){
-          yearId = jsonDecode(response.body)[i]['EducationalYearID'];
-          yearName = jsonDecode(response.body)[i]['sYearName'];
-          indexYear =i;
-          //todo : attenendanceEducationalYearId
-          break;
-        }
-      }
-      //Homework
-      prefs.setInt('indexYearHw',i);
-      prefs.setInt('educationalYearIdHw', yearId);
-      prefs.setString('educationalYearNameHw', yearName);
-      // end of Homework
-      //Homework
-      prefs.setInt('indexYearHwR',i);
-      prefs.setInt('educationalYearIdHwR', yearId);
-      prefs.setString('educationalYearNameHwR', yearName);
-      // end of Homework
 
-      //Attendance
-      prefs.setInt('indexYearHwA',i);
-      prefs.setInt('educationalYearIdHwA', yearId);
-      prefs.setString('educationalYearNameHwA', yearName);
-      // end of Attendance
-
-      //Attendance report
-      prefs.setInt('indexYearHwAR',i);
-      prefs.setInt('educationalYearIdHwAR', yearId);
-      prefs.setString('educationalYearNameHwAR', yearName);
-      // end of Attendance Report
-      //todo : attendanceEducationalYearData
-      prefs.setString('getEducationalYearData',response.body);
-      // todo: GetEducationalYear save
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Teacher()),
-      );
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
+
+        body: WillPopScope(
           onWillPop:onWillPop,
-        child: Stack(
-          children: <Widget>[
+          child: Stack(
+            children: <Widget>[
 
-            Container(
-              padding: EdgeInsets.all(30),
-              child: Center(
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-
-                    InkWell(onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
-                      );
-                    },
-                      child: TapDesign(txt:'Homework',tab:'one'),
-                    ),
-                    InkWell(onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
-                      );
-                    },
-                      child: TapDesign(txt:'Homework Report',tab:'two'),
-                    ),
-                    InkWell(onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
-                      );
-                    },
-                      child: TapDesign(txt:'Attendance',tab:'three'),
-                    ),
-                    InkWell(onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
-                      );
-                    },
-                      child: TapDesign(txt:'Attendance Report',tab:'four'),
-                    ),
-                  ],
+              Container(
+                decoration: new BoxDecoration(
+                  color: Color(0xfffbfff7).withOpacity(0.5),
                 ),
+                padding: EdgeInsets.all(30),
+                child: Center(
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+
+                      InkWell(onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
+                        );
+                      },
+                        child: TapDesign(txt:'Homework',tab:'one'),
+                      ),
+                      InkWell(onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
+                        );
+                      },
+                        child: TapDesign(txt:'Homework Report',tab:'two'),
+                      ),
+                      InkWell(onTap: (){
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
+                        );
+                      },
+                        child: TapDesign(txt:'Attendance',tab:'three'),
+                      ),
+                      InkWell(onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
+                        );
+                      },
+                        child: TapDesign(txt:'Attendance Report',tab:'four'),
+                      ),
+                    ],
+                  ),
+                ),
+
               ),
-              decoration: new BoxDecoration(
-                color: Colors.yellow.withOpacity(0.1),
-//                gradient: purpleGradient,
-//          image: new DecorationImage(
-//              fit: BoxFit.cover,
-//              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0), BlendMode.dstATop),
-//              image: ExactAssetImage('assets/banner.jpg')
-//          ),
-              ),
-            ),
-            SideBar(),
-          ],
-        ),
-      )
+              SideBar(),
+            ],
+          ),
+        )
     );
   }
 
@@ -181,48 +112,49 @@ class TapDesign extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: 5,bottom: 5),
       child: Container(
-
         child:
-      Container(child: Row(
-        children: <Widget>[
-          Expanded(child: Align(
-            alignment: Alignment.center,
-            child: Text('$txt',style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
-                shadows: [
-                  Shadow(
-                    blurRadius: 2.0,
-                    color: Colors.black.withOpacity(0.08),
-                    offset: Offset(1.0, 1.0),
-                  ),
-                ],
-                color: Colors.orange[500]), ),
-          ),flex: 3,),
-          tab == 'one' ?
+        Container(child: Row(
+          children: <Widget>[
             Expanded(child: Align(
               alignment: Alignment.center,
-              child: Icon(Icons.account_balance_wallet,color: Colors.orange[700],),
+              child: Text('$txt',style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 2.0,
+                      color: Colors.black.withOpacity(0.08),
+                      offset: Offset(1.0, 1.0),
+                    ),
+                  ],
+                  color: Colors.blue[900]), ),
+            ),flex: 3,),
+            tab == 'one' ?
+            Expanded(child: Align(
+              alignment: Alignment.center,
+              child: Icon(Icons.account_balance_wallet,color: Colors.blue[900],),
             ),flex: 2
               ,) :
             Expanded(child: Align(
               alignment: Alignment.center,
-              child: Icon(Icons.graphic_eq,color: Colors.orange[700]),
+              child: Icon(Icons.graphic_eq,color: Colors.blue[900]),
             ),flex: 2
-            ,),
-        ],
-      ),width: double.infinity,
-        height: 100,), decoration: BoxDecoration(
-        color: Color(0xfffdf9f7), //
+              ,),
+          ],
+        ),width: double.infinity,
+          height: 100,), decoration: BoxDecoration(
+         //  0xfffdf9f7
+//          gradient: purpleGradient,
+        color: Colors.white,
         borderRadius: BorderRadius.all(
             Radius.circular(10)
         ),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 6.0, // has the effect of softening the shadow
-            spreadRadius: 2.0, // has the effect of extending the shadow
+            blurRadius: 4.0, // has the effect of softening the shadow
+            spreadRadius: 1.0, // has the effect of extending the shadow
             offset: Offset(
-              2.0, // horizontal, move right 10
-              2.0, // vertical, move down 10
+              1.0, // horizontal, move right 10
+              1.0, // vertical, move down 10
             ),
           )
         ],

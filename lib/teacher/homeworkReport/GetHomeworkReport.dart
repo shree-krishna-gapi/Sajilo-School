@@ -15,6 +15,8 @@ import 'field/service/stream.dart';
 import 'field/service/subject.dart';
 import 'reportData.dart';
 import 'newservice/getYear.dart';
+import 'package:sajiloschool/teacher/generic/textStyle.dart';
+import 'downloadHomeworkReport.dart';
 class GetHomeworkReport extends StatefulWidget {
   @override
   _GetHomeworkReportState createState() => _GetHomeworkReportState();
@@ -101,12 +103,20 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
               homeworkDetails= jsonDecode(data)[0]['HomeworkDetail'];
               subjectNames= jsonDecode(data)[0]['SubjectName'];
 //              Timer(Duration(milliseconds: 400), () {
-                return showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ReportData(homeworkDates:homeworkDates,homeworkDetails:homeworkDetails,subjectNames:subjectNames);
-                  },
-                );
+//                return showDialog<void>(
+//                  context: context,
+//                  builder: (BuildContext context) {
+//                    return ReportData(homeworkDates:homeworkDates,homeworkDetails:homeworkDetails,subjectNames:subjectNames);
+//                  },
+//                );
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (context) => LoginStatus()),
+//              );
+              print('subjectNames $homeworkDates');
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>Download(publishDate:homeworkDates.toString(),caption:subjectNames,description:homeworkDetails)));
+
+
 //              });
             }
             else {
@@ -149,27 +159,8 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 20,),
-                FadeAnimation(
-                  0.2, Row(
-                    children: <Widget>[
-                      Expanded(child: LabelText(labelTitle:''),flex: 3,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text('HomeWork Report',style: TextStyle(fontSize: 20,color: Colors.white,letterSpacing: 0.4,
-                            shadows:[
-                              Shadow(
-                                offset: Offset(1.0, 1.0),
-                                blurRadius: 3.0,
-                                color: Colors.black12,
-                              ),
-                            ]
-                        ),),
-                      ),flex: 5,)
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20,),
+
+                TitleText(txt:'Homework Report'),
                 FadeAnimation(0.2, GetYear()),
                 SizedBox(height: sizedBoxHeight,),
                 FadeAnimation(
@@ -733,8 +724,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
                 child: Container(
-                  child: Center(
-                    child: Padding(
+                  child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: FutureBuilder<List<GetStream>>(
                           future: FetchStream(http.Client()),
@@ -744,6 +734,8 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                               return snapshot.data.length > 0 ? Center(
                                 child: ListView.builder(
                                     itemCount: snapshot.data.length,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
                                     itemBuilder: (BuildContext context, int index) {
                                       return
                                         index == indexStream? FadeAnimation(
@@ -856,7 +848,7 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                           },
                         )
                     ),
-                  ),
+
                 ),
               ),
 //              actions: <Widget>[

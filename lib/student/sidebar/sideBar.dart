@@ -6,11 +6,11 @@ import 'package:sajiloschool/utils/pallate.dart';
 import 'package:sajiloschool/auth/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sajiloschool/utils/api.dart';
-
+import 'package:sajiloschool/student/sidebar/profile.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sajiloschool/teacher/sidebar/calender.dart';
-
+import 'package:sajiloschool/student/sidebar/calender.dart';
+import 'package:sajiloschool/student/hh.dart';
 import 'package:sajiloschool/global/service/offlineYear.dart';
 import 'package:sajiloschool/global/service/offlineMonth.dart';
 import 'package:flutter/cupertino.dart';
@@ -158,7 +158,20 @@ class SideBarBody extends StatefulWidget {
 }
 
 class _SideBarBodyState extends State<SideBarBody> {
+  String studentName = '';
 
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
+  getUser() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    String names  = pref.getString('studentName');
+    setState(() {
+      studentName = names;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,8 +183,8 @@ class _SideBarBodyState extends State<SideBarBody> {
         children: <Widget>[
           Container(
             child: new UserAccountsDrawerHeader(
-//              accountName: Text('$studentName'),
-//              accountEmail: Text('$studentName@demo.com'),
+              accountName: Text('$studentName'),
+              accountEmail: Text('$studentName@demo.com'),
               currentAccountPicture: GestureDetector(
                 child: new CircleAvatar(
                   backgroundColor: Colors.white,
@@ -193,15 +206,41 @@ class _SideBarBodyState extends State<SideBarBody> {
             margin: EdgeInsets.all(0),
             child: Column(
               children: <Widget>[
-
+                Container(
+                  padding: EdgeInsets.fromLTRB(15,12,15,12),
+                  child: InkWell(
+                    onTap: () {
+                      showDialog<void>(
+                          context: context,
+                          barrierDismissible: true, // user must tap button!
+                          builder: (BuildContext context) {
+                            return Profile();
+                          });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        ListText(txt: 'Profile Details',),
+                        Icon(Icons.contact_mail,color: SideBarColor.color),
+                      ],
+                    ),
+                  ),
+                ),
                 Container(color: Colors.black12.withOpacity(0.05),height: 1,),
                 Container(
                   padding: EdgeInsets.fromLTRB(15,12,15,12),
                   child: InkWell(
                     onTap: ()async {
                       final SharedPreferences prefs = await SharedPreferences.getInstance();
-                      prefs.setInt('teacherCalenderMonthId',1);
+                      prefs.setInt('studentCalenderMonthId',1);
                       Navigator.push(context, MaterialPageRoute(builder: (context)=> Calender()));
+//                      getYear();
+//                      showDialog<void>(
+//                          context: context,// user must tap button!
+//                          builder: (BuildContext context) {
+//                            return Calender(
+//                            );
+//                          });
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -550,7 +589,7 @@ class _SideBarBodyState extends State<SideBarBody> {
         }
     );
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('teacherStatus',false);
+    prefs.setBool('studentStatus',false);
     Timer(Duration(milliseconds: 200), () {
       Navigator.of(context).pop();
     });

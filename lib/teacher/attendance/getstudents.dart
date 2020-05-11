@@ -14,7 +14,7 @@ import 'field/service/grade.dart';
 import 'field/service/classget.dart';
 import 'field/service/getYear.dart';
 import 'field/service/stream.dart';
-
+import 'package:sajiloschool/teacher/generic/textStyle.dart';
 class GetStudents extends StatefulWidget {
   @override
   _GetStudentsState createState() => _GetStudentsState();
@@ -138,24 +138,9 @@ class _GetStudentsState extends State<GetStudents> {
             child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(child: LabelText(labelTitle:''),flex: 3,),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('Attendance',style: TextStyle(fontSize: 20,color: Colors.white,letterSpacing: 0.4,
-                          shadows:[
-                            Shadow(
-                              offset: Offset(1.0, 1.0),
-                              blurRadius: 3.0,
-                              color: Colors.black12,
-                            ),
-                          ]
-                      ),),
-                    ),flex: 5,)
-                  ],
-                ),
-                SizedBox(height: 20,),
+
+                TitleText(txt:'Attendance'),
+
                 FadeAnimation(0.2, GetYear()),
                 SizedBox(height: 20,),
                 FadeAnimation(
