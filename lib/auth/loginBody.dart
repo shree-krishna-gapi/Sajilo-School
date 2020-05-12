@@ -1045,6 +1045,7 @@ class _LoginBodyState extends State<LoginBody> {
                                               snapshot.data[index].gradeId;
                                           SharedPreferences prefs = await SharedPreferences.getInstance();
                                           int oldGradeId = prefs.getInt('gradeId');
+
                                           setState(() {
                                             selectedGrade = changedNowGrade;
 
@@ -1054,6 +1055,8 @@ class _LoginBodyState extends State<LoginBody> {
                                           else if(oldGradeId!=changedNowId) {
                                             prefs.setInt('gradeId',0);
                                             prefs.setInt('studentId',0);
+                                            selectedStudentId = 0;
+                                            studentName = '';
                                             setState(() {
                                               selectedStudentName = '';
                                             });
@@ -1106,6 +1109,8 @@ class _LoginBodyState extends State<LoginBody> {
                                           else if(oldGradeId!=changedNowId) {
                                             prefs.setInt('gradeId',0);
                                             prefs.setInt('studentId',0);
+                                            selectedStudentId = 0;
+                                            studentName = '';
                                             setState(() {
                                               selectedStudentName = '';
                                             });
