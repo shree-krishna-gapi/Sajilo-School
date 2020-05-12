@@ -876,6 +876,7 @@ class _LoginBodyState extends State<LoginBody> {
       showSnack('Please, Select the Field.');
     }
     else {
+//      Timer(Duration(milliseconds: 600), () {
       showDialog<void>(
           context: context,
           barrierDismissible: false, // user must tap button!
@@ -890,17 +891,20 @@ class _LoginBodyState extends State<LoginBody> {
           final isUser = json.decode(response.body)['Success'];
           if(isUser == true) {
             prefs.setBool('studentStatus',true);
-            showDialog<void>(
-                context: context,
-                barrierDismissible: false, // user must tap button!
-                builder: (BuildContext context) {
-                  return Success();
-                }
-            );
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginStatus()),
-            );
+//            showDialog<void>(
+//                context: context,
+//                barrierDismissible: false, // user must tap button!
+//                builder: (BuildContext context) {
+//                  return Success();
+//                }
+//            );
+//            Timer(Duration(milliseconds: 200), ()
+//            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginStatus()),
+              );
+//            });
           }
           else {
 
@@ -942,18 +946,20 @@ class _LoginBodyState extends State<LoginBody> {
         final isUser = json.decode(response.body)['Success'];
         if(isUser == true) {
           prefs.setBool('teacherStatus',true);
-          showDialog<void>(
-              context: context,
-              barrierDismissible: false, // user must tap button!
-              builder: (BuildContext context) {
-                return Success();
-              }
-          );
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => LoginStatus()),
-          );
+//          showDialog<void>(
+//              context: context,
+//              barrierDismissible: false, // user must tap button!
+//              builder: (BuildContext context) {
+//                return Success();
+//              }
+//          );
+//          Timer(Duration(milliseconds: 200), ()
+//          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginStatus()),
+            );
+//          });
         }
         else {
 
@@ -1024,6 +1030,7 @@ class _LoginBodyState extends State<LoginBody> {
                           if (snapshot.hasError) ;
                           if(snapshot.hasData) {
                             return snapshot.data.length > 0 ? ListView.builder(
+                              shrinkWrap: true,scrollDirection: Axis.vertical,
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return

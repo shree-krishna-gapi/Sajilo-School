@@ -12,6 +12,7 @@ Future<List<Grade>> Fetch(http.Client client) async {
   try {
     final response =
     await http.get("${Urls.BASE_API_URL}/login/getgrades?schoolid=$schoolId");
+    print('grade -> ${Urls.BASE_API_URL}/login/getgrades?schoolid=$schoolId');
     if (response.statusCode == 200) {
 
       final stringData = response.body;

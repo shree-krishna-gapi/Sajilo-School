@@ -15,6 +15,7 @@ import 'package:sajiloschool/global/educationalYear.dart';
 import 'package:sajiloschool/global/selectMonth.dart';
 import 'package:sajiloschool/student/notification/notificationBoard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:io';
 class Attendance extends StatefulWidget {
   @override
   _AttendanceState createState() => _AttendanceState();
@@ -30,11 +31,11 @@ class _AttendanceState extends State<Attendance> {
       backPressTime = currentTime;
       Fluttertoast.showToast(
           msg: "Double Tap to Exit App",
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.black45,
           textColor: Colors.white);
       return false;
     }
-    return true;
+    exit(0);
   }
   @override
   Widget build(BuildContext context) {

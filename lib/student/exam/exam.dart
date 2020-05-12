@@ -16,7 +16,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:sajiloschool/student/student.dart';
 //import 'package:school/test.dart';
-
+import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Exam extends StatefulWidget {
@@ -36,11 +36,11 @@ class _ExamState extends State<Exam> {
       backPressTime = currentTime;
       Fluttertoast.showToast(
           msg: "Double Tap to Exit App",
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.black45,
           textColor: Colors.white);
       return false;
     }
-    return true;
+    exit(0);
   }
 
   @override

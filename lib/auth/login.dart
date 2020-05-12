@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sajiloschool/student/student.dart';
 import 'package:sajiloschool/teacher/teacher.dart';
+import 'dart:io';
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -29,7 +30,7 @@ class _LoginState extends State<Login> {
           textColor: Colors.white);
       return false;
     }
-    return true;
+    exit(0);
   }
   @override
   Widget build(BuildContext context) {

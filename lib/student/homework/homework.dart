@@ -9,6 +9,7 @@ import 'package:nepali_date_picker/nepali_date_picker.dart';
 import 'package:sajiloschool/student/notification/notificationBoard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sajiloschool/utils/api.dart';
+import 'dart:io';
 class BodySection extends StatefulWidget {
   @override
   _BodySectionState createState() => _BodySectionState();
@@ -42,11 +43,11 @@ class _BodySectionState extends State<BodySection> {
       backPressTime = currentTime;
       Fluttertoast.showToast(
           msg: "Double Tap to Exit App",
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.black45,
           textColor: Colors.white);
       return false;
     }
-    return true;
+    exit(0);
   }
   @override
 

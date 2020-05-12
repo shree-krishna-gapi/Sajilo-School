@@ -6,6 +6,7 @@ import 'pages/educationalYearFees.dart';
 import 'modal.dart';
 import 'package:sajiloschool/utils/pallate.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:io';
 class Fees extends StatefulWidget {
   @override
   _FeesState createState() => _FeesState();
@@ -22,11 +23,11 @@ class _FeesState extends State<Fees> {
       backPressTime = currentTime;
       Fluttertoast.showToast(
           msg: "Double Tap to Exit App",
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.black45,
           textColor: Colors.white);
       return false;
     }
-    return true;
+    exit(0);
   }
   @override
   Widget build(BuildContext context) {

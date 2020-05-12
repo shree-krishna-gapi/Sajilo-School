@@ -12,8 +12,13 @@ class NotificationBoard extends StatefulWidget {
 }
 
 class _NotificationBoardState extends State<NotificationBoard> {
+  @override
+  void initState() {
+    this.getNotice();
+  }
+  getNotice() {
 
-
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
