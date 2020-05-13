@@ -7,6 +7,7 @@ import '../utils/pallate.dart';
 import 'fees/fees.dart';
 import 'homework/homework.dart';
 import 'attendance/attendance.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sajiloschool/utils/api.dart';
 import 'package:http/http.dart' as http;

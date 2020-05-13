@@ -15,11 +15,15 @@ class NotificationBoard extends StatefulWidget {
 class _NotificationBoardState extends State<NotificationBoard> {
   List<NoticeData> list = List();
   var isLoading = false;
+
   _fetchNotice() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    int schoolId = prefs.getInt('schoolId');
     setState(() {
       isLoading = true;
     });
-    final response = await http.get('http://192.168.1.89:88/api/login/GetNotice?schoolid=1');
+    String url = "${Urls.BASE_API_URL}/login/GetNotice?schoolid=$schoolId";
+    final response = await http.get(url);
     if(response.statusCode == 200) {
       list = (json.decode(response.body) as List).map((data) => new NoticeData.fromJson(data)).toList();
       setState(() {
@@ -42,22 +46,27 @@ class _NotificationBoardState extends State<NotificationBoard> {
         title: Text('Notices'),
         backgroundColor: Color(0xFF28588e),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){  _fetchNotice();
+        },
+        child: Icon(Icons.refresh),
+      ),
       body: Container(
         padding: EdgeInsets.only(top: 10),
-          child: isLoading ?
-                 Loader() :  ListView.builder(
-    itemCount: list.length,
-    itemBuilder: (BuildContext context,int index) {
+        child: isLoading ?
+        Loader() :  ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (BuildContext context,int index) {
 //                        return _create1(context, '${index+1}',snapshot.data[index].publishDateNepali,snapshot.data[index].description,'${snapshot.data[index].caption}');
-    return _create(context,'${index+1}',
-    '${list[index].id}',
-    '${list[index].contentTypeId}',
-    '${list[index].caption}',
-    '${list[index].description}',
-    '${list[index].publishDateNepali}'
-    );
-    }
-    ),
+              return _create(context,'${index+1}',
+                  '${list[index].id}',
+                  '${list[index].contentTypeId}',
+                  '${list[index].caption}',
+                  '${list[index].description}',
+                  '${list[index].publishDateNepali}'
+              );
+            }
+        ),
 //    Align(
 //                      alignment: Alignment.center,
 //                      child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
@@ -73,58 +82,58 @@ class _NotificationBoardState extends State<NotificationBoard> {
   }
 
   Column _create(BuildContext context, String sn,String id, String contentTypeId,
-     String caption, String description, String publishDateNepali) {
+      String caption, String description, String publishDateNepali) {
     return Column(
       children: <Widget>[
         FadeAnimation(
           0.5, InkWell( onTap: ()async{
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString('noticeId', id);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('noticeId', id);
 //            notificationDetail();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Download(
-              caption: caption,
+                caption: caption,
                 description: description,
-              publishDate : publishDateNepali
+                publishDate : publishDateNepali
             )),
           );
 
-          },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Container(
+        },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Container(
 
-                width: double.infinity,
-                child: Card(
-                  elevation: 4,
-                  color: Color(0x000000),
-                  child: Container(
-                    decoration: BoxDecoration(
+              width: double.infinity,
+              child: Card(
+                elevation: 4,
+                color: Color(0x000000),
+                child: Container(
+                  decoration: BoxDecoration(
 //                      gradient: lightGradient,
-                        color: Color(0xfffbf9e7),
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(10)
-                        )
-                    ),
-                    child: Padding(
+                      color: Color(0xfffbf9e7),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(10)
+                      )
+                  ),
+                  child: Padding(
                       padding: const EdgeInsets.fromLTRB(10,10,10,10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
 
-                             Container(
-                              child: Text('$sn.  ',
-                                style: TextStyle(fontSize: 15,
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 3.0,
-                                        color: Colors.black.withOpacity(0.05),
-                                        offset: Offset(2.0, 2.0),
-                                      ),
-                                    ]
-                                ),),
-                            ),
+                          Container(
+                            child: Text('$sn.  ',
+                              style: TextStyle(fontSize: 15,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 3.0,
+                                      color: Colors.black.withOpacity(0.05),
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ]
+                              ),),
+                          ),
                           Expanded( flex: 13,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +141,7 @@ class _NotificationBoardState extends State<NotificationBoard> {
                               children: <Widget>[
                                 Text(caption , //publishDateNepali,
                                   style: TextStyle(fontSize: 15,
-                                    letterSpacing: 0.2,
+                                      letterSpacing: 0.2,
                                       shadows: [
                                         Shadow(
                                           blurRadius: 3.0,
@@ -144,8 +153,8 @@ class _NotificationBoardState extends State<NotificationBoard> {
                                 Align( alignment: Alignment.bottomRight,
                                   child: Text(publishDateNepali , //,
                                     style: TextStyle(fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.w500,
+                                        fontStyle: FontStyle.italic,
                                         shadows: [
                                           Shadow(
                                             blurRadius: 3.0,
@@ -161,15 +170,15 @@ class _NotificationBoardState extends State<NotificationBoard> {
 
                         ],
                       )
-                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
+        ),
 
-    ],
+      ],
     );
   }
 // downloadFile() async {

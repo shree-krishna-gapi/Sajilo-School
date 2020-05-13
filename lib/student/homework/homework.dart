@@ -53,6 +53,14 @@ class _BodySectionState extends State<BodySection> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+          setState(() {
+            loadDate =! loadDate;
+          });
+          },
+          child: Icon(Icons.refresh),
+        ),
         body: WillPopScope(
           onWillPop : onWillPop,
           child: Column(

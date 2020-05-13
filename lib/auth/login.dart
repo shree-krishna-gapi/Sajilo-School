@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
 
   DateTime backPressTime;
   bool loader;
-  Future<bool> onWillPop() async {
+  Future<bool> onWillPop() async {  //  Future<bool> onWillPop() async {
     DateTime currentTime = DateTime.now();
     //Statement 1 Or statement2
     bool backButton = backPressTime == null ||
@@ -46,7 +46,6 @@ class _LoginState extends State<Login> {
             Widget child,
             ) {
          connected = connectivity != ConnectivityResult.none;
-
           return new Center(
             child: WillPopScope(
               onWillPop: onWillPop,
@@ -114,3 +113,5 @@ class _LoginState extends State<Login> {
   }
 
 }
+
+//import 'globals.dart' as globals;
