@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sajiloschool/student/student.dart';
 import 'package:sajiloschool/teacher/teacher.dart';
 import 'dart:io';
+import 'package:flutter_offline/flutter_offline.dart';
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -32,40 +33,81 @@ class _LoginState extends State<Login> {
     }
     exit(0);
   }
+  bool connected = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       resizeToAvoidBottomPadding: false,
-      body: Center(
-        child: WillPopScope(
-          onWillPop: onWillPop,
-          child:  Container(
-            color: Colors.yellow.withOpacity(0.1),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Expanded(child: Container(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 1,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.only(top:40),
-                        child: FadeAnimation(1.0, Image.asset('assets/logo/logo.png')),
-                      ),flex: 1,),
-                      Expanded(child: Text(''),flex: 1,),
-                    ],
-                  ),
-                ),flex: 1,),
-                Expanded(
-                  flex: 3,
-                  child: LoginBody(),
+      body: OfflineBuilder(
+        connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+            ) {
+         connected = connectivity != ConnectivityResult.none;
+
+          return new Center(
+            child: WillPopScope(
+              onWillPop: onWillPop,
+              child:  Container(
+                color: Colors.yellow.withOpacity(0.1),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 1,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.only(top:40),
+                            child: FadeAnimation(1.0, Image.asset('assets/logo/logo.png')),
+                          ),flex: 1,),
+                          Expanded(child: Text(''),flex: 1,),
+                        ],
+                      ),
+                    ),flex: 1,),
+                    Expanded(
+                      flex: 3,
+                      child: LoginBody(connected:connected),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
+          child: Center(
+            child: WillPopScope(
+              onWillPop: onWillPop,
+              child:  Container(
+                color: Colors.yellow.withOpacity(0.1),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(child: Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 1,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.only(top:40),
+                            child: FadeAnimation(1.0, Image.asset('assets/logo/logo.png')),
+                          ),flex: 1,),
+                          Expanded(child: Text(''),flex: 1,),
+                        ],
+                      ),
+                    ),flex: 1,),
+                    Expanded(
+                      flex: 3,
+                      child: LoginBody(connected:connected),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
       ),
 
     );

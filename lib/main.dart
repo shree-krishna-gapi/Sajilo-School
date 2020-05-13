@@ -201,7 +201,7 @@ class _LoginStatusState extends State<LoginStatus> {
             child: Image.asset('assets/logo/logo.png',
               fit: BoxFit.cover,),
           )),
-            height: 100,
+            height: 85,
           ),
         ),
       ),

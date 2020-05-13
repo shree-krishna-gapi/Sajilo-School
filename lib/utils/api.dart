@@ -194,3 +194,31 @@ class ModalTitle extends StatelessWidget {
         ]));
   }
 }
+
+//class NoNetwork1 extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Container(
+//        height: 30,
+//        color: Colors.red,
+////        width: double.infinity,
+//        alignment: Alignment.center,
+//        child: Text('Network Connection Failled.',style: TextStyle(color: Colors.white),)
+//    );
+//  }
+//}
+
+class NoNetwork extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      child: Container(
+          height: 30,
+          color: Colors.red.withOpacity(0.75),
+          alignment: Alignment.center,
+          child: Text('Network Connection Failled.',style: TextStyle(color: Colors.white),)
+      ),
+      bottom: 0,left: 0, right: 0,
+    );
+  }
+}

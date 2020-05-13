@@ -6,57 +6,67 @@ import 'package:sajiloschool/utils/api.dart';
 import 'package:sajiloschool/utils/fadeAnimation.dart';
 import 'notificationDownload.dart';
 import 'noticeDownload.dart';
+import 'dart:convert';
 class NotificationBoard extends StatefulWidget {
   @override
   _NotificationBoardState createState() => _NotificationBoardState();
 }
 
 class _NotificationBoardState extends State<NotificationBoard> {
+  List<NoticeData> list = List();
+  var isLoading = false;
+  _fetchNotice() async {
+    setState(() {
+      isLoading = true;
+    });
+    final response = await http.get('http://192.168.1.89:88/api/login/GetNotice?schoolid=1');
+    if(response.statusCode == 200) {
+      list = (json.decode(response.body) as List).map((data) => new NoticeData.fromJson(data)).toList();
+      setState(() {
+        isLoading = false;
+      });
+    }else {
+      throw Exception('Failed, Please contact to the developer');
+    }
+  }
   @override
   void initState() {
-    this.getNotice();
+    this._fetchNotice();
+    super.initState();
   }
-  getNotice() {
 
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Notices'),
-        backgroundColor: Colors.blue[800],
+        backgroundColor: Color(0xFF28588e),
       ),
       body: Container(
         padding: EdgeInsets.only(top: 10),
-          child:FutureBuilder<List<NotificationData>>(
-              future: fetchNotification(http.Client()),
-              builder: (context, snapshot) {
-                if (snapshot.hasError);
-                if(snapshot.hasData) {
-                  return snapshot.data.length > 0 ?
-                  ListView.builder(
-                      itemCount: (snapshot.data == null && snapshot.data.length==0) ? 0 : snapshot.data.length,
-                      itemBuilder: (context, index) {
+          child: isLoading ?
+                 Loader() :  ListView.builder(
+    itemCount: list.length,
+    itemBuilder: (BuildContext context,int index) {
 //                        return _create1(context, '${index+1}',snapshot.data[index].publishDateNepali,snapshot.data[index].description,'${snapshot.data[index].caption}');
-                        return _create(context,'${index+1}',
-                            '${snapshot.data[index].id}',
-                            '${snapshot.data[index].contentTypeId}',
-                            '${snapshot.data[index].caption}',
-                            '${snapshot.data[index].description}',
-//                            '${snapshot.data[index].isPublish}',
-                            '${snapshot.data[index].publishDateNepali}'
-                        );
-                      }
-                  ) :
-                  Align(
-                      alignment: Alignment.center,
-                      child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
-                        letterSpacing: 0.4,),)
-                  );
-                } else {
-                  return Loader();
-                }
-              }),
+    return _create(context,'${index+1}',
+    '${list[index].id}',
+    '${list[index].contentTypeId}',
+    '${list[index].caption}',
+    '${list[index].description}',
+    '${list[index].publishDateNepali}'
+    );
+    }
+    ),
+//    Align(
+//                      alignment: Alignment.center,
+//                      child: Text('Data Not Found.',style: TextStyle(fontSize: 20,
+//                        letterSpacing: 0.4,),)
+//                  );
+//                } else {
+//                  return Loader();
+//                }
+//              }),
 
       ),
     );
@@ -198,4 +208,25 @@ class _NotificationBoardState extends State<NotificationBoard> {
         }
     );
   }
+}
+class NoticeData {
+  final int id;
+  final int contentTypeId;
+  final String caption;
+  final String description;
+  final bool isPublish;
+  final String publishDateNepali;
+  NoticeData({
+    this.id,this.contentTypeId,this.caption,this.description,this.isPublish,this.publishDateNepali
+  });
+  factory NoticeData.fromJson(Map<String, dynamic> json) {
+    return NoticeData(
+      id: json['Id'] as int,
+      contentTypeId: json['ContentTypeId'] as int,
+      caption: json['Caption'] as String,
+      description: json['Description'] as String,
+      isPublish: json['IsPublish'] as bool,
+      publishDateNepali: json['PublishedDateNepali'] as String,
+
+    );}
 }

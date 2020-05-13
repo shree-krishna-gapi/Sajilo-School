@@ -21,7 +21,9 @@ import 'service/grade.dart';
 import 'package:sajiloschool/auth/login.dart';
 import 'package:sajiloschool/main.dart';
 class LoginBody extends StatefulWidget {
+  final bool connected;
   final String title = "AutoComplete Demo";
+  LoginBody({this.connected});
   @override
   _LoginBodyState createState() => _LoginBodyState();
 }
@@ -31,10 +33,22 @@ class _LoginBodyState extends State<LoginBody> {
   final _formKey = GlobalKey<FormState>();
   double paddingValue = 10.0;
   bool gettingGrade = false;
-
+  bool isNetwork = false;
   @override
   void initState() {
-    getSchool();
+//    if(widget.connected == true) {
+//      setState(() {
+//        isNetwork = false;
+//      });
+//      getSchool();
+//
+//    }
+//    else {
+//      setState(() {
+//        isNetwork = true;
+//      });
+//    }
+    this.getSchool();
 //    getGrades();
     super.initState();
   }
@@ -62,15 +76,18 @@ class _LoginBodyState extends State<LoginBody> {
   // School
   // Grade
   bool loadGrade = false;
-
+  bool caseTwo = false;
   getSchool() async {
+    print('key $schoolData');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('schoolId',0);
     prefs.setInt('gradeId',0);
+    print('school api ${Urls.BASE_API_URL}/login/getschools');
     try {
       final response =
       await http.get('${Urls.BASE_API_URL}/login/getschools');
       if (response.body != null) {
+        caseTwo = true;
         setState(() {
           schoolData = loadUsers(response.body);
           loading = false;
@@ -91,747 +108,760 @@ class _LoginBodyState extends State<LoginBody> {
   bool loginStatus = true;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            topLeft:  Radius.circular(30),
-            topRight: Radius.circular(30)
-        ),
-        gradient: purpleGradient,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            offset: Offset(1.0,-3.0),
-          )
-        ],
-      ),
-      child: Form(
-        key: _formKey,
-        child: Container(
-          color: Colors.black12.withOpacity(0.01),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: loginStatus?
-            FadeAnimation(
-              0.2, ListView(
-              children: <Widget>[
-                FadeAnimation(
-                  0.3, Container(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: loading
-                              ? Loader()
-                              : searchTextField = AutoCompleteTextField<School>(
-                            key: key,
-                            clearOnSubmit: false,
-                            suggestions: schoolData,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            decoration: InputDecoration(
-                                hintText: "Search School",
-                                hintStyle: TextStyle(fontSize: 16, color: Colors.white),focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white70,width: 1.5)
-                            )
-                            ),
-                            itemFilter: (item, query) {
-                              return item.name
-                                  .toLowerCase()
-                                  .startsWith(query.toLowerCase());
-                            },
-                            itemSorter: (a, b) {
-                              return a.name.compareTo(b.name);
-                            },
-                            itemSubmitted: (item)async {
-                              // todo: autoCompleteField
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              int oldSchoolId = prefs.getInt('schoolId');
-
-                              if(oldSchoolId != item.id) {
-                                prefs.setInt('gradeId',0);
-                                prefs.setInt('studentId',0);
-                                selectedStudentId = 0;
-                                setState(() {
-                                  selectedGrade = '';
-                                  selectedStudentName = '';
-                                });
-                                loadGrade = false;
-                              }
-                              selectedSchoolId = item.id;
-                              schoolId=item.id;                          prefs.setInt('schoolId',selectedSchoolId);
-                              print('${item.logoImage}');
-                              prefs.setString('logoImage',item.logoImage);
-                              setState(() {
-                                searchTextField.textField.controller.text = item.name;
-                              });
-                            },
-                            itemBuilder: (context, item) {
-                              return row(item);
-                            },
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Container(
-                      ),flex: 2,)
-                    ],
-                  ),
-                  height: 65,
-                ),
-                ),
-                SizedBox(
-                    height: 10
-                ),
-                FadeAnimation(
-                    0.4, Container(height: 65,child: Row(
-                  children: <Widget>[
-                    Expanded(child:
-                    Text(''),flex: 2,),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child:  selectedGrade == '' ?
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showDialog();},
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
-                              fontSize: 16, color: Colors.white60
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ):
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showDialog();},
-                          textAlign: TextAlign.center,
-                          initialValue: selectedGrade,
-                          decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
-                              fontSize: 18, color: Colors.white
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ),
-                      )
-                      ,flex: 6,
-                    ),
-                    Expanded(child: Container(
-                    ),flex: 2,)
-                  ],
-                ),)
-                ),
-                // todo Student Name Field
-                FadeAnimation(
-                    0.4, Container(height: 65,child: Row(
-                  children: <Widget>[
-                    Expanded(child: Text(''),flex: 2,),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child:  studentName == '' || studentName == null ? TextFormField(
-                        onTap: ()async {
-                          if(selectedGradeId == 0 || selectedGradeId == null) {
-                            showSnack('Please, Select The Student Grade.');
-                          }
-                          else {
-                            String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
-                                schoolId: selectedSchoolId, gradeId:selectedGradeId
-                            )));
-                            if(message != null){
-                              setState(() {
-                                studentName = message;
-                              });
-                            }
-
-                          }
-                        },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black12,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        readOnly: true,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(hintText: "Student Name",hintStyle: TextStyle(
-                            fontSize: 16, color: Colors.white60
-                        ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                          ),
-
-                        ),
-                      ):TextFormField(
-                        onTap: ()async {
-                          if(selectedGradeId == 0 || selectedGradeId == null) {
-                            showSnack('Please, Select The Student Grade.');
-                          }
-                          else {
-                            String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
-                                schoolId: selectedSchoolId, gradeId:selectedGradeId
-                            )));
-                            if(message != null ){
-                              setState(() {
-                                studentName = message;
-                              });
-                            }
-                          }
-                        },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Colors.black12,
-                              offset: Offset(2.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        readOnly: true,
-                        decoration: InputDecoration(hintText: studentName,hintStyle: TextStyle(
-                            fontSize: 18, color: Colors.white
-                        ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,width: 1.5),
-                          ),
-
-                        ),
-                      ),
-
-                    ),flex: 6,),
-                    Expanded(child: Container(
-                    ),flex: 2,)
-                  ],
-                ),)
-                ),
-                SizedBox(
-                  height: 0,
-                ),
-                FadeAnimation(
-                  0.4, Container(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                            controller: mobileNumber,
-                            keyboardType: TextInputType.number,
-                            validator: (value){
-                              if(value.isEmpty) {
-                                return '* Insert the Mobile Number';
-                              }
-                              else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: "Mobile No.",hintStyle: TextStyle(
-                                fontSize: 16, color: Colors.white60
-                            ),errorStyle: TextStyle(
-                              color: Colors.orange[600],
-                              wordSpacing: 2.0,
-                              letterSpacing: 0.4,
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                              ),
-
-                            ),
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Container(
-                      ),flex: 2,)
-                    ],
-                  ),
-                  height: 65,
-                ),
-                ),
-                SizedBox(height: 35,),
-                FadeAnimation(
-                  0.5, Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(30)
-                          ),
-
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: Offset(1.0,5.0),
-                            )
-                          ],
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          child: Material(
-                            color: Color(0x00000000),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(10.0),
-                                side: BorderSide(
-                                    color: Colors.white.withOpacity(0.75),width: 1.5
-                                )
-                            ),
-                            child: InkWell(
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text('Login',style: TextStyle(
-                                    color: Colors.white.withOpacity(0.75),fontSize: 16,fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.4,shadows:[
-                                    Shadow(
-                                      blurRadius: 4.0,
-                                      color: Colors.black12,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                  ),),
-                                ),
-                              ),
-                              splashColor: Colors.orange,
-                              onTap: (){
-
-                                if (_formKey.currentState.validate() && studentId !=0) {
-                                  studentLoginProcess();
-                                }
-                                else {
-                                  showSnack('Please, Select The All Field.');
-                                }
-
-
-                              },
-                            ),
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Text(''),flex: 2,),
-                    ],
-                  ),
-                ),
-                ),
-                SizedBox(height: 25,),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 80),
-                  child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          loginStatus =! loginStatus;
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Text('Teacher Login ?',style: TextStyle(color: Colors.white70,
-                                  fontSize: 14),),
-                              SizedBox(height: 4,),
-                              Container(
-                                height: 2,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30),
-                                  ),  color: Colors.white.withOpacity(0.75),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 4,
-                                      offset: Offset(1.0,5.0),
-                                    )
-                                  ],
-                                ),
-
-                              ),
-                            ],
-                          ),
-
-                        ],
-                      )
-                  ),
-                ),
-              ],
-            )
-              ,
-            ):
-            // Teacher Login
-            FadeAnimation(
-              0.2, ListView(
-              children: <Widget>[
-                FadeAnimation(
-                  0.3, Container(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: loading
-                              ? Loader()
-                              : searchTextField = AutoCompleteTextField<School>(
-                            key: key,
-                            clearOnSubmit: false,
-                            suggestions: schoolData,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            decoration: InputDecoration(
-                                hintText: "Search School",
-                                hintStyle: TextStyle(fontSize: 16, color: Colors.white),focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white70,width: 1.5)
-                            )
-                            ),
-                            itemFilter: (item, query) {
-                              return item.name
-                                  .toLowerCase()
-                                  .startsWith(query.toLowerCase());
-                            },
-                            itemSorter: (a, b) {
-                              return a.name.compareTo(b.name);
-                            },
-                            itemSubmitted: (item)async {
-                              // todo: autoCompleteField
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              int oldSchoolId = prefs.getInt('schoolId');
-
-                              if(oldSchoolId != item.id) {
-                                prefs.setInt('gradeId',0);
-                                prefs.setInt('studentId',0);
-                                setState(() {
-                                  selectedGrade = '';
-                                  selectedStudentName = '';
-                                });
-                              }
-                              prefs.setInt('schoolId',item.id);
-                              prefs.setString('logoImage',item.logoImage);
-
-                              setState(() {
-                                searchTextField.textField.controller.text = item.name;
-                              });
-                            },
-                            itemBuilder: (context, item) {
-                              return row(item);
-                            },
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Container(
-                      ),flex: 2,)
-                    ],
-                  ),
-                  height: 65,
-                ),
-                ),
-                SizedBox(
-                    height: 0
-                ),
-                FadeAnimation(
-                  0.4, Container(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                            controller: userName,
-                            validator: (value){
-                              if(value.isEmpty) {
-                                return '* Insert the Username';
-                              }
-                              else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: "UserName",hintStyle: TextStyle(
-                                fontSize: 16, color: Colors.white60
-                            ),errorStyle: TextStyle(
-                              color: Colors.orange[600],
-                              wordSpacing: 2.0,
-                              letterSpacing: 0.4,
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                              ),
-
-                            ),
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Container(
-                      ),flex: 2,)
-                    ],
-                  ),
-                  height: 65,
-                ),
-                ),
-                FadeAnimation(
-                  0.5, Container(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                            controller: teacherNumber,
-                            keyboardType: TextInputType.number,
-                            validator: (value){
-                              if(value.isEmpty) {
-                                return '* Insert the Mobile Number';
-                              }
-                              else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(hintText: "Mobile No.",hintStyle: TextStyle(
-                                fontSize: 16, color: Colors.white60
-                            ),errorStyle: TextStyle(
-                              color: Colors.orange[600],
-                              wordSpacing: 2.0,
-                              letterSpacing: 0.4,
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                              ),
-
-                            ),
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Container(
-                      ),flex: 2,)
-                    ],
-                  ),
-                  height: 65,
-                ),
-                ),
-                SizedBox(height: 35,),
-                FadeAnimation(
-                  0.5, Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 2,),
-                      Expanded(child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(30)
-                          ),
-
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: Offset(1.0,5.0),
-                            )
-                          ],
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          child: Material(
-                            color: Color(0x00000000),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(10.0),
-                                side: BorderSide(
-                                    color: Colors.white.withOpacity(0.75),width: 1.5
-                                )
-                            ),
-                            child: InkWell(
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text('Login',style: TextStyle(
-                                    color: Colors.white.withOpacity(0.75),fontSize: 16,fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.4,shadows:[
-                                    Shadow(
-                                      blurRadius: 4.0,
-                                      color: Colors.black12,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                  ),),
-                                ),
-                              ),
-                              splashColor: Colors.orange,
-                              onTap: (){
-
-                                if (_formKey.currentState.validate() && selectedSchoolId !=null) {
-                                  teacherLoginProcess();
-                                }
-                                else {
-                                  showSnack('Please, Select The All Field.');
-                                }
-
-
-                              },
-                            ),
-                          ),
-                        ),
-                      ),flex: 6,),
-                      Expanded(child: Text(''),flex: 2,),
-                    ],
-                  ),
-                ),
-                ),
-                SizedBox(height: 30,),
-                FadeAnimation(
-                  0.5, Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 80),
-                  child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          loginStatus =! loginStatus;
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Text('Student Login ?',style: TextStyle(color: Colors.white70,
-                                  fontSize: 14),),
-                              SizedBox(height: 4,),
-                              Container(
-                                height: 2,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30),
-                                  ),  color: Colors.white.withOpacity(0.75),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 4,
-                                      offset: Offset(1.0,5.0),
-                                    )
-                                  ],
-                                ),
-
-                              ),
-                            ],
-                          ),
-
-                        ],
-                      )
-                  ),
-                ),
-                ),
-
-              ],
+  if(widget.connected) {
+    if(caseTwo == false) {
+      getSchool();
+    }
+  }
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft:  Radius.circular(30),
+                topRight: Radius.circular(30)
             ),
+            gradient: purpleGradient,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5,
+                offset: Offset(1.0,-3.0),
+              )
+            ],
+          ),
+          child: Form(
+            key: _formKey,
+            child: Container(
+              color: Colors.black12.withOpacity(0.01),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: loginStatus?
+                FadeAnimation(
+                  0.2, ListView(
+                  children: <Widget>[
+                    FadeAnimation(
+                      0.3, Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: loading
+                                  ? Loader()
+                                  : searchTextField = AutoCompleteTextField<School>(
+                                key: key,
+                                clearOnSubmit: false,
+                                suggestions: schoolData,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                decoration: InputDecoration(
+                                    hintText: "Search School",
+                                    hintStyle: TextStyle(fontSize: 16, color: Colors.white),focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white70,width: 1.5)
+                                )
+                                ),
+                                itemFilter: (item, query) {
+                                  return item.name
+                                      .toLowerCase()
+                                      .startsWith(query.toLowerCase());
+                                },
+                                itemSorter: (a, b) {
+                                  return a.name.compareTo(b.name);
+                                },
+                                itemSubmitted: (item)async {
+                                  // todo: autoCompleteField
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  int oldSchoolId = prefs.getInt('schoolId');
+
+                                  if(oldSchoolId != item.id) {
+                                    prefs.setInt('gradeId',0);
+                                    prefs.setInt('studentId',0);
+                                    selectedStudentId = 0;
+                                    setState(() {
+                                      selectedGrade = '';
+                                      selectedStudentName = '';
+                                    });
+                                    loadGrade = false;
+                                  }
+                                  selectedSchoolId = item.id;
+                                  schoolId=item.id;                          prefs.setInt('schoolId',selectedSchoolId);
+                                  print('${item.logoImage}');
+                                  prefs.setString('logoImage',item.logoImage);
+                                  setState(() {
+                                    searchTextField.textField.controller.text = item.name;
+                                  });
+                                },
+                                itemBuilder: (context, item) {
+                                  return row(item);
+                                },
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Container(
+                          ),flex: 2,)
+                        ],
+                      ),
+                      height: 65,
+                    ),
+                    ),
+                    SizedBox(
+                        height: 10
+                    ),
+                    FadeAnimation(
+                        0.4, Container(height: 65,child: Row(
+                      children: <Widget>[
+                        Expanded(child:
+                        Text(''),flex: 2,),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child:  selectedGrade == '' ?
+                            TextFormField(
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 4.0,
+                                    color: Colors.black12,
+                                    offset: Offset(2.0, 2.0),
+                                  ),
+                                ],
+                              ),
+                              readOnly: true,
+                              onTap: (){_showDialog();},
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
+                                  fontSize: 16, color: Colors.white60
+                              ),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                ),
+
+                              ),
+                            ):
+                            TextFormField(
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 4.0,
+                                    color: Colors.black12,
+                                    offset: Offset(2.0, 2.0),
+                                  ),
+                                ],
+                              ),
+                              readOnly: true,
+                              onTap: (){_showDialog();},
+                              textAlign: TextAlign.center,
+                              initialValue: selectedGrade,
+                              decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
+                                  fontSize: 18, color: Colors.white
+                              ),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                ),
+
+                              ),
+                            ),
+                          )
+                          ,flex: 6,
+                        ),
+                        Expanded(child: Container(
+                        ),flex: 2,)
+                      ],
+                    ),)
+                    ),
+                    // todo Student Name Field
+                    FadeAnimation(
+                        0.4, Container(height: 65,child: Row(
+                      children: <Widget>[
+                        Expanded(child: Text(''),flex: 2,),
+                        Expanded(child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child:  studentName == '' || studentName == null ? TextFormField(
+                            onTap: ()async {
+                              if(selectedGradeId == 0 || selectedGradeId == null) {
+                                showSnack('Please, Select The Student Grade.');
+                              }
+                              else {
+                                String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
+                                    schoolId: selectedSchoolId, gradeId:selectedGradeId
+                                )));
+                                if(message != null){
+                                  setState(() {
+                                    studentName = message;
+                                  });
+                                }
+
+                              }
+                            },
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4.0,
+                                  color: Colors.black12,
+                                  offset: Offset(2.0, 2.0),
+                                ),
+                              ],
+                            ),
+                            readOnly: true,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(hintText: "Student Name",hintStyle: TextStyle(
+                                fontSize: 16, color: Colors.white60
+                            ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                              ),
+
+                            ),
+                          ):TextFormField(
+                            onTap: ()async {
+                              if(selectedGradeId == 0 || selectedGradeId == null) {
+                                showSnack('Please, Select The Student Grade.');
+                              }
+                              else {
+                                String message = await Navigator.push(context, MaterialPageRoute(builder: (context) => UserFilterDemo(
+                                    schoolId: selectedSchoolId, gradeId:selectedGradeId
+                                )));
+                                if(message != null ){
+                                  setState(() {
+                                    studentName = message;
+                                  });
+                                }
+                              }
+                            },
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 4.0,
+                                  color: Colors.black12,
+                                  offset: Offset(2.0, 2.0),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                            readOnly: true,
+                            decoration: InputDecoration(hintText: studentName,hintStyle: TextStyle(
+                                fontSize: 18, color: Colors.white
+                            ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white,width: 1.5),
+                              ),
+
+                            ),
+                          ),
+
+                        ),flex: 6,),
+                        Expanded(child: Container(
+                        ),flex: 2,)
+                      ],
+                    ),)
+                    ),
+                    SizedBox(
+                      height: 0,
+                    ),
+                    FadeAnimation(
+                      0.4, Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                                controller: mobileNumber,
+                                keyboardType: TextInputType.number,
+                                validator: (value){
+                                  if(value.isEmpty) {
+                                    return '* Insert the Mobile Number';
+                                  }
+                                  else {
+                                    return null;
+                                  }
+                                },
+                                decoration: InputDecoration(hintText: "Mobile No.",hintStyle: TextStyle(
+                                    fontSize: 16, color: Colors.white60
+                                ),errorStyle: TextStyle(
+                                  color: Colors.orange[600],
+                                  wordSpacing: 2.0,
+                                  letterSpacing: 0.4,
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                                  ),
+
+                                ),
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Container(
+                          ),flex: 2,)
+                        ],
+                      ),
+                      height: 65,
+                    ),
+                    ),
+                    SizedBox(height: 35,),
+                    FadeAnimation(
+                      0.5, Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(30)
+                              ),
+
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  offset: Offset(1.0,5.0),
+                                )
+                              ],
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              child: Material(
+                                color: Color(0x00000000),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(10.0),
+                                    side: BorderSide(
+                                        color: Colors.white.withOpacity(0.75),width: 1.5
+                                    )
+                                ),
+                                child: InkWell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text('Login',style: TextStyle(
+                                        color: Colors.white.withOpacity(0.75),fontSize: 16,fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.4,shadows:[
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black12,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ],
+                                      ),),
+                                    ),
+                                  ),
+                                  splashColor: Colors.orange,
+                                  onTap: (){
+
+                                    if (_formKey.currentState.validate() && studentId !=0) {
+                                      studentLoginProcess();
+                                    }
+                                    else {
+                                      showSnack('Please, Select The All Field.');
+                                    }
+
+
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Text(''),flex: 2,),
+                        ],
+                      ),
+                    ),
+                    ),
+                    SizedBox(height: 25,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 80),
+                      child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              loginStatus =! loginStatus;
+                            });
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Text('Teacher Login ?',style: TextStyle(color: Colors.white70,
+                                      fontSize: 14),),
+                                  SizedBox(height: 4,),
+                                  Container(
+                                    height: 2,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),  color: Colors.white.withOpacity(0.75),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 4,
+                                          offset: Offset(1.0,5.0),
+                                        )
+                                      ],
+                                    ),
+
+                                  ),
+                                ],
+                              ),
+
+                            ],
+                          )
+                      ),
+                    ),
+
+                  ],
+                )
+                  ,
+                ):            // Teacher Login
+                FadeAnimation(
+                  0.2, ListView(
+                  children: <Widget>[
+                    FadeAnimation(
+                      0.3, Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: loading
+                                  ? Loader()
+                                  : searchTextField = AutoCompleteTextField<School>(
+                                key: key,
+                                clearOnSubmit: false,
+                                suggestions: schoolData,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                decoration: InputDecoration(
+                                    hintText: "Search School",
+                                    hintStyle: TextStyle(fontSize: 16, color: Colors.white),focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white70,width: 1.5)
+                                )
+                                ),
+                                itemFilter: (item, query) {
+                                  return item.name
+                                      .toLowerCase()
+                                      .startsWith(query.toLowerCase());
+                                },
+                                itemSorter: (a, b) {
+                                  return a.name.compareTo(b.name);
+                                },
+                                itemSubmitted: (item)async {
+                                  // todo: autoCompleteField
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  int oldSchoolId = prefs.getInt('schoolId');
+
+                                  if(oldSchoolId != item.id) {
+                                    prefs.setInt('gradeId',0);
+                                    prefs.setInt('studentId',0);
+                                    setState(() {
+                                      selectedGrade = '';
+                                      selectedStudentName = '';
+                                    });
+                                  }
+                                  prefs.setInt('schoolId',item.id);
+                                  prefs.setString('logoImage',item.logoImage);
+
+                                  setState(() {
+                                    searchTextField.textField.controller.text = item.name;
+                                  });
+                                },
+                                itemBuilder: (context, item) {
+                                  return row(item);
+                                },
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Container(
+                          ),flex: 2,)
+                        ],
+                      ),
+                      height: 65,
+                    ),
+                    ),
+                    SizedBox(
+                        height: 0
+                    ),
+                    FadeAnimation(
+                      0.4, Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                                controller: userName,
+                                validator: (value){
+                                  if(value.isEmpty) {
+                                    return '* Insert the Username';
+                                  }
+                                  else {
+                                    return null;
+                                  }
+                                },
+                                decoration: InputDecoration(hintText: "UserName",hintStyle: TextStyle(
+                                    fontSize: 16, color: Colors.white60
+                                ),errorStyle: TextStyle(
+                                  color: Colors.orange[600],
+                                  wordSpacing: 2.0,
+                                  letterSpacing: 0.4,
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                                  ),
+
+                                ),
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Container(
+                          ),flex: 2,)
+                        ],
+                      ),
+                      height: 65,
+                    ),
+                    ),
+                    FadeAnimation(
+                      0.5, Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                                controller: teacherNumber,
+                                keyboardType: TextInputType.number,
+                                validator: (value){
+                                  if(value.isEmpty) {
+                                    return '* Insert the Mobile Number';
+                                  }
+                                  else {
+                                    return null;
+                                  }
+                                },
+                                decoration: InputDecoration(hintText: "Mobile No.",hintStyle: TextStyle(
+                                    fontSize: 16, color: Colors.white60
+                                ),errorStyle: TextStyle(
+                                  color: Colors.orange[600],
+                                  wordSpacing: 2.0,
+                                  letterSpacing: 0.4,
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                                  ),
+
+                                ),
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Container(
+                          ),flex: 2,)
+                        ],
+                      ),
+                      height: 65,
+                    ),
+                    ),
+                    SizedBox(height: 35,),
+                    FadeAnimation(
+                      0.5, Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(30)
+                              ),
+
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  offset: Offset(1.0,5.0),
+                                )
+                              ],
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              child: Material(
+                                color: Color(0x00000000),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(10.0),
+                                    side: BorderSide(
+                                        color: Colors.white.withOpacity(0.75),width: 1.5
+                                    )
+                                ),
+                                child: InkWell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text('Login',style: TextStyle(
+                                        color: Colors.white.withOpacity(0.75),fontSize: 16,fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.4,shadows:[
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black12,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ],
+                                      ),),
+                                    ),
+                                  ),
+                                  splashColor: Colors.orange,
+                                  onTap: (){
+
+                                    if (_formKey.currentState.validate() && selectedSchoolId !=null) {
+                                      teacherLoginProcess();
+                                    }
+                                    else {
+                                      showSnack('Please, Select The All Field.');
+                                    }
+
+
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),flex: 6,),
+                          Expanded(child: Text(''),flex: 2,),
+                        ],
+                      ),
+                    ),
+                    ),
+                    SizedBox(height: 30,),
+                    FadeAnimation(
+                      0.5, Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 80),
+                      child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              loginStatus =! loginStatus;
+                            });
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Text('Student Login ?',style: TextStyle(color: Colors.white70,
+                                      fontSize: 14),),
+                                  SizedBox(height: 4,),
+                                  Container(
+                                    height: 2,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),  color: Colors.white.withOpacity(0.75),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 4,
+                                          offset: Offset(1.0,5.0),
+                                        )
+                                      ],
+                                    ),
+
+                                  ),
+                                ],
+                              ),
+
+                            ],
+                          )
+                      ),
+                    ),
+                    ),
+
+                  ],
+                ),
+                ),
+              ),
             ),
           ),
         ),
-      ),
+//        Positioned(child: widget.connected?Container(height: 1,) :NoNetwork(), bottom: 0,left: 0, right: 0,)
+        widget.connected?Container(height: 1,) :NoNetwork()
+//        isNetwork ? Positioned(child: NoNetwork(),bottom: 0,) : Text(''),
+      ],
     );
   }
   Widget row(School school) {
+
     return Container(
       decoration: BoxDecoration(
           gradient: purpleGradient,
@@ -986,7 +1016,7 @@ class _LoginBodyState extends State<LoginBody> {
   String yearName;
   int yearId;
 //  int schoolId;
-  int i;
+
 
 
   showSnack(message) {
@@ -1003,8 +1033,8 @@ class _LoginBodyState extends State<LoginBody> {
     int schoolId =  prefs.getInt('schoolId');
 
     if(schoolId == 0) {
-      final scaff = Scaffold.of(context);
-      scaff.showSnackBar(SnackBar(
+//      final scaff = Scaffold.of(context);
+      Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Please, Select The School Name"),
         backgroundColor: Colors.black26,
         duration: Duration(milliseconds: 800),
@@ -1163,3 +1193,4 @@ class _LoginBodyState extends State<LoginBody> {
 
 
 }
+
