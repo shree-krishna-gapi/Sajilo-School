@@ -17,6 +17,7 @@ import 'field/service/stream.dart';
 import 'field/service/subject.dart';
 import '../teacher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 class SetHomework extends StatefulWidget {
   @override
   _SetHomeworkState createState() => _SetHomeworkState();
@@ -56,18 +57,6 @@ class _SetHomeworkState extends State<SetHomework> {
   String date =('${NepaliDateFormat("y-MM-dd",).format(NepaliDateTime.now())}');
   // End
   // is Active
-  bool isMonthly = true;
-  @override
-  void initState() {
-//    getDate();
-    super.initState();
-  }
-
-  void getDate()async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  }
-
 
   _submit(BuildContext context)async {
 
@@ -98,13 +87,6 @@ class _SetHomeworkState extends State<SetHomework> {
           print(json.decode(response.body)['Success']);
           final isUser = json.decode(response.body)['Success'];
             if(isUser == true) {
-//              showDialog<void>(
-//                  context: context,
-//                  barrierDismissible: true, // user must tap button!
-//                  builder: (BuildContext context) {
-//                    return Success(txt: 'Create Successfully',);
-//                  }
-//              );
               Fluttertoast.showToast(
                   msg: "HomeWork Create Successfully!",
                   backgroundColor: Colors.black45,
@@ -142,7 +124,7 @@ class _SetHomeworkState extends State<SetHomework> {
 
     }
   }
-
+  bool connected = false;
   @override
 
   Widget build(BuildContext context) {
@@ -150,238 +132,249 @@ class _SetHomeworkState extends State<SetHomework> {
       resizeToAvoidBottomInset: true,
       resizeToAvoidBottomPadding: false,
       key: scaffoldKey,
-      body:  Container(
-          decoration: BoxDecoration(
-              gradient: purpleGradient
-          ),
-          child: Form(
-            key: formKey,
-            child: ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
+      body:
+      OfflineBuilder(
+        connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+            )
+        {
+          connected = connectivity != ConnectivityResult.none;
+          return Stack(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                    gradient: purpleGradient
+                ),
+                child: Form(
+                  key: formKey,
+                  child: ListView(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
 //              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 30,),
-                TitleText(txt:'Homework'),
-
-                FadeAnimation(0.2, GetYear()),
-                SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(
-                  0.3, Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(child: LabelText(labelTitle:'Grade'),flex: 3,),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child:  selectedGrade == '' ?
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showGradeDialog();},
-//                  textAlign: TextAlign.center,
-                          decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
-                              fontSize: 15, color: Colors.white60
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ):
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showGradeDialog();},
-                          textAlign: TextAlign.left,
-                          initialValue: selectedGrade,
-                          decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
-                              fontSize: 15, color: Colors.white
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ),
-                      )
-                      ,flex: 5,
-                    ),
-                  ],
-                ),
-                ),
-                SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(
-                  0.3, Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(child: LabelText(labelTitle: 'Stream',),flex: 3,),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child:  selectedStream == '' ?
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showStreamDialog();},
-//                  textAlign: TextAlign.center,
-                          decoration: InputDecoration(hintText: "Stream",hintStyle: TextStyle(
-                              fontSize: 15, color: Colors.white60
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ):
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showStreamDialog();},
-                          textAlign: TextAlign.left,
-                          initialValue: selectedStream,
-                          decoration: InputDecoration(hintText: "$selectedStream",hintStyle: TextStyle(
-                              fontSize: 15, color: Colors.white
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ),
-                      )
-                      ,flex: 5,
-                    ),
-                  ],
-                ),
-                ),
-                SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(
-                  0.4, Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Expanded(child: LabelText(labelTitle: 'Class',),flex: 3,),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child:  selectedClass == '' ?
-                          TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
+                      SizedBox(height: 30,),
+                      TitleText(txt:'Homework'),
+
+                      FadeAnimation(0.2, GetYear()),
+                      SizedBox(height: sizedBoxHeight,),
+                      FadeAnimation(
+                        0.3, Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(child: LabelText(labelTitle:'Grade'),flex: 3,),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child:  selectedGrade == '' ?
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            readOnly: true,
-                            onTap: (){_showClassDialog();},
+                                readOnly: true,
+                                onTap: (){_showGradeDialog();},
 //                  textAlign: TextAlign.center,
-                            decoration: InputDecoration(hintText: "Class",hintStyle: TextStyle(
-                                fontSize: 15, color: Colors.white60
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                              ),
-
-                            ),
-                          ):
-                          TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
+                                decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white60
                                 ),
-                              ],
-                            ),
-                            readOnly: true,
-                            onTap: (){_showClassDialog();},
-                            textAlign: TextAlign.left,
-                            initialValue: selectedClass,
-                            decoration: InputDecoration(hintText: selectedClass,hintStyle: TextStyle(
-                                fontSize: 15, color: Colors.white
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
+                              ):
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showGradeDialog();},
+                                textAlign: TextAlign.left,
+                                initialValue: selectedGrade,
+                                decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
                               ),
-
-                            ),
+                            )
+                            ,flex: 5,
                           ),
-                        )
-                        ,flex: 5,
-                      )
-                    ]
-                ),
-                ),
-                SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(0.4,
-//                    _test(context,'Homework','hw','Homework Task','')
-                    Row(
-                      children: <Widget>[
-                        Expanded(child: Align(alignment: Alignment.centerRight,child: Padding(
-                          padding: const EdgeInsets.only(right: 20, left: 10),
-                          child: Text('Homework',style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 0.6,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4.0,
+                        ],
+                      ),
+                      ),
+                      SizedBox(height: sizedBoxHeight,),
+                      FadeAnimation(
+                        0.3, Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(child: LabelText(labelTitle: 'Stream',),flex: 3,),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child:  selectedStream == '' ?
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showStreamDialog();},
+//                  textAlign: TextAlign.center,
+                                decoration: InputDecoration(hintText: "Stream",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white60
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
 
-                                )
-                              ]
-                          ),),
-                        )),flex: 3,),
-                        Expanded(child: Padding(
-                          padding: const EdgeInsets.only(right: 20),
+                                ),
+                              ):
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showStreamDialog();},
+                                textAlign: TextAlign.left,
+                                initialValue: selectedStream,
+                                decoration: InputDecoration(hintText: "$selectedStream",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
+                              ),
+                            )
+                            ,flex: 5,
+                          ),
+                        ],
+                      ),
+                      ),
+                      SizedBox(height: sizedBoxHeight,),
+                      FadeAnimation(
+                        0.4, Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Expanded(child: LabelText(labelTitle: 'Class',),flex: 3,),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child:  selectedClass == '' ?
+                                TextFormField(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black12,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                  readOnly: true,
+                                  onTap: (){_showClassDialog();},
+//                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(hintText: "Class",hintStyle: TextStyle(
+                                      fontSize: 15, color: Colors.white60
+                                  ),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                    ),
+
+                                  ),
+                                ):
+                                TextFormField(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black12,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                  readOnly: true,
+                                  onTap: (){_showClassDialog();},
+                                  textAlign: TextAlign.left,
+                                  initialValue: selectedClass,
+                                  decoration: InputDecoration(hintText: selectedClass,hintStyle: TextStyle(
+                                      fontSize: 15, color: Colors.white
+                                  ),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                    ),
+
+                                  ),
+                                ),
+                              )
+                              ,flex: 5,
+                            )
+                          ]
+                      ),
+                      ),
+                      SizedBox(height: sizedBoxHeight,),
+                      FadeAnimation(0.4,
+//                    _test(context,'Homework','hw','Homework Task','')
+                          Row(
+                            children: <Widget>[
+                              Expanded(child: Align(alignment: Alignment.centerRight,child: Padding(
+                                padding: const EdgeInsets.only(right: 20, left: 10),
+                                child: Text('Homework',style: TextStyle(
+                                    color: Colors.white,
+                                    letterSpacing: 0.6,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black12,
+                                        blurRadius: 4.0,
+
+                                      )
+                                    ]
+                                ),),
+                              )),flex: 3,),
+                              Expanded(child: Padding(
+                                padding: const EdgeInsets.only(right: 20),
 
 //                            child: TextFormField(
 //                              decoration: new InputDecoration(labelText: "Homework Task",labelStyle: TextStyle(
@@ -401,191 +394,197 @@ class _SetHomeworkState extends State<SetHomework> {
 //                                }
 //                              },
 //                            ),
-                          child: TextFormField(
-                            decoration: InputDecoration(hintText: "Homework Task",hintStyle: TextStyle(
-                                fontSize: 16, color: Colors.white60
-                            ),errorStyle: TextStyle(
-                              color: Colors.orange[600],
-                              wordSpacing: 2.0,
-                              letterSpacing: 0.4,
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5),
-                              ),
-                            ),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            maxLines: 2,
-                            controller: homeworkController,
-                            validator: (value){
-                              if(value.isEmpty) {
-                                return '* Insert the Homework Task';
-                              }
-                              else {
-                                return null;
-                              }
-                            },
+                                child: TextFormField(
+                                  decoration: InputDecoration(hintText: "Homework Task",hintStyle: TextStyle(
+                                      fontSize: 16, color: Colors.white60
+                                  ),errorStyle: TextStyle(
+                                    color: Colors.orange[600],
+                                    wordSpacing: 2.0,
+                                    letterSpacing: 0.4,
+                                  ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5),
+                                    ),
+                                  ),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black12,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                  maxLines: 2,
+                                  controller: homeworkController,
+                                  validator: (value){
+                                    if(value.isEmpty) {
+                                      return '* Insert the Homework Task';
+                                    }
+                                    else {
+                                      return null;
+                                    }
+                                  },
 //                            minLines: 2, maxLength: 3,
 
-                          ),
-
-                        ),flex: 4,), //        Expanded(child: Text(''),flex: 1,)
-                      ],
-                    )
-                ),
-                SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(
-                  0.5, Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(child: LabelText(labelTitle: 'Subject',),flex: 3,),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child:  selectedSubject == '' ?
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showSubjectDialog();},
-//                  textAlign: TextAlign.center,
-                          decoration: InputDecoration(hintText: "Subject",hintStyle: TextStyle(
-                              fontSize: 15, color: Colors.white60
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ):
-                        TextFormField(
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black12,
-                                offset: Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                          readOnly: true,
-                          onTap: (){_showSubjectDialog();},
-                          textAlign: TextAlign.left,
-                          initialValue: selectedSubject,
-                          decoration: InputDecoration(hintText: "$selectedSubject",hintStyle: TextStyle(
-                              fontSize: 15, color: Colors.white
-                          ),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                            ),
-
-                          ),
-                        ),
-                      )
-                      ,flex: 5,
-                    ),
-                  ],
-                ),
-                ),
-                SizedBox(height: sizedBoxHeight,),
-                FadeAnimation(0.5, _hwDate(context,'Date','date')),
-                SizedBox(height: 20,),
-                FadeAnimation(0.6, _status(context,'IsActive')),
-                FadeAnimation(
-                  0.6, Row(
-                  children: <Widget>[
-                    Expanded(child: Text(''),flex: 1,),
-                    Expanded(child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.only(left: 20,top: 20),
-                      child: Material(
-                        color: Color(0x00000000),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(10.0),
-                          side: BorderSide(
-                              color: Colors.white.withOpacity(0.75),width: 1.5
-                          ),
-                        ),
-                        child: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text('Save Homework',style: TextStyle(
-                                color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500,
-                                letterSpacing: 0.8,shadows:[
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black26,
-                                  offset: Offset(2.0, 2.0),
                                 ),
-                              ],
-                              ),),
-                            ),
-                          ),
-                          splashColor: Colors.orange,
-                          onTap: (){
-                            if (formKey.currentState.validate()) {
-                              _submit(context);
-                            }
 
-                          },
-                        ),
+                              ),flex: 4,), //        Expanded(child: Text(''),flex: 1,)
+                            ],
+                          )
                       ),
-                    ),flex: 2,),
-                    Expanded(child: Text(''),flex: 1,),
+                      SizedBox(height: sizedBoxHeight,),
+                      FadeAnimation(
+                        0.5, Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(child: LabelText(labelTitle: 'Subject',),flex: 3,),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child:  selectedSubject == '' ?
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showSubjectDialog();},
+//                  textAlign: TextAlign.center,
+                                decoration: InputDecoration(hintText: "Subject",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white60
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
 
-                  ],
-                ),
-                ),
-                SizedBox(height: 15,),
-                FadeAnimation(
-                  0.6, Center(
-                  child: Center(
-                    child: FlatButton(onPressed: () {
-                      Navigator.of(context).pop();},
-                      child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 5,
-                        width: 90,
-                        decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.65),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)
+                                ),
+                              ):
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showSubjectDialog();},
+                                textAlign: TextAlign.left,
+                                initialValue: selectedSubject,
+                                decoration: InputDecoration(hintText: "$selectedSubject",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
+                              ),
                             )
-                        ),
-
+                            ,flex: 5,
+                          ),
+                        ],
                       ),
-                      splashColor: Color(0x0000000),
-                    ),
+                      ),
+                      SizedBox(height: sizedBoxHeight,),
+                      FadeAnimation(0.5, _hwDate(context,'Date','date')),
+                      SizedBox(height: 20,),
+                      FadeAnimation(0.6, _status(context,'IsActive')),
+                      FadeAnimation(
+                        0.6, Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 1,),
+                          Expanded(child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.only(left: 20,top: 20),
+                            child: Material(
+                              color: Color(0x00000000),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                side: BorderSide(
+                                    color: Colors.white.withOpacity(0.75),width: 1.5
+                                ),
+                              ),
+                              child: InkWell(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text('Save Homework',style: TextStyle(
+                                      color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.8,shadows:[
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black26,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                    ),),
+                                  ),
+                                ),
+                                splashColor: Colors.orange,
+                                onTap: (){
+                                  if (formKey.currentState.validate()) {
+                                    _submit(context);
+                                  }
+
+                                },
+                              ),
+                            ),
+                          ),flex: 2,),
+                          Expanded(child: Text(''),flex: 1,),
+
+                        ],
+                      ),
+                      ),
+                      SizedBox(height: 15,),
+                      FadeAnimation(
+                        0.6, Center(
+                        child: Center(
+                          child: FlatButton(onPressed: () {
+                            Navigator.of(context).pop();},
+                            child: Container(
+                              margin: EdgeInsets.only(left: 15),
+                              height: 5,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.65),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(4)
+                                  )
+                              ),
+
+                            ),
+                            splashColor: Color(0x0000000),
+                          ),
+                        ),
+                      ),
+                      ),
+
+                    ],
                   ),
                 ),
-                ),
+              ),
+              connected?Container(height: 1,) :NoNetwork()
+            ],
+          )
 
-              ],
-            ),
-          ),
-        ),
+            ;
+        },child: Center(child: Text('Please, Contact to Developer.'),),),
 
 
     );
@@ -660,12 +659,12 @@ class _SetHomeworkState extends State<SetHomework> {
                     Container(
                       width: 70,
                       child: Switch(
-                        value: isMonthly,
+                        value: isActive,
                         onChanged: (value) async{
                           final SharedPreferences prefs= await SharedPreferences.getInstance();
                           prefs.setBool('hwIsactive', value);
                           setState(() {
-                            isMonthly = value;
+                            isActive = value;
                           });
                         },
                         activeTrackColor: Colors.white38,

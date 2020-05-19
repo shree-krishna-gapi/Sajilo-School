@@ -15,6 +15,7 @@ import 'field/service/classget.dart';
 import 'field/service/getYear.dart';
 import 'field/service/stream.dart';
 import 'package:sajiloschool/teacher/generic/textStyle.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 class GetStudents extends StatefulWidget {
   @override
   _GetStudentsState createState() => _GetStudentsState();
@@ -40,6 +41,8 @@ class _GetStudentsState extends State<GetStudents> {
   String selectedClass;
   int schoolId;
   // Date
+  bool connected = false;
+
   String date =('${NepaliDateFormat("y-MM-dd",).format(NepaliDateTime.now())}');
   // End
   _submit(BuildContext context)async {
@@ -128,267 +131,277 @@ class _GetStudentsState extends State<GetStudents> {
       resizeToAvoidBottomPadding: false,
       key: scaffoldKey,
 //      backgroundColor: Colors.blue[800],
-      body:  Container(
+      body:  OfflineBuilder(
+        connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+            )
+        {
+          connected = connectivity != ConnectivityResult.none;
+          return Stack(
+            children: <Widget>[
+              Container(
 //          height: double.infinity, width: double.infinity,
-          decoration: BoxDecoration(
-              gradient: purpleGradient
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-
-                TitleText(txt:'Attendance'),
-
-                FadeAnimation(0.2, GetYear()),
-                SizedBox(height: 20,),
-                FadeAnimation(
-                  0.3, Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Expanded(child: LabelText(labelTitle:'Grade'),flex: 3,),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child:  selectedGrade == '' ?
-                          TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            readOnly: true,
-                            onTap: (){_showGradeDialog();},
-//                  textAlign: TextAlign.center,
-                            decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
-                                fontSize: 15, color: Colors.white60
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                              ),
-
-                            ),
-                          ):
-                          TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            readOnly: true,
-                            onTap: (){_showGradeDialog();},
-                            textAlign: TextAlign.left,
-                            initialValue: selectedGrade,
-                            decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
-                                fontSize: 15, color: Colors.white
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                              ),
-
-                            ),
-                          ),
-                        )
-                        ,flex: 5,
-                      ),
-                    ],
-                  ),
+                decoration: BoxDecoration(
+                    gradient: purpleGradient
                 ),
-                SizedBox(height: 20,),
-                FadeAnimation(
-                  0.4, Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Expanded(child: LabelText(labelTitle: 'Stream',),flex: 3,),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child:  selectedStream == '' ?
-                          TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            readOnly: true,
-                            onTap: (){_showStreamDialog();},
-//                  textAlign: TextAlign.center,
-                            decoration: InputDecoration(hintText: "Stream",hintStyle: TextStyle(
-                                fontSize: 15, color: Colors.white60
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                              ),
 
-                            ),
-                          ):
-                          TextFormField(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black12,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                            ),
-                            readOnly: true,
-                            onTap: (){_showStreamDialog();},
-                            textAlign: TextAlign.left,
-                            initialValue: selectedStream,
-                            decoration: InputDecoration(hintText: "$selectedStream",hintStyle: TextStyle(
-                                fontSize: 15, color: Colors.white
-                            ),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                              ),
+                      TitleText(txt:'Attendance'),
 
-                            ),
-                          ),
-                        )
-                        ,flex: 5,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20,),
-                FadeAnimation(0.5, _hwDate(context,'Date','date')),
-                SizedBox(height: 20,),
-                FadeAnimation(
-                  0.6, Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Expanded(child: LabelText(labelTitle: 'Class',),flex: 3,),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child:  selectedClass == null ?
-                            TextFormField(
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 4.0,
-                                    color: Colors.black12,
-                                    offset: Offset(2.0, 2.0),
-                                  ),
-                                ],
-                              ),
-                              readOnly: true,
-                              onTap: (){_showClassDialog();},
-//                  textAlign: TextAlign.center,
-                              decoration: InputDecoration(hintText: "Class",hintStyle: TextStyle(
-                                  fontSize: 15, color: Colors.white60
-                              ),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                                ),
-
-                              ),
-                            ):
-                            TextFormField(
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 4.0,
-                                    color: Colors.black12,
-                                    offset: Offset(2.0, 2.0),
-                                  ),
-                                ],
-                              ),
-                              readOnly: true,
-                              onTap: (){_showClassDialog();},
-                              textAlign: TextAlign.left,
-                              initialValue: selectedClass,
-                              decoration: InputDecoration(hintText: selectedClass,hintStyle: TextStyle(
-                                  fontSize: 15, color: Colors.white
-                              ),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                                ),
-
-                              ),
-                            ),
-                          )
-                          ,flex: 5,
-                        )
-                      ]
-                  ),
-                ),
-                SizedBox(height: 20,),
-                FadeAnimation(
-                  0.6, Row(
-                    children: <Widget>[
-                      Expanded(child: Text(''),flex: 1,),
-                      Expanded(child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.only(left: 20,top: 40),
-                        child: Material(
-                          color: Color(0x00000000),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10.0),
-                            side: BorderSide(
-                                color: Colors.white.withOpacity(0.75),width: 1.5
-                            ),
-                          ),
-                          child: InkWell(
+                      FadeAnimation(0.2, GetYear()),
+                      SizedBox(height: 20,),
+                      FadeAnimation(
+                        0.3, Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(child: LabelText(labelTitle:'Grade'),flex: 3,),
+                          Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text('Get Students',style: TextStyle(
-                                  color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.8,shadows:[
-                                  Shadow(
-                                    blurRadius: 4.0,
-                                    color: Colors.black26,
-                                    offset: Offset(2.0, 2.0),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child:  selectedGrade == '' ?
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showGradeDialog();},
+//                  textAlign: TextAlign.center,
+                                decoration: InputDecoration(hintText: "Grade",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white60
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
                                   ),
-                                ],
-                                ),),
+
+                                ),
+                              ):
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showGradeDialog();},
+                                textAlign: TextAlign.left,
+                                initialValue: selectedGrade,
+                                decoration: InputDecoration(hintText: "$selectedGrade",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
+                              ),
+                            )
+                            ,flex: 5,
+                          ),
+                        ],
+                      ),
+                      ),
+                      SizedBox(height: 20,),
+                      FadeAnimation(
+                        0.4, Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(child: LabelText(labelTitle: 'Stream',),flex: 3,),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child:  selectedStream == '' ?
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showStreamDialog();},
+//                  textAlign: TextAlign.center,
+                                decoration: InputDecoration(hintText: "Stream",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white60
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
+                              ):
+                              TextFormField(
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                readOnly: true,
+                                onTap: (){_showStreamDialog();},
+                                textAlign: TextAlign.left,
+                                initialValue: selectedStream,
+                                decoration: InputDecoration(hintText: "$selectedStream",hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.white
+                                ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                  ),
+
+                                ),
+                              ),
+                            )
+                            ,flex: 5,
+                          ),
+                        ],
+                      ),
+                      ),
+                      SizedBox(height: 20,),
+                      FadeAnimation(0.5, _hwDate(context,'Date','date')),
+                      SizedBox(height: 20,),
+                      FadeAnimation(
+                        0.6, Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Expanded(child: LabelText(labelTitle: 'Class',),flex: 3,),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child:  selectedClass == null ?
+                                TextFormField(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black12,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                  readOnly: true,
+                                  onTap: (){_showClassDialog();},
+//                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(hintText: "Class",hintStyle: TextStyle(
+                                      fontSize: 15, color: Colors.white60
+                                  ),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                    ),
+
+                                  ),
+                                ):
+                                TextFormField(
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black12,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                  readOnly: true,
+                                  onTap: (){_showClassDialog();},
+                                  textAlign: TextAlign.left,
+                                  initialValue: selectedClass,
+                                  decoration: InputDecoration(hintText: selectedClass,hintStyle: TextStyle(
+                                      fontSize: 15, color: Colors.white
+                                  ),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                    ),
+
+                                  ),
+                                ),
+                              )
+                              ,flex: 5,
+                            )
+                          ]
+                      ),
+                      ),
+                      SizedBox(height: 20,),
+                      FadeAnimation(
+                        0.6, Row(
+                        children: <Widget>[
+                          Expanded(child: Text(''),flex: 1,),
+                          Expanded(child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.only(left: 20,top: 40),
+                            child: Material(
+                              color: Color(0x00000000),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                side: BorderSide(
+                                    color: Colors.white.withOpacity(0.75),width: 1.5
+                                ),
+                              ),
+                              child: InkWell(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(22,8,7.5,11),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text('Get Students',style: TextStyle(
+                                      color: Colors.white,fontSize: 16,fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.8,shadows:[
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black26,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                    ),),
+                                  ),
+                                ),
+                                splashColor: Colors.orange,
+                                onTap: (){
+                                  if (formKey.currentState.validate()) {
+                                    _submit(context);
+                                  }
+
+
+                                },
                               ),
                             ),
-                            splashColor: Colors.orange,
-                            onTap: (){
-                              if (formKey.currentState.validate()) {
-                                _submit(context);
-                              }
+                          ),flex: 2,),
+                          Expanded(child: Text(''),flex: 1,),
 
-
-                            },
-                          ),
-                        ),
-                      ),flex: 2,),
-                      Expanded(child: Text(''),flex: 1,),
-
-                    ],
-                  ),
-                ),
-                SizedBox(height: 5,),
+                        ],
+                      ),
+                      ),
+                      SizedBox(height: 5,),
 //                FadeAnimation(
 //                  0.8, Row(
 //                    children: <Widget>[
@@ -437,31 +450,37 @@ class _GetStudentsState extends State<GetStudents> {
 //                    ],
 //                  ),
 //                ),
-                SizedBox(height: 20,),
-                FadeAnimation(
-                  0.7, Center(
-                    child: Center(
-                      child: FlatButton( onPressed:() {Navigator.of(context).pop();},
-                        child: Container(
-                          margin: EdgeInsets.only(left: 20),
-                          height: 5,
-                          width: 90,
-                          decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.65),
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(4)
-                              )
+                      SizedBox(height: 20,),
+                      FadeAnimation(
+                        0.7, Center(
+                        child: Center(
+                          child: FlatButton( onPressed:() {Navigator.of(context).pop();},
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              height: 5,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.65),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(4)
+                                  )
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      ),
+
+                    ],
                   ),
                 ),
+              ),
+              connected?Container(height: 1,) :NoNetwork()
+            ],
+          )
 
-              ],
-            ),
-          ),
-        ),
+            ;
+        },child: Center(child: Text('Please, Contact to Developer.'),),),
 
     );
   }

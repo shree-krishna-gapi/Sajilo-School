@@ -18,7 +18,7 @@ import 'field/services/getYear.dart';
 import 'field/services/stream.dart';
 import 'field/services/monthget.dart';
 import 'pages/recordShow.dart';
-
+import 'package:flutter_offline/flutter_offline.dart';
 class GetAttendance extends StatefulWidget {
   @override
   _GetAttendanceState createState() => _GetAttendanceState();
@@ -50,7 +50,7 @@ class _GetAttendanceState extends State<GetAttendance> {
   int selectedMonthId = 0;
   String selectedMonth = '';
 
-
+  bool connected = false;
   int schoolId;
   // Date
   String fromDate =('${NepaliDateFormat("y-MM-dd",).format(NepaliDateTime.now().add(Duration(days: -15)))}');
@@ -161,66 +161,76 @@ class _GetAttendanceState extends State<GetAttendance> {
       key: scaffoldKey,
 //      backgroundColor: Colors.blue[800],
 
-      body:  Center(
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: purpleGradient
-          ),
-          child: Align( alignment: Alignment.center,
-            child: ListView(shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: <Widget>[
+      body:  OfflineBuilder(
+        connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+            )
+        {
+          connected = connectivity != ConnectivityResult.none;
+          return Stack(
+            children: <Widget>[
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                      gradient: purpleGradient
+                  ),
+                  child: Align( alignment: Alignment.center,
+                    child: ListView(shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      children: <Widget>[
 
-                      TitleText(txt:'Attendance Report'),
-                      FadeAnimation(
-                        0.2, Row(
+                        TitleText(txt:'Attendance Report'),
+                        FadeAnimation(
+                          0.2, Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
 //                          Expanded(child: LabelText(labelTitle:'Is Monthly'),flex: 3,),
-                          Expanded(child: Align(alignment: Alignment.bottomRight,child: Padding(
-                            padding: const EdgeInsets.only(left: 10,bottom: 10),
-                            child: Text('Is Monthly',style: TextStyle(
-                                color: Colors.white,
-                                letterSpacing: 0.6,
-                                fontSize: 15,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black12,
-                                    blurRadius: 4.0,
-                                  )
-                                ]
-                            ),),
-                          )),flex: 3,),
+                            Expanded(child: Align(alignment: Alignment.bottomRight,child: Padding(
+                              padding: const EdgeInsets.only(left: 10,bottom: 10),
+                              child: Text('Is Monthly',style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 0.6,
+                                  fontSize: 15,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black12,
+                                      blurRadius: 4.0,
+                                    )
+                                  ]
+                              ),),
+                            )),flex: 3,),
                             Expanded(child:
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 Container(
-                                      margin: EdgeInsets.only(left: 7,),
-                                      width: 70,
-                                      child: Switch(
-                                        value: isMonthly,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isMonthly = value;
-                                          });
-                                        },
-                                        activeTrackColor: Colors.white38,
-                                        activeColor: Colors.white,
+                                  margin: EdgeInsets.only(left: 7,),
+                                  width: 70,
+                                  child: Switch(
+                                    value: isMonthly,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isMonthly = value;
+                                      });
+                                    },
+                                    activeTrackColor: Colors.white38,
+                                    activeColor: Colors.white,
 
-                                    ),
+                                  ),
                                 ),
                                 Expanded(child: Text(''))
                               ],
                             ),flex: 5,),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 0,),
-                      FadeAnimation(0.3, GetYear()),
-                      SizedBox(height: 20,),
-                      FadeAnimation(
-                        0.3, Row(
+                        ),
+                        SizedBox(height: 0,),
+                        FadeAnimation(0.3, GetYear()),
+                        SizedBox(height: 20,),
+                        FadeAnimation(
+                          0.3, Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Expanded(child: LabelText(labelTitle:'Grade'),flex: 3,),
@@ -269,10 +279,10 @@ class _GetAttendanceState extends State<GetAttendance> {
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 20,),
-                      FadeAnimation(
-                        0.4, Row(
+                        ),
+                        SizedBox(height: 20,),
+                        FadeAnimation(
+                          0.4, Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Expanded(child: LabelText(labelTitle: 'Stream',),flex: 3,),
@@ -321,10 +331,10 @@ class _GetAttendanceState extends State<GetAttendance> {
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 20,),
-                      FadeAnimation(
-                        0.5, Row(
+                        ),
+                        SizedBox(height: 20,),
+                        FadeAnimation(
+                          0.5, Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
                               Expanded(child: LabelText(labelTitle: 'Class',),flex: 3,),
@@ -373,83 +383,83 @@ class _GetAttendanceState extends State<GetAttendance> {
                               )
                             ]
                         ),
-                      ),
-                      SizedBox(height: 20,),
+                        ),
+                        SizedBox(height: 20,),
 
-                      isMonthly ? FadeAnimation(
-                        0.6, Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Expanded(child: LabelText(labelTitle: 'Select Month',),flex: 3,),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                child:  selectedMonth == '' ?
-                                TextFormField(
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 4.0,
-                                        color: Colors.black12,
-                                        offset: Offset(2.0, 2.0),
-                                      ),
-                                    ],
-                                  ),
-                                  readOnly: true,
-                                  onTap: (){_showMonthDialog();},
+                        isMonthly ? FadeAnimation(
+                          0.6, Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Expanded(child: LabelText(labelTitle: 'Select Month',),flex: 3,),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  child:  selectedMonth == '' ?
+                                  TextFormField(
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black12,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ],
+                                    ),
+                                    readOnly: true,
+                                    onTap: (){_showMonthDialog();},
 //                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(hintText: "Month",hintStyle: TextStyle(
-                                      fontSize: 15, color: Colors.white60
-                                  ),
-                                    focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                    decoration: InputDecoration(hintText: "Month",hintStyle: TextStyle(
+                                        fontSize: 15, color: Colors.white60
                                     ),
-
-                                  ),
-                                ):
-                                TextFormField(
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 4.0,
-                                        color: Colors.black12,
-                                        offset: Offset(2.0, 2.0),
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.white60,width: 1.5)
                                       ),
-                                    ],
-                                  ),
-                                  readOnly: true,
-                                  onTap: (){_showMonthDialog();},
-                                  textAlign: TextAlign.left,
-                                  initialValue: selectedMonth,
-                                  decoration: InputDecoration(hintText: '$selectedMonth',hintStyle: TextStyle(
-                                      fontSize: 15, color: Colors.white
-                                  ),
-                                    focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.white60,width: 1.5)
-                                    ),
 
+                                    ),
+                                  ):
+                                  TextFormField(
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black12,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ],
+                                    ),
+                                    readOnly: true,
+                                    onTap: (){_showMonthDialog();},
+                                    textAlign: TextAlign.left,
+                                    initialValue: selectedMonth,
+                                    decoration: InputDecoration(hintText: '$selectedMonth',hintStyle: TextStyle(
+                                        fontSize: 15, color: Colors.white
+                                    ),
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.white60,width: 1.5)
+                                      ),
+
+                                    ),
                                   ),
-                                ),
+                                )
+                                ,flex: 5,
                               )
-                              ,flex: 5,
-                            )
-                          ]
-                      ),
-                      ): FadeAnimation(
-                        0.5, Column(
+                            ]
+                        ),
+                        ): FadeAnimation(
+                          0.5, Column(
                           children: <Widget>[
                             _fromDate(context,'From Date','fromDate'),
                             _toDate(context,'To Date','toDate'),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 20,),
-                      FadeAnimation(
-                        0.6, Row(
+                        ),
+                        SizedBox(height: 20,),
+                        FadeAnimation(
+                          0.6, Row(
                           children: <Widget>[
                             Expanded(child: Text(''),flex: 1,),
                             Expanded(child: Container(
@@ -491,30 +501,30 @@ class _GetAttendanceState extends State<GetAttendance> {
 
                           ],
                         ),
-                      ),
-                      SizedBox(height: 20,),
-                FadeAnimation(
-                  0.6, Center(
-                  child: Center(
-                    child: FlatButton(onPressed: () {
-                      Navigator.of(context).pop();},
-                      child: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        height: 5,
-                        width: 90,
-                        decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.65),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(4)
-                            )
                         ),
+                        SizedBox(height: 20,),
+                        FadeAnimation(
+                          0.6, Center(
+                          child: Center(
+                            child: FlatButton(onPressed: () {
+                              Navigator.of(context).pop();},
+                              child: Container(
+                                margin: EdgeInsets.only(left: 15),
+                                height: 5,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.65),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(4)
+                                    )
+                                ),
 
-                      ),
-                      splashColor: Color(0x0000000),
-                    ),
-                  ),
-                ),
-                ),
+                              ),
+                              splashColor: Color(0x0000000),
+                            ),
+                          ),
+                        ),
+                        ),
 //                      FadeAnimation(
 //                        0.6, Row(
 //                          children: <Widget>[
@@ -566,12 +576,18 @@ class _GetAttendanceState extends State<GetAttendance> {
 
 //                    ],
 //                  ),
-              ],
-            ),
-          ),
+                      ],
+                    ),
+                  ),
 
-        ),
-      ),
+                ),
+              ),
+              connected?Container(height: 1,) :NoNetwork()
+            ],
+          )
+
+            ;
+        },child: Center(child: Text('Please, Contact to Developer.'),),),
 
     );
   }

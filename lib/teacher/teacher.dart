@@ -13,12 +13,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'sidebar/sideBar.dart';
 import 'dart:io';
+import 'package:flutter_offline/flutter_offline.dart';
 class Teacher extends StatefulWidget {
   @override
   _TeacherState createState() => _TeacherState();
 }
 
 class _TeacherState extends State<Teacher> {
+  bool connected = false;
   bool gridView = true;
   DateTime backPressTime;
   Future<bool> onWillPop() async {
@@ -55,251 +57,267 @@ class _TeacherState extends State<Teacher> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-        body: WillPopScope(
-          onWillPop:onWillPop,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                decoration: new BoxDecoration(
-                  color: Color(0xfffbfff7).withOpacity(0.5),
-                ),
+        body:
+        OfflineBuilder(
+        connectivityBuilder: (
+        BuildContext context,
+        ConnectivityResult connectivity,
+        Widget child,
+    )
+    {
+      connected = connectivity != ConnectivityResult.none;
+      return
+          WillPopScope(
+            onWillPop:onWillPop,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  decoration: new BoxDecoration(
+                    color: Color(0xfffbfff7).withOpacity(0.5),
+                  ),
 
-                child: Center(
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                  child: Center(
+                    child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
 
-                      Container(
-                        padding: EdgeInsets.only(right:30),
-                        height: 36,
-                        color:Color(0xFF28588e),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Text('Filter View   ',style: TextStyle(color: Colors.white),),
-                            gridView ? InkWell(child: Icon(Icons.view_module, size: 28,color: Colors.white,),
-                              onTap: ()async {
-                                final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                setState(() {
-                                  gridView =! gridView;
-                                });
-                                prefs.setBool('isGridView',gridView);
-                              },
-                            ):
-                            InkWell(child: Icon(Icons.view_stream,size: 28,color: Colors.white,),
-                              onTap: ()async {
-                                final SharedPreferences prefs = await SharedPreferences.getInstance();
-                                setState(() {
-                                  gridView =! gridView;
-                                });
-                                prefs.setBool('isGridView',gridView);
-                              },)
-                          ],
+                        Container(
+                          padding: EdgeInsets.only(right:30),
+                          height: 36,
+                          color:Color(0xFF28588e),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text('Filter View   ',style: TextStyle(color: Colors.white),),
+                              gridView ? InkWell(child: Icon(Icons.view_module, size: 28,color: Colors.white,),
+                                onTap: ()async {
+                                  final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  setState(() {
+                                    gridView =! gridView;
+                                  });
+                                  prefs.setBool('isGridView',gridView);
+                                },
+                              ):
+                              InkWell(child: Icon(Icons.view_stream,size: 28,color: Colors.white,),
+                                onTap: ()async {
+                                  final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  setState(() {
+                                    gridView =! gridView;
+                                  });
+                                  prefs.setBool('isGridView',gridView);
+                                },)
+                            ],
+                          ),
                         ),
-                      ),
-                      gridView? Container(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
+                        gridView? Container(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(height: 15,),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(child: InkWell( onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
+                                      );
+                                    },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black12,
+                                                blurRadius: 4.0, // has the effect of softening the shadow
+                                                spreadRadius: 1.0, // has the effect of extending the shadow
+                                                offset: Offset(
+                                                  1.0, // horizontal, move right 10
+                                                  1.0, // vertical, move down 10
+                                                ),
+                                              ),]),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(height: 35,),
+                                            Icon(Icons.message,color: Color(0xFF28588e),size: 30,),
+                                            SizedBox(height: 15,),
+                                            title(context,'${tabList[0]['title']}',),
+                                            SizedBox(height: 30,),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                    SizedBox(width: 15,),
+                                    Expanded(child: InkWell(onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
+                                      );
+                                    },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black12,
+                                                blurRadius: 4.0, // has the effect of softening the shadow
+                                                spreadRadius: 1.0, // has the effect of extending the shadow
+                                                offset: Offset(
+                                                  1.0, // horizontal, move right 10
+                                                  1.0, // vertical, move down 10
+                                                ),
+                                              ),]),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(height: 35,),
+                                            Icon(Icons.account_balance_wallet,color: Color(0xFF28588e),size: 30,),
+                                            SizedBox(height: 15,),
+                                            title(context,'${tabList[1]['title']}',),
+                                            SizedBox(height: 30,),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                  ],
+                                ),
+                                SizedBox(height: 15,),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black12,
+                                                blurRadius: 4.0, // has the effect of softening the shadow
+                                                spreadRadius: 1.0, // has the effect of extending the shadow
+                                                offset: Offset(
+                                                  1.0, // horizontal, move right 10
+                                                  1.0, // vertical, move down 10
+                                                ),
+                                              ),]),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(height: 35,),
+                                            Icon(Icons.account_balance,color: Color(0xFF28588e),size: 30,),
+                                            SizedBox(height: 15,),
+                                            title(context,'${tabList[2]['title']}',),
+                                            SizedBox(height: 30,),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                    SizedBox(width: 15,),
+                                    Expanded(child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black12,
+                                                blurRadius: 4.0, // has the effect of softening the shadow
+                                                spreadRadius: 1.0, // has the effect of extending the shadow
+                                                offset: Offset(
+                                                  1.0, // horizontal, move right 10
+                                                  1.0, // vertical, move down 10
+                                                ),
+                                              ),]),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(height: 35,),
+                                            Icon(Icons.graphic_eq,color: Color(0xFF28588e),size: 30,),
+                                            SizedBox(height: 15,),
+                                            title(context,'${tabList[3]['title']}',),
+                                            SizedBox(height: 30,),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                  ],
+                                ),
+                                SizedBox(height: 50,),
+                              ],
+                            )
+                        ) : Container(
+                          padding: EdgeInsets.fromLTRB(30,0,30,0),
                           child: Column(
                             children: <Widget>[
-                              SizedBox(height: 15,),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(child: InkWell( onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
-                                    );
-                                  },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4.0, // has the effect of softening the shadow
-                                              spreadRadius: 1.0, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                1.0, // horizontal, move right 10
-                                                1.0, // vertical, move down 10
-                                              ),
-                                            ),]),
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(height: 35,),
-                                          Icon(Icons.message,color: Color(0xFF28588e),size: 30,),
-                                          SizedBox(height: 15,),
-                                          title(context,'${tabList[0]['title']}',),
-                                          SizedBox(height: 30,),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                                  SizedBox(width: 15,),
-                                  Expanded(child: InkWell(onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
-                                    );
-                                  },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4.0, // has the effect of softening the shadow
-                                              spreadRadius: 1.0, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                1.0, // horizontal, move right 10
-                                                1.0, // vertical, move down 10
-                                              ),
-                                            ),]),
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(height: 35,),
-                                          Icon(Icons.account_balance_wallet,color: Color(0xFF28588e),size: 30,),
-                                          SizedBox(height: 15,),
-                                          title(context,'${tabList[1]['title']}',),
-                                          SizedBox(height: 30,),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                                ],
+
+                              InkWell(onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
+                                );
+                              },
+                                child: TapDesign(txt:'Homework',tab:'one'),
                               ),
-                              SizedBox(height: 15,),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
-                                      );
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4.0, // has the effect of softening the shadow
-                                              spreadRadius: 1.0, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                1.0, // horizontal, move right 10
-                                                1.0, // vertical, move down 10
-                                              ),
-                                            ),]),
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(height: 35,),
-                                          Icon(Icons.account_balance,color: Color(0xFF28588e),size: 30,),
-                                          SizedBox(height: 15,),
-                                          title(context,'${tabList[2]['title']}',),
-                                          SizedBox(height: 30,),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                                  SizedBox(width: 15,),
-                                  Expanded(child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
-                                      );
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4.0, // has the effect of softening the shadow
-                                              spreadRadius: 1.0, // has the effect of extending the shadow
-                                              offset: Offset(
-                                                1.0, // horizontal, move right 10
-                                                1.0, // vertical, move down 10
-                                              ),
-                                            ),]),
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(height: 35,),
-                                          Icon(Icons.graphic_eq,color: Color(0xFF28588e),size: 30,),
-                                          SizedBox(height: 15,),
-                                          title(context,'${tabList[3]['title']}',),
-                                          SizedBox(height: 30,),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                                ],
+                              InkWell(onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
+                                );
+                              },
+                                child: TapDesign(txt:'Homework Report',tab:'two'),
                               ),
-                              SizedBox(height: 50,),
+                              InkWell(onTap: (){
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
+                                );
+                              },
+                                child: TapDesign(txt:'Attendance',tab:'three'),
+                              ),
+                              InkWell(onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
+                                );
+                              },
+                                child: TapDesign(txt:'Attendance Report',tab:'four'),
+                              ),
                             ],
-                          )
-                      ) : Container(
-                        padding: EdgeInsets.fromLTRB(30,0,30,0),
-                        child: Column(
-                          children: <Widget>[
-
-                            InkWell(onTap: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => SetHomework()), //StudentAttendance
-                              );
-                            },
-                              child: TapDesign(txt:'Homework',tab:'one'),
-                            ),
-                            InkWell(onTap: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => GetHomeworkReport()), //StudentAttendance
-                              );
-                            },
-                              child: TapDesign(txt:'Homework Report',tab:'two'),
-                            ),
-                            InkWell(onTap: (){
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => GetStudents()), //StudentAttendance
-                              );
-                            },
-                              child: TapDesign(txt:'Attendance',tab:'three'),
-                            ),
-                            InkWell(onTap: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => GetAttendance()), //StudentAttendance
-                              );
-                            },
-                              child: TapDesign(txt:'Attendance Report',tab:'four'),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
 
-              ),
-              SideBar(),
-            ],
-          ),
-        )
+                ),
+                SideBar(),
+              connected?Container(height: 1,) :NoNetwork()
+              ],
+            ),
+          )
+        ;
+    },child: Center(child: Text('Please, Contact to Developer.'),),)
+
+
+
     );
   }
   Text title(BuildContext context,txt) {

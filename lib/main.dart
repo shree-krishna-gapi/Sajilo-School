@@ -13,6 +13,9 @@ import 'package:sajiloschool/utils/api.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter_offline/flutter_offline.dart';
+import 'package:connectivity/connectivity.dart';
+
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(debug: false);
@@ -27,9 +30,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Sajilo School',
-//        com.mininginfosys.sajiloschool
         theme: ThemeData(
-          primarySwatch: Colors.blueGrey,
+//          primarySwatch: Colors.blueGrey,
+        primaryColor: Color(0xFF117aac), //0xFF28588e
           accentColor: Color(0xFF35739f),
           bottomSheetTheme: BottomSheetThemeData(
               backgroundColor: Colors.black.withOpacity(0)),
@@ -52,11 +55,14 @@ class _LoginStatusState extends State<LoginStatus> {
   int yearId;
   int schoolId;
   int i;
-  @override
-  void initState() {
-    this.checkStatus();
-    super.initState();
-  }
+  bool connected = false;
+//
+//  @override
+//  void initState() {
+////    this.checkStatus();
+//
+//    super.initState();
+//  }
   checkStatus() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final teacherLogin = prefs.getBool('teacherStatus');
@@ -186,24 +192,70 @@ class _LoginStatusState extends State<LoginStatus> {
     }
 
   }
+
   @override
   Widget build(BuildContext context) {
+//    print('widget First $connected');
+//    if(connected) {
+//      print('widget connected First');
+//      print('this is connected $connected');
+//      checkStatus();
+//    }
+//    else {
+//      print('false');
+//    }
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: purpleGradient
-        ),
-        child: Center(
-          child: Container(child: FadeAnimation(1.0, InkWell(
-            onTap: () {
+      body: OfflineBuilder(
+          connectivityBuilder: (
+              BuildContext context,
+              ConnectivityResult connectivity,
+
+              Widget child,
+              ) {
+            connected = connectivity != ConnectivityResult.none;
+            if(connected) {
               checkStatus();
-            },
-            child: Image.asset('assets/logo/logo.png',
-              fit: BoxFit.cover,),
-          )),
-            height: 85,
-          ),
-        ),
+            }
+            return Stack(
+              children: <Widget>[
+//                InkWell(
+//                  onTap: () {
+//                    checkStatus();
+//                  },
+//                  child:
+                  new Container(
+                    decoration: BoxDecoration(
+                        gradient: purpleGradient
+                    ),
+                    child: Center(
+                      child: Container(child: FadeAnimation(1.0,
+
+                         Image.asset('assets/logo/logo.png',
+                          fit: BoxFit.cover,),
+                      ),
+                        height: 85,
+                      ),
+                    ),
+//                  ),
+                ),
+                connected? new Container(height: 1,) : new NoNetwork()
+              ],
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: purpleGradient
+            ),
+            child: Center(
+              child: Container(child: FadeAnimation(1.0,
+
+                 Image.asset('assets/logo/logo.png',
+                  fit: BoxFit.cover,),
+              ),
+                height: 80,
+              ),
+            ),
+          )
       ),
     );
   }

@@ -6,8 +6,12 @@ class Urls {
 //  static const BASE_API_URL = "http://mobileapp.karmathalo.com/Api";  // live server
   static const BASE_API_URL = "http://192.168.1.89:88/api"; // Ramesh Laptop192.168.100.12:88
 //  static const BASE_API_URL = "http://192.168.100.12:88/api"; // Bikesh
+//  static const BASE_API_URL = "http://192.168.1.68/api"; // Ramesh
+
+
+
   static const Image_API_URL = "http://192.168.1.89:88";
-//  static const BASE_API_URL = "http://192.168.100.12/School/Api"; // Bikesh Laptop
+
 //  static const BASE_API_URL = "http://192.168.0.140:88/api";  // mining wifi
 //  static const BASE_API_URL = Future((oo));
 //  static const BASE_API_URL = "http://192.168.1.100:88/api"; // Ramesh Laptop
@@ -207,18 +211,47 @@ class ModalTitle extends StatelessWidget {
 //    );
 //  }
 //}
-
+//widget.connected?Container(height: 1,) :NoNetwork()
 class NoNetwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
       child: Container(
-          height: 30,
-          color: Colors.red.withOpacity(0.75),
+          height: 27,
+          color: Colors.red.withOpacity(0.8),
           alignment: Alignment.center,
           child: Text('Network Connection Failled.',style: TextStyle(color: Colors.white),)
       ),
       bottom: 0,left: 0, right: 0,
+    );
+  }
+}
+class Test1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      child: Container(
+          height: 27,
+          color: Colors.red.withOpacity(0.8),
+          alignment: Alignment.center,
+          child: Text('Test 1',style: TextStyle(color: Colors.white),)
+      ),
+      bottom: 0,left: 0, right: 0,
+    );
+  }
+}
+class Test2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      child: Container(
+          height: 27,
+          color: Colors.red.withOpacity(0.8),
+          alignment: Alignment.center,
+          child: Text('Test 2',
+            style: TextStyle(color: Colors.white),)
+      ),
+      bottom: 0, left: 0, right: 0,
     );
   }
 }

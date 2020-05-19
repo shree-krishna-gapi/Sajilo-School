@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "193428745590",
+    "firebase_url": "https://sajiloschool-33b81.firebaseio.com",
+    "project_id": "sajiloschool-33b81",
+    "storage_bucket": "sajiloschool-33b81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193428745590:android:5be8ef3878fa84d33ede57",
+        "android_client_info": {
+          "package_name": "com.mininginfosys.sajiloschool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193428745590-p7vlus7d4ngv83ep0gn88f5kuhgv3frk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mininginfosys.sajiloschool",
+            "certificate_hash": "b1940df5560c9df71ed8c00c2468078ee899a9a8"
+          }
+        },
+        {
+          "client_id": "193428745590-7tv8lnrbl7r7s7vv70tfc54uocgvhl67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyButpatG65O79Ry3KTA0Wlvb3lNxr8QfnI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193428745590-7tv8lnrbl7r7s7vv70tfc54uocgvhl67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

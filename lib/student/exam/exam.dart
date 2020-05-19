@@ -20,7 +20,8 @@ import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Exam extends StatefulWidget {
-
+Exam({this.connected});
+final bool connected;
   @override
   _ExamState createState() => _ExamState();
 }
@@ -293,7 +294,7 @@ class _BodySectionState extends State<BodySection> {
             contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
             content: Container(
               child: Container(
-//                height: 380,
+                width: 10,
                 child: FadeAnimation(
                   0.3, Padding(
                       padding: const EdgeInsets.fromLTRB(20,15,20,10),

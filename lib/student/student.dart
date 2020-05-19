@@ -15,8 +15,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:sajiloschool/auth/login.dart';
 
-
 class Student extends StatefulWidget {
+
   @override
   _StudentState createState() => _StudentState();
 }
@@ -24,6 +24,7 @@ class Student extends StatefulWidget {
 class _StudentState extends State<Student> {
   int _currentIndex = 0;
   PageController _pageController;
+  bool connected = false;
   String url;
   @override
   void initState() {
@@ -89,21 +90,37 @@ class _StudentState extends State<Student> {
           ),
         ),
       ),
-      body: FadeAnimation(
-        0.3, SizedBox.expand(
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() => _currentIndex = index);
-            },
+      body: OfflineBuilder(
+        connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+            ) {
+          connected = connectivity != ConnectivityResult.none;
+          return Stack(
             children: <Widget>[
-              FadeAnimation(0.3,Exam()),
-              Fees(),
-              HomeWork(),
-              Attendance()
+              FadeAnimation(
+                0.3, SizedBox.expand(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() => _currentIndex = index);
+                  },
+                  children: <Widget>[
+                    FadeAnimation(0.3,Exam()),
+                    Fees(),
+                    HomeWork(),
+                    Attendance(),
+
+                  ],
+                ),
+              ),
+              ),
+              connected? new Container(height: 1,) : new NoNetwork()
             ],
-          ),
-        ),
+          );
+        },
+        child: Text(''),
       ),
     );
   }

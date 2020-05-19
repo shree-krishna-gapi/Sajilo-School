@@ -17,6 +17,7 @@ import 'reportData.dart';
 import 'newservice/getYear.dart';
 import 'package:sajiloschool/teacher/generic/textStyle.dart';
 import 'downloadHomeworkReport.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 class GetHomeworkReport extends StatefulWidget {
   @override
   _GetHomeworkReportState createState() => _GetHomeworkReportState();
@@ -24,7 +25,7 @@ class GetHomeworkReport extends StatefulWidget {
 
 class _GetHomeworkReportState extends State<GetHomeworkReport> {
   final scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  bool connected = false;
 
   // auto
   final sizedBoxHeight = 14.0;
@@ -151,10 +152,21 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
       resizeToAvoidBottomInset: false,
       resizeToAvoidBottomPadding: false,
       key: scaffoldKey,
-      body:  Container(
-          decoration: BoxDecoration(
-              gradient: purpleGradient
-          ),
+      body:
+      OfflineBuilder(
+      connectivityBuilder: (
+      BuildContext context,
+      ConnectivityResult connectivity,
+      Widget child,
+    )
+    {
+      connected = connectivity != ConnectivityResult.none;
+      return Stack(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+                gradient: purpleGradient
+            ),
 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -472,32 +484,38 @@ class _GetHomeworkReportState extends State<GetHomeworkReport> {
                 SizedBox(height: 20,),
                 FadeAnimation(
                   0.7, Center(
-                    child: Center(
-                      child: FlatButton(onPressed: () {
-                        Navigator.of(context).pop();},
-                        child: Container(
-                          margin: EdgeInsets.only(left: 15),
-                          height: 5,
-                          width: 90,
-                          decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.65),
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(4)
-                              )
-                          ),
-
+                  child: Center(
+                    child: FlatButton(onPressed: () {
+                      Navigator.of(context).pop();},
+                      child: Container(
+                        margin: EdgeInsets.only(left: 15),
+                        height: 5,
+                        width: 90,
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.65),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(4)
+                            )
                         ),
-                        splashColor: Color(0x0000000),
+
                       ),
+                      splashColor: Color(0x0000000),
                     ),
                   ),
+                ),
                 ),
 //                SizedBox(height: 5,),
 
               ],
             ),
 
-        ),
+          ),
+          connected?Container(height: 1,) :NoNetwork()
+        ],
+      )
+
+        ;
+    },child: Center(child: Text('Please, Contact to Developer.'),),),
 
 
     );

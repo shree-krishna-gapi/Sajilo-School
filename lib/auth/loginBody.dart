@@ -20,6 +20,7 @@ import 'page/searchBody.dart';
 import 'service/grade.dart';
 import 'package:sajiloschool/auth/login.dart';
 import 'package:sajiloschool/main.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 class LoginBody extends StatefulWidget {
   final bool connected;
   final String title = "AutoComplete Demo";
@@ -108,11 +109,11 @@ class _LoginBodyState extends State<LoginBody> {
   bool loginStatus = true;
   @override
   Widget build(BuildContext context) {
-  if(widget.connected) {
-    if(caseTwo == false) {
-      getSchool();
+    if(widget.connected) {
+      if(caseTwo == false) {
+        getSchool();
+      }
     }
-  }
     return Stack(
       children: <Widget>[
         Container(
@@ -192,6 +193,7 @@ class _LoginBodyState extends State<LoginBody> {
                                     selectedStudentId = 0;
                                     setState(() {
                                       selectedGrade = '';
+                                      studentName = '';
                                       selectedStudentName = '';
                                     });
                                     loadGrade = false;
@@ -497,7 +499,7 @@ class _LoginBodyState extends State<LoginBody> {
                               ),
                             ),
                           ),flex: 6,),
-                          Expanded(child: Text(''),flex: 2,),
+                          Expanded(child: Text('hello'),flex: 2,),
                         ],
                       ),
                     ),
@@ -898,55 +900,52 @@ class _LoginBodyState extends State<LoginBody> {
   String url;
   String getYearUrl;
   int getStudentId;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+//  _getToken() {
+//    _firebaseMessaging.getToken().then((token) {
+//      print('this is token: $token');
+//    });
+//  }
   studentLoginProcess() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    getStudentId = prefs.getInt('studentId');
-    var mobileNo = mobileNumber.text;
     if(getStudentId == null || getStudentId == 0) {
       showSnack('Please, Select the Field.');
     }
-    else {
-//      Timer(Duration(milliseconds: 600), () {
-      showDialog<void>(
-          context: context,
-          barrierDismissible: false, // user must tap button!
-          builder: (BuildContext context) {
-            return Wait();});
-      url = '${Urls.BASE_API_URL}/login/checkcredential?schoolid=$selectedSchoolId&gradeid=$selectedGradeId&studentid=$getStudentId&mobileno=$mobileNo';
-      print(url);
+    _firebaseMessaging.getToken().then((token)async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      getStudentId = prefs.getInt('studentId');
+      var mobileNo = mobileNumber.text;
+      if(token == null || token == '') {
+        showSnack('Network Error! Please, Try Again.');
+      }
+      else {
+        showDialog<void>(
+            context: context,
+            barrierDismissible: false, // user must tap button!
+            builder: (BuildContext context) {
+              return Wait();});
+        url = '${Urls.BASE_API_URL}/login/checkcredential?schoolid=$selectedSchoolId&gradeid=$selectedGradeId&studentid=$getStudentId&mobileno=$mobileNo&token=$token';
+        print(url);
         final response =
-        await http.get(url);
-      Navigator.of(context).pop();
+            await http.get(url);
+        Navigator.of(context).pop();
         if (response.statusCode == 200) {
           final isUser = json.decode(response.body)['Success'];
           if(isUser == true) {
             prefs.setBool('studentStatus',true);
-//            showDialog<void>(
-//                context: context,
-//                barrierDismissible: false, // user must tap button!
-//                builder: (BuildContext context) {
-//                  return Success();
-//                }
-//            );
-//            Timer(Duration(milliseconds: 200), ()
-//            {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginStatus()),
-              );
-//            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginStatus()),
+            );
           }
           else {
-
             showSnack('Login Failled! Please, Try Again');
           }
-
         } else {
-
           showSnack('Login Failled! Please, Contact To The Developer');
         }
+      }
+    });
 
-    }
 
 
 
@@ -956,7 +955,6 @@ class _LoginBodyState extends State<LoginBody> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var teacherName = userName.text;
     var teacherMobileNo = teacherNumber.text;
-    print('lllll');
     if(selectedSchoolId == null || selectedSchoolId == 0) {
       showSnack('Please, Select the Field.');
     }
@@ -966,9 +964,8 @@ class _LoginBodyState extends State<LoginBody> {
           barrierDismissible: false, // user must tap button!
           builder: (BuildContext context) {
             return Wait();});
-      url = '${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$selectedSchoolId&username=$teacherName&password=$teacherMobileNo';
       print(url);
-
+      url = '${Urls.BASE_API_URL}/login/checkteachercredential?schoolid=$selectedSchoolId&username=$teacherName&password=$teacherMobileNo';
       final response =
       await http.get(url);
       Navigator.of(context).pop();
@@ -976,19 +973,12 @@ class _LoginBodyState extends State<LoginBody> {
         final isUser = json.decode(response.body)['Success'];
         if(isUser == true) {
           prefs.setBool('teacherStatus',true);
-//          showDialog<void>(
-//              context: context,
-//              barrierDismissible: false, // user must tap button!
-//              builder: (BuildContext context) {
-//                return Success();
-//              }
-//          );
 //          Timer(Duration(milliseconds: 200), ()
 //          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginStatus()),
-            );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LoginStatus()),
+          );
 //          });
         }
         else {
@@ -1051,7 +1041,7 @@ class _LoginBodyState extends State<LoginBody> {
                   borderRadius: BorderRadius.all(Radius.circular(15.0))),
               contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
               content: Container(
-                child: Container(
+                child: Container( width:10,
                   child: Padding(
                       padding: const EdgeInsets.fromLTRB(20,10,20,0),
                       child: FutureBuilder<List<Grade>>(
@@ -1060,7 +1050,7 @@ class _LoginBodyState extends State<LoginBody> {
                           if (snapshot.hasError) ;
                           if(snapshot.hasData) {
                             return snapshot.data.length > 0 ? ListView.builder(
-                              shrinkWrap: true,scrollDirection: Axis.vertical,
+                                shrinkWrap: true,scrollDirection: Axis.vertical,
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return
@@ -1158,7 +1148,7 @@ class _LoginBodyState extends State<LoginBody> {
                                                   vertical: 8.5),
                                               child: Center(child: Text(
                                                   '${snapshot.data[index]
-                                                  .gradeNameEng}')),
+                                                      .gradeNameEng}')),
 //                                    color: Colors.black12,
                                             ),
                                             Container(
