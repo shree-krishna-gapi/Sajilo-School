@@ -499,7 +499,7 @@ class _LoginBodyState extends State<LoginBody> {
                               ),
                             ),
                           ),flex: 6,),
-                          Expanded(child: Text('hello'),flex: 2,),
+                          Expanded(child: Text(''),flex: 2,),
                         ],
                       ),
                     ),
